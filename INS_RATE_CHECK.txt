@@ -1,0 +1,111 @@
+SET VER OFF
+
+SET LINES 188
+SET PAGES 5000
+COMPUTE COUNT OF PROD_NM ON P_CODE
+BREAK ON REPORT ON P_CODE
+
+
+
+SPOOL ON
+
+SELECT A.SC_CD, A.FP_ID, A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID CL_ID, INITCAP(SUBSTR(C.CL_NM,1,18)) CL_NM, A.BILL_NO, A.DELI_DT, A.SALE_NET, A.SALE_CD, D.CAT_CD||D.PRD_CD P_CODE,
+INITCAP(SUBSTR(E.PROD_NM,1,20)) PROD_NM, F.DIS_PCT, D.FLAT_RT BILL_RT, F.FLAT_RT APPV_RT, D.FLAT_RT- F.FLAT_RT DIFF, (D.FLAT_RT- F.FLAT_RT)*D.PRO_QTY MY_BE_LOSS, D.PRO_QTY, D.SALE_GR, D.SALE_NET
+	FROM SCENT.BILL_MAS A,SCENT.FP_MGR B,SCENT.CL_INFO C, SCENT.BILL_DET D, SCENT.INV_PROD E, SCENT.FLAT_RATE_INS F
+	WHERE A.SC_CD='&&SC_CD'AND
+	A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID = '&CLIENT_CD' AND
+	A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID = F.DIST_CD||F.THA_CD||F.UN_CD||F.CL_ID AND
+	A.DELI_DT BETWEEN '01JAN24' AND '31DEC24' AND
+	A.BILL_NO = D.BILL_NO AND
+	A.SC_CD=B.SC_CD AND
+	A.SC_CD=C.SC_CD AND
+	A.SC_CD=D.SC_CD AND
+	A.SC_CD=F.SC_CD AND
+	A.FP_ID=B.FP_ID AND
+	A.DIST_CD=C.DIST_CD AND
+	A.THA_CD=C.THA_CD AND
+	A.UN_CD=C.UN_CD AND
+	A.CL_ID=C.CL_ID AND 
+	A.SALE_CD IN('IC','IM','IN') AND
+	A.FL_MVH='1' AND
+	D.TYP_CD=E.TYP_CD AND 
+	D.CAT_CD=E.CAT_CD AND
+	D.PRD_CD=E.PRD_CD AND
+	D.TYP_CD=F.TYP_CD AND 
+	D.CAT_CD=F.CAT_CD AND
+	D.PRD_CD=F.PRD_CD AND
+	F.DIS_PCT > '&PCT'
+	ORDER BY P_CODE, A.BILL_NO
+
+/
+
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+=========================================================
+
+Enter value for client_cd: 5515041009
+Enter value for pct: 5
+
+SC FP_ID CL_ID      CL_NM              BILL_NO DELI_DT     SALE_NET SA P_CODE PROD_NM                 DIS_PCT    BILL_RT    APPV_RT       DIFF MY_BE_LOSS    PRO_QTY    SALE_GR   SALE_NET
+-- ----- ---------- ------------------ ------- --------- ---------- -- ------ -------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+11 22116 5515041009 Hasem Modern Pharm 1478623 11-AUG-24       7605 IC 051013 A-Flox 500mg                 10     221.39     221.39          0          0         10       2420     2213.9
+11 22116 5515041009 Hasem Modern Pharm 1483493 29-AUG-24    4643.79 IC        A-Flox 500mg                 10     221.39     221.39          0          0          5       1210    1106.95
+                                                                       ****** --------------------
+                                                                       count                     2
+11 22116 5515041009 Hasem Modern Pharm 1418310 17-JAN-24   18065.58 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386       4500
+11 22116 5515041009 Hasem Modern Pharm 1422968 03-FEB-24   65638.74 IC        Trizon-Iv 1g                 54         90         90          0          0        150      25158      13500
+11 22116 5515041009 Hasem Modern Pharm 1432449 03-MAR-24   66599.62 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1440914 01-APR-24      83225 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1450848 05-MAY-24   59706.38 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1455104 19-MAY-24       2500 IC        Trizon-Iv 1g                 54         90         90          0          0         10     1677.2        900
+11 22116 5515041009 Hasem Modern Pharm 1459606 03-JUN-24   20317.02 IC        Trizon-Iv 1g                 54         90         90          0          0        150      25158      13500
+11 22116 5515041009 Hasem Modern Pharm 1460003 05-JUN-24   20660.03 IC        Trizon-Iv 1g                 54         90         90          0          0        150      25158      13500
+11 22116 5515041009 Hasem Modern Pharm 1463903 23-JUN-24      18000 IC        Trizon-Iv 1g                 54         90         90          0          0        100      16772       9000
+11 22116 5515041009 Hasem Modern Pharm 1466990 02-JUL-24      43000 IC        Trizon-Iv 1g                 54         90         90          0          0        300      50316      27000
+11 22116 5515041009 Hasem Modern Pharm 1478478 11-AUG-24      40500 IC        Trizon-Iv 1g                 54         90         90          0          0        300      50316      27000
+11 22116 5515041009 Hasem Modern Pharm 1486510 08-SEP-24   43937.17 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1494849 06-OCT-24   61598.02 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1501721 30-OCT-24   28514.51 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+11 22116 5515041009 Hasem Modern Pharm 1507356 17-NOV-24   58255.46 IC        Trizon-Iv 1g                 54         90         90          0          0        100      16772       9000
+11 22116 5515041009 Hasem Modern Pharm 1513759 08-DEC-24    48202.1 IC        Trizon-Iv 1g                 54         90         90          0          0        200      33544      18000
+                                                                       ****** --------------------
+                                                                       count                    16
+11 22116 5515041009 Hasem Modern Pharm 1422968 03-FEB-24   65638.74 IC 051028 Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1432449 03-MAR-24   66599.62 IC        Trizon Iv 2gm                38        160        180        -20       -600         30     7944.3       4800
+11 22116 5515041009 Hasem Modern Pharm 1436910 17-MAR-24       3200 IC        Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1440914 01-APR-24      83225 IC        Trizon Iv 2gm                38        160        180        -20      -1000         50    13240.5       8000
+11 22116 5515041009 Hasem Modern Pharm 1450848 05-MAY-24   59706.38 IC        Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1455104 19-MAY-24       2500 IC        Trizon Iv 2gm                38        160        180        -20       -200         10     2648.1       1600
+11 22116 5515041009 Hasem Modern Pharm 1457371 28-MAY-24       3200 IC        Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1459606 03-JUN-24   20317.02 IC        Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1460003 05-JUN-24   20660.03 IC        Trizon Iv 2gm                38        160        180        -20       -400         20     5296.2       3200
+11 22116 5515041009 Hasem Modern Pharm 1466990 02-JUL-24      43000 IC        Trizon Iv 2gm                38        160        180        -20      -2000        100      26481      16000
+11 22116 5515041009 Hasem Modern Pharm 1507356 17-NOV-24   58255.46 IC        Trizon Iv 2gm                38        180        180          0          0         20     5296.2       3600
+                                                                       ****** --------------------
+                                                                       count                    11
+11 22116 5515041009 Hasem Modern Pharm 1447127 24-APR-24    3696.28 IC 051061 Fulspec 250mg Iv             29     264.02     264.02          0          0         14    4928.28    3696.28
+                                                                       ****** --------------------
+                                                                       count                     1
+11 22116 5515041009 Hasem Modern Pharm 1418310 17-JAN-24   18065.58 IC 051068 Maxima 40 Iv (Lyophi         44         45         50         -5       -500        100       7945       4500
+11 22116 5515041009 Hasem Modern Pharm 1422968 03-FEB-24   65638.74 IC        Maxima 40 Iv (Lyophi         44         45         50         -5       -750        150    11917.5       6750
+11 22116 5515041009 Hasem Modern Pharm 1432449 03-MAR-24   66599.62 IC        Maxima 40 Iv (Lyophi         44         45         50         -5      -1000        200      15890       9000
+11 22116 5515041009 Hasem Modern Pharm 1440914 01-APR-24      83225 IC        Maxima 40 Iv (Lyophi         44         45         50         -5      -1000        200      15890       9000
+11 22116 5515041009 Hasem Modern Pharm 1450848 05-MAY-24   59706.38 IC        Maxima 40 Iv (Lyophi         44         45         50         -5      -1000        200      15890       9000
+11 22116 5515041009 Hasem Modern Pharm 1463903 23-JUN-24      18000 IC        Maxima 40 Iv (Lyophi         44         45         50         -5      -1000        200      15890       9000
+11 22116 5515041009 Hasem Modern Pharm 1467369 03-JUL-24       7200 IC        Maxima 40 Iv (Lyophi         44         45         50         -5       -800        160      12712       7200
+11 22116 5515041009 Hasem Modern Pharm 1474994 29-JUL-24       9888 IC        Maxima 40 Iv (Lyophi         44      65.92         50      15.92       2388        150    11917.5       9888
+11 22116 5515041009 Hasem Modern Pharm 1478478 11-AUG-24      40500 IC        Maxima 40 Iv (Lyophi         44         45         50         -5      -1500        300      23835      13500
+11 22116 5515041009 Hasem Modern Pharm 1486510 08-SEP-24   43937.17 IC        Maxima 40 Iv (Lyophi         44         50         50          0          0        200      15890      10000
+11 22116 5515041009 Hasem Modern Pharm 1494849 06-OCT-24   61598.02 IC        Maxima 40 Iv (Lyophi         44         50         50          0          0        250    19862.5      12500
+11 22116 5515041009 Hasem Modern Pharm 1501721 30-OCT-24   28514.51 IC        Maxima 40 Iv (Lyophi         44         50         50          0          0        200      15890      10000
+11 22116 5515041009 Hasem Modern Pharm 1507356 17-NOV-24   58255.46 IC        Maxima 40 Iv (Lyophi         44         50         50          0          0        200      15890      10000
+11 22116 5515041009 Hasem Modern Pharm 1513759 08-DEC-24    48202.1 IC        Maxima 40 Iv (Lyophi         44         50         50          0          0        200      15890      10000
+                                                                       ****** --------------------
+                                                                       count                    14
+
+44 rows selected.

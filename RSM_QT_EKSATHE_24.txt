@@ -1,0 +1,312 @@
+ACCEPT SC_CD CHAR PROMPT 'SC_NO : '
+---ACCEPT DIV CHAR PROMPT 'FL_MVH : '
+
+DROP TABLE S1;
+CREATE TABLE S1 AS
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, SUM(B.SAM_VAL)JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01JAN2024' AND '31JAN2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,SUM(B.SAM_VAL)FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01FEB2024' AND '29FEB2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,SUM(B.SAM_VAL)MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01MAR2024' AND '31MAR2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,SUM(B.SAM_VAL)APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01APR2024' AND '30APR2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,SUM(B.SAM_VAL)MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01MAY2024' AND '31MAY2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,SUM(B.SAM_VAL)JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01JUN2024' AND '30JUN2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,SUM(B.SAM_VAL)JUL,0 AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01JUL2024' AND '31JUL2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,SUM(B.SAM_VAL)AUG,0 SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01AUG2024' AND '31AUG2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,SUM(B.SAM_VAL)SEP,0 OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01SEP2024' AND '30SEP2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,SUM(B.SAM_VAL)OCT,0 NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01OCT2024' AND '30OCT2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,SUM(B.SAM_VAL)NOV,0 DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01NOV2024' AND '30NOV2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO
+UNION
+SELECT DISTINCT C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT,W_DT, SUBSTR((A.REMARKS),1,10) REMARKS, B.BILL_V_NO, 0 JAN,0 FEB,0 MAR,0 APR,0 MAY,0 JUN,0 JUL,0 AUG,0 SEP,0 OCT,0 NOV,SUM(B.SAM_VAL)DEC  
+FROM SCENT.SAMP_MAS A, SCENT.SAMP_DET B,SCENT.FP_MGR C, SCENT.INV_PROD D
+	WHERE A.SC_NO='&SC_CD'
+	AND A.SC_NO=B.SC_NO
+	AND A.SC_NO=C.SC_CD
+	and a.fl_mvh=C.FL_MVH
+	AND C.FL_MVH=D.DIV_CD
+	AND A.BILL_v_DT BETWEEN '01DEC2024' AND '31DEC2024'
+	AND A.BILL_V_NO=B.BILL_V_NO  
+	AND A.FP_ID=C.FP_ID
+	AND B.TYP_CD=D.TYP_CD
+	AND B.CAT_CD||B.PRD_CD=D.CAT_CD||D.PRD_CD
+	AND B.TYP_CD='09'
+	AND A.PROM_CAT IN('03','18')
+	AND CANCL IS NULL 
+	AND C.STATUS NOT IN('P')
+group by C.RM_ID, C.FM_ID, a.PROM_CAT, A.FP_ID, A.BILL_V_DT, W_DT, A.REMARKS, B.BILL_V_NO;
+
+COMPUTE SUM OF JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC ON REPORT
+COMPUTE SUM OF JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC ON RM_ID
+COMPUTE SUM OF JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC ON FM_ID
+COMPUTE SUM OF JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC ON FP_ID
+
+BREAK ON REPORT ON RM_ID ON FM_ID ON FP_ID
+
+SET LINES 242
+SET PAGES 750 
+SET NUMFORMAT 9,99,99,999.99
+---COLUMN JAN FORMAT 9,99,999.99
+spool on
+
+SELECT RM_ID,FM_ID,PROM_CAT,FP_ID,BILL_V_DT,REMARKS,BILL_V_NO,SUM(JAN)JAN,SUM(FEB)FEB,SUM(MAR)MAR,SUM(APR)APR,SUM(MAY)MAY,SUM(JUN)JUN,SUM(JUL)JUL,SUM(AUG)AUG,SUM(SEP)SEP,SUM(OCT)OCT,SUM(NOV)NOV,SUM(DEC)DEC
+FROM S1
+GROUP BY RM_ID,FM_ID,PROM_CAT,FP_ID,BILL_V_DT,REMARKS,BILL_V_NO
+ORDER BY RM_ID,FM_ID,PROM_CAT,FP_ID,BILL_V_DT,REMARKS,BILL_V_NO
+/
+
+
+
+COMPUTE SUM OF JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC ON REPORT
+BREAK ON REPORT SKIP-3
+
+SELECT RM_ID, SUM(JAN)JAN,SUM(FEB)FEB,SUM(MAR)MAR,SUM(APR)APR,SUM(MAY)MAY,SUM(JUN)JUN,SUM(JUL)JUL,SUM(AUG)AUG,SUM(SEP)SEP,SUM(OCT)OCT,SUM(NOV)NOV,SUM(DEC)DEC
+FROM S1
+GROUP BY RM_ID
+ORDER BY RM_ID
+
+/
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+=============================================
+
+
+
+RM_ID FM_ID PR FP_ID BILL_V_DT REMARKS    BILL_V             JAN             FEB             MAR             APR             MAY             JUN             JUL             AUG             SEP             OCT             NOV             DEC  
+----- ----- -- ----- --------- ---------- ------ --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+02BM1 02BM1 18 02BM1 28-JAN-24 RSM QUATA  285942        7,992.07             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       15-FEB-24 RSM QUATA  286919             .00        7,992.72             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       27-MAR-24 RSM QUATA  288656             .00             .00        7,995.34             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       28-APR-24 RSM QUATA  289994             .00             .00             .00        7,999.50             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       25-MAY-24 RSM QUATA  290721             .00             .00             .00             .00        7,979.72             .00             .00             .00             .00             .00             .00             .00  
+            18       24-JUN-24 RSM QUATA  292132             .00             .00             .00             .00             .00        7,991.73             .00             .00             .00             .00             .00             .00  
+            18       24-JUL-24 RSM QUATA  293099             .00             .00             .00             .00             .00             .00        7,988.96             .00             .00             .00             .00             .00  
+            18       27-AUG-24 RSM QUATA  293941             .00             .00             .00             .00             .00             .00             .00        7,995.50             .00             .00             .00             .00  
+            18       28-SEP-24 RSM QUATA  294980             .00             .00             .00             .00             .00             .00             .00             .00        7,982.54             .00             .00             .00  
+            18       09-NOV-24 RSM QUATA  296752             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00        7,996.46             .00  
+            18       22-DEC-24 RSM QUATA  298629             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00        7,999.85  
+               *****                             --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+               sum                                      7,992.07        7,992.72        7,995.34        7,999.50        7,979.72        7,991.73        7,988.96        7,995.50        7,982.54             .00        7,996.46        7,999.85  
+      *****                                      --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+      sum                                               7,992.07        7,992.72        7,995.34        7,999.50        7,979.72        7,991.73        7,988.96        7,995.50        7,982.54             .00        7,996.46        7,999.85  
+*****                                            --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+sum                                                     7,992.07        7,992.72        7,995.34        7,999.50        7,979.72        7,991.73        7,988.96        7,995.50        7,982.54             .00        7,996.46        7,999.85  
+20033 20033 18 20033 23-JAN-24 RSM QUATA  285941       69,944.72             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       25-FEB-24 RSM QUATA  287348             .00       69,975.90             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       30-MAR-24 RSM QUATA  288943             .00             .00       69,960.00             .00             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       23-APR-24 RSM QUATA  289827             .00             .00             .00       69,951.60             .00             .00             .00             .00             .00             .00             .00             .00  
+            18       25-MAY-24 08         290814             .00             .00             .00             .00       69,942.70             .00             .00             .00             .00             .00             .00             .00  
+            18       24-JUN-24 RSM QUATA  292129             .00             .00             .00             .00             .00       69,981.10             .00             .00             .00             .00             .00             .00  
+            18       24-JUL-24 RSM QUATA  292969             .00             .00             .00             .00             .00             .00       69,985.22             .00             .00             .00             .00             .00  
+            18       20-AUG-24 RSM QUATA  293717             .00             .00             .00             .00             .00             .00             .00       69,994.00             .00             .00             .00             .00  
+            18       19-SEP-24 RSM QUATA  294698             .00             .00             .00             .00             .00             .00             .00             .00       69,922.85             .00             .00             .00  
+            18       27-OCT-24 RSM QUATA  296380             .00             .00             .00             .00             .00             .00             .00             .00             .00       69,996.13             .00             .00  
+            18       14-NOV-24 RSM QUATA  297110             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00       69,999.00             .00  
+            18       22-DEC-24 RSM QUATA  298630             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00             .00       69,983.10  
+               *****                             --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+               sum                                     69,944.72       69,975.90       69,960.00       69,951.60       69,942.70       69,981.10       69,985.22       69,994.00       69,922.85       69,996.13       69,999.00       69,983.10  
+      *****                                      --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+      sum                                              69,944.72       69,975.90       69,960.00       69,951.60       69,942.70       69,981.10       69,985.22       69,994.00       69,922.85       69,996.13       69,999.00       69,983.10  
+*****                                            --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+sum                                                    69,944.72       69,975.90       69,960.00       69,951.60       69,942.70       69,981.10       69,985.22       69,994.00       69,922.85       69,996.13       69,999.00       69,983.10  
+                                                 --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------  
+sum                                                    77,936.79       77,968.62       77,955.34       77,951.10       77,922.42       77,972.83       77,974.18       77,989.50       77,905.39       69,996.13       77,995.46       77,982.95  
+
+23 rows selected.
+
+
+RM_ID             JAN             FEB             MAR             APR             MAY             JUN             JUL             AUG             SEP             OCT             NOV             DEC                                             
+----- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------                                             
+02BM1        7,992.07        7,992.72        7,995.34        7,999.50        7,979.72        7,991.73        7,988.96        7,995.50        7,982.54             .00        7,996.46        7,999.85                                             
+20033       69,944.72       69,975.90       69,960.00       69,951.60       69,942.70       69,981.10       69,985.22       69,994.00       69,922.85       69,996.13       69,999.00       69,983.10                                             
+      --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------                                             
+sum         77,936.79       77,968.62       77,955.34       77,951.10       77,922.42       77,972.83       77,974.18       77,989.50       77,905.39       69,996.13       77,995.46       77,982.95                                             
+

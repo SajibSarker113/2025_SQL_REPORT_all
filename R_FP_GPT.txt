@@ -1,0 +1,251 @@
+
+
+
+SET LINES 100
+SET PAGES 1200
+
+SET VER OFF
+ACCEPT SC CHAR PROMPT 'SC :'
+ACCEPT FL CHAR PROMPT 'FL :'
+ACCEPT DATE1 CHAR PROMPT 'DATE1 :'
+ACCEPT DATE2 CHAR PROMPT 'DATE2 :'
+
+DROP TABLE RTN_HASAN
+/
+COMMIT;
+
+CREATE TABLE RTN_HASAN AS
+SELECT D.SC_CD,D.RM_ID,D.FM_ID, B.EMP_NM, A.FP_ID,
+G.FPBS_NM,SUM(A.SALE_NET-A.VAT_AMT)SAL,0 RT,0 RV FROM SCENT.BILL_DET A,PIMS.EMP_MAST B,
+SCENT.FP_MGR C,SCENT.BILL_MAS D, SCENT.FP_BASE G 
+WHERE A.FP_ID=B.EMP_ID 
+AND B.EMP_ID=C.FP_ID 
+AND C.FL_MVH='&FL' 
+AND CANCL IS NULL 
+AND A.BILL_NO=D.BILL_NO
+AND D.SC_CD='&SC' 
+AND D.SC_CD=C.SC_CD
+AND D.BS_CD=C.BS_CD  
+AND A.FP_ID=B.EMP_ID
+AND D.DELI_DT BETWEEN TO_DATE('&DATE1','DDMMYY') AND TO_DATE('&DATE2','DDMMYY')
+AND D.BS_CD=G.FPBS_CD
+AND C.BS_CD=G.FPBS_CD
+AND D.SC_CD=G.SC_CD
+AND G.SC_CD=C.SC_CD
+GROUP BY D.SC_CD,D.RM_ID,D.FM_ID,B.EMP_NM,A.FP_ID,G.FPBS_NM
+UNION
+SELECT A.SC_CD,D.RM_ID,D.FM_ID, B.EMP_NM,A.FP_ID,C.FPBS_NM,0 SAL,SUM(A.RTN_NET-A.R_VAT)RT,0 RV FROM SCENT.RTN_MAS A,SCENT.FP_BASE C,PIMS.EMP_MAST B,SCENT.FP_MGR D
+WHERE A.FP_ID=D.FP_ID
+AND D.BS_CD=C.FPBS_CD
+AND A.SC_CD=D.SC_CD
+AND A.SC_CD=C.SC_CD
+AND D.SC_CD=C.SC_CD
+AND A.FP_ID=B.EMP_ID
+AND A.FL_MVH='&FL'
+AND A.RSN_NO NOT IN('1','0','2')
+AND A.RTN_DT BETWEEN TO_DATE('&DATE1','DDMMYY') AND TO_DATE('&DATE2','DDMMYY') 
+AND A.CANCL IS NULL AND A.SC_CD='&SC'
+GROUP BY A.SC_CD,D.RM_ID,D.FM_ID,B.EMP_NM,A.FP_ID,C.FPBS_NM
+/
+UPDATE RTN_HASAN SET SAL='.01' WHERE SAL='0'
+/
+UPDATE RTN_HASAN SET RT='.01' WHERE SAL='0'
+/
+
+
+COMPUTE SUM OF SAL ON RM_ID
+COMPUTE SUM OF SAL ON FM_ID
+COMPUTE SUM OF RTN ON RM_ID
+COMPUTE SUM OF RTN ON FM_ID
+--BREAK ON RM_ID ON FM_ID
+
+SET VER OFF
+SET NUMFORMAT 999999999
+COLUMN ACV FORMAT 999.99
+SET UNDERLINE=
+
+TTITLE CENTER 'DEPOT: '&SC'.' SKIP 1 -
+CENTER 'FP WISE RETURN' SKIP 1 CENTER ''PERIOD: ''&DATE1''-TO-''&DATE2'' -
+ SKIP 2
+
+SPOOL ON
+
+SELECT RM_ID,FM_ID, 'Mr. '||INITCAP(SUBSTR((EMP_NM),1,20))||' ('|| FP_ID || ')' as FP_NM,SUBSTR((FPBS_NM),1,18)FPBS_NM,SUM(SAL)SAL,SUM(RT)RTN,(SUM(RT)/SUM(SAL)*100)ACV FROM RTN_HASAN
+GROUP BY RM_ID,FM_ID,EMP_NM,FP_ID,FPBS_NM
+ORDER BY ACV DESC
+/
+
+COMPUTE SUM OF SAL ON RM_ID
+COMPUTE SUM OF RTN ON RM_ID
+--BREAK ON RM_ID
+
+SELECT A.RM_ID, 'Mr. '||INITCAP(SUBSTR((B.EMP_NM),1,20))||' ('|| A.FM_ID || ')' AS FM_NM,SUBSTR((C.FMBS_NM),1,25)FMBS_NM,SUM(SAL)SAL,
+SUM(RT)RTN,(SUM(RT)/SUM(SAL)*100)ACV FROM RTN_HASAN A, PIMS.EMP_MAST B, SCENT.FM_BASE C
+WHERE A.FM_ID=B.EMP_ID 
+AND A.FM_ID=C.FM_ID 
+AND C.SC_CD='&SC'
+GROUP BY A.RM_ID,A.FM_ID,B.EMP_NM,C.FMBS_NM
+ORDER BY ACV DESC
+/
+
+COMPUTE SUM OF SAL ON RM_ID
+COMPUTE SUM OF RTN ON RM_ID
+BREAK ON RM_ID
+
+SELECT 'Mr. '||INITCAP(SUBSTR((B.EMP_NM),1,20))||' ('|| A.RM_ID || ')' AS RM_NM,SUBSTR((C.RMBS_NM),1,25)RMBS_NM,SUM(SAL)SAL,
+SUM(RT)RTN,(SUM(RT)/SUM(SAL)*100)ACV FROM RTN_HASAN A, PIMS.EMP_MAST B, SCENT.RM_BASE C
+WHERE A.RM_ID=B.EMP_ID 
+AND A.RM_ID=C.RSM_ID 
+AND A.SC_CD='&SC'
+GROUP BY A.RM_ID,B.EMP_NM,C.RMBS_NM
+ORDER BY ACV DESC
+/
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+
+================================================================
+
+
+
+                                             DEPOT: 11.                                             
+                                           FP WISE RETURN                                           
+                                       PERIOD:010125-TO-310125                                      
+                                                                                                    
+RM_ID FM_ID FP_NM                            FPBS_NM                   SAL        RTN     ACV       
+===== ===== ================================ ================== ========== ========== =======       
+20033 20134 Mr. Prabir Kumar Roy (05S49)     DEBIDWAR TOWER HOS          0     141378 #######       
+20033 20134 Mr. Md. Hasanur Rahman (21906)   DEVIDWAR THC                0      50251 #######       
+20033 20134 Mr. Md. Meraz (22516)            BRAMMANPARA THC             0      42532 #######       
+20033 26384 Mr. Alauddin (21738)             MOINAMOTI MEDICAL           0      41420 #######       
+20033 20134 Mr. Md. Zonee Ahmed (28578)      BANGURA BAZER               0      33748 #######       
+20033 20134 Mr. Md. Sariful Islam (26687)    DEVIDWAR SQUARE HO          0      33260 #######       
+20033 08265 Mr. Md. Abdur Rouf (22295)       CHANDINA THC                0      27656 #######       
+20033 08265 Mr. Md. Badiuzzaman Bapp (22970) CHANDINA MEDICAL C          0      26006 #######       
+20033 08265 Mr. Md. Amran Hossain (22648)    CHANDINA THC                0      23965 #######       
+20033 20134 Mr. Md. Faruk Mia (21258)        BRAMMANPARA THC             0      22843 #######       
+20033 20134 Mr. Md. Rokonuzzaman (20793)     DEVIDWAR THC                0      22075 #######       
+20033 26393 Mr. Rana Hamid (21015)           CUMILLA SADAR HOSP          0      18885 #######       
+20033 08265 Mr. Md. Moniruzzaman (05207)     CHANDINA TOWN               0      14387 #######       
+20033 08265 Mr. Shyamal Kumar Barkon (02MT7) NAWABPUR                    0      13513 #######       
+20033 26384 Mr. Md. Mahmudul Hasan (22572)   MUKTI HOSP+SADAR H          0      13133 #######       
+20033 26393 Mr. Md. Saiful Islam (21799)     CUMILLA SADAR HOSP          0      10271 #######       
+20033 26393 Mr. Saju Miah (50185)            CUMILLA TRAUMA CEN          0       7260 #######       
+20033 26384 Mr. Mizanur Rahman (50026)       CUMCH-MOON HOSP             0       7205 #######       
+20033 26393 Mr. Md. Omar Faruk (02FT8)       JHAWTOLA-CUMCH              0       3811 #######       
+20033 26384 Mr. Abdul Karim (05137)          MUKTI HOSP+SADAR H          0       2879 #######       
+20033 26393 Mr. Md. Abdul Awal (22026)       CUMILLA TRAUMA CEN          0       1626 #######       
+20033 26384 Mr. Md. Ataur Rahman (26384)     CUMCH-MOON HOSP             0       1456 #######       
+20033 08265 Mr. Debprashad Mondal (06834)    ELIOTGANJ                   0       1306 #######       
+20033 08265 Mr. Md Zahangir Alam (50102)     NAWABPUR MEDINOVA           0        364 #######       
+20033 26393 Mr. Md. Rayhan Kabir (28037)     JHAWTOLA-CUMCH              0        175 #######       
+20033 02AL6 Mr. Md. Morshedur Rahman (21497) CENTRAL MED. COLL.    1192033      52038    4.37       
+20033 02FL9 Mr. Md. Safiul Alam Sark (20611) GOURIPUR THC-2         879672      36911    4.20       
+02A23 02FV5 Mr. Md. Mahbubur Rahman (05X38)  MURADNAGAR            1145694      47792    4.17       
+02A23 02FV5 Mr. Md. Sumon Ali (05X32)        MURADNAGAR             732809      26262    3.58       
+02A23 02FV5 Mr. Md. Jihad Hossain (50091)    RAM CHANDRAPUR         502786      17285    3.44       
+20033 02FL9 Mr. Sarif Md. Obaydur Ra (22116) GOURIPUR THC-1         955913      29858    3.12       
+20033 26016 Mr. Jahidul Islam (21678)        CUMILLA SADAR DHAK     745304      21683    2.91       
+20033 02FL9 Mr. Md. Ariful Islam (27585)     GOURIPUR BAZAR SOU    1016714      27715    2.73       
+20033 21187 Mr. Sheikh Abdur Rashid (02EC8)  CUMILLA DIABEITC H     716959      16848    2.35       
+20033 02AL6 Mr. Md. Asaduzzaman (20508)      BURICHANG THC          708714      14992    2.12       
+20033 02FL9 Mr. Md. A. Malek (27517)         GOURIPUR BAZAR        1080552      22805    2.11       
+02A23 02FV5 Mr. Md. Ataur Rahman (26879)     SALIMGONJ             1573127      32857    2.09       
+20033 02FL9 Mr. Md. Mofizul Islam (02Q72)    DAUDKANDI             1639839      32484    1.98       
+20033 26016 Mr. Md. Shahjahan Bhuiya (02455) CUMILLA SADAR DHAK    1320327      23343    1.77       
+20033 02AL6 Mr. Shalah Uddin Ahammed (20123) BURICHANG THC         1543018      25230    1.64       
+20033 26016 Mr. Mohammad Zakir Hossa (02Q68) CUMILLA POPULAR HO    1104487      17855    1.62       
+02A23 02FV5 Mr. Md. Shahin Uddin (21646)     MAHBUBUR RAHMAN-ME    1107175      17292    1.56       
+20033 02PR9 Mr. Md. Hanif (26648)            BARURA THC             927336      14088    1.52       
+02A23 02FV5 Mr. Atear Rahman (22083)         BANCHARAMPUR THC       897738      12061    1.34       
+20033 20033 Mr. Md. Golam Rabbanee (07F18)   COMILLA W/S(HUMAN)     696754       8493    1.22       
+20033 26016 Mr. Monirul Islam (21720)        CUMILLA POPULAR HO     577542       6827    1.18       
+20033 02PR9 Mr. Nozir Ahamed (02MK2)         BARURA APPOLO HOSP    1781246      20913    1.17       
+20033 02BN2 Mr. Md. Nazrul Islam (02YS8)     TITAS THC             1437776      16491    1.15       
+20033 02AL6 Mr. Abdur Razzak (07137)         CENTRAL MED. COLL.     706706       7877    1.11       
+02A23 02FV5 Mr. Md. Abdul Khaleque (06928)   BANCHARAMPUR THC      1441791      15823    1.10       
+20033 02PR9 Mr. Himel Halder (22512)         MUDAFFARGANJ          1581011      15395     .97       
+20033 02BN2 Mr. Mohammed Mizanur Rah (05418) HOMNA THC             1265714      12256     .97       
+20033 02BN2 Mr. Abu Bakkar Siddik (26688)    HOMNA THC              769246       6996     .91       
+20033 21187 Mr. Anarul Islam (20542)         CUMILLA CANT+EMCH      660602       5645     .85       
+20033 20033 Mr. Ismail Hossain (08734)       COMILLA W/S(HUMAN)     564453       4708     .83       
+20033 02BN2 Mr. Sydul Islam (20468)          RAMKRISHNAPUR         1270352       9881     .78       
+20033 21187 Mr. Md. Sheikh Sadi (02VL8)      CUMILLA DIABEITC H     362953       2306     .64       
+20033 02AL6 Mr. Md. Javed Hossain (08006)    CUMILLA TOWER+CUMC     425657       2670     .63       
+20033 02PR9 Mr. Md. Nazrul Islam (21666)     BARURA THC            1586060       9723     .61       
+20033 02AL6 Mr. Abdullah  Alimran (22415)    CUMILLA TOWER+CUMC     856868       4919     .57       
+20033 02BN2 Mr. Md. Rasel Ahmed (21467)      MEGHNA THC            1524675       8383     .55       
+20033 21187 Mr. Md. Abdul Hannan Mia (22702) MOINAMOTI GEN HOSP    1428720       7084     .50       
+20033 21187 Mr. Ripon Miah (22027)           CUMILLA CANT+EMCH     1266568       5922     .47       
+20033 02PR9 Mr. Md. Hasib Uddin (26615)      BIZRA BAZAR           1151000       3987     .35       
+20033 26016 Mr. Rayhan Ali (20844)           CUMILLA MCH            503700       1724     .34       
+20033 26016 Mr. Md. Biplob Hossain (21267)   CUMILLA MCH            781697       2616     .33       
+20033 08265 Mr. Md. Meraz (22516)            BRAMMANPARA THC       1197892          0     .00       
+20033 20142 Mr. Rana Hamid (21015)           CUMILLA SADAR HOSP    1368055          0     .00       
+20033 20142 Mr. Mohammad Safiqul Isl (08009) JHAWTOLA-CUMCH           4269          0     .00       
+20033 02BN2 Mr. Mohammad Sanoar Hoss (02X98) MEGHNA THC               1325          0     .00       
+20033 08265 Mr. Md. Hasanur Rahman (21906)   DEVIDWAR THC          1469232          0     .00       
+20033 20134 Mr. Md. Badiuzzaman Bapp (22970) CHANDINA MEDICAL C    1024660          0     .00       
+20033 20142 Mr. Md. Omar Faruk (02FT8)       JHAWTOLA-CUMCH        1140158          0     .00       
+20033 08265 Mr. Prabir Kumar Roy (05S49)     DEBIDWAR TOWER HOS    1432417          0     .00       
+20033 20134 Mr. Debprashad Mondal (06834)    ELIOTGANJ             1465949          0     .00       
+20033 20134 Mr. Md. Abdur Rouf (22295)       CHANDINA THC           523325          0     .00       
+20033 20134 Mr. Shyamal Kumar Barkon (02MT7) NAWABPUR              1364235          0     .00       
+20033 26393 Mr. Alauddin (21738)             MOINAMOTI MEDICAL     1344556          0     .00       
+20033 26393 Mr. Md. Mahmudul Hasan (22572)   MUKTI HOSP+SADAR H     671354          0     .00       
+20033 20142 Mr. Md. Rayhan Kabir (28037)     JHAWTOLA-CUMCH         709086          0     .00       
+20033 26393 Mr. Md. Ataur Rahman (26384)     CUMCH-MOON HOSP        826458          0     .00       
+20033 20134 Mr. Md Zahangir Alam (50102)     NAWABPUR MEDINOVA      545981          0     .00       
+20033 20142 Mr. Md. Abdul Awal (22026)       CUMILLA TRAUMA CEN    1147421          0     .00       
+20033 26393 Mr. Abdul Karim (05137)          MUKTI HOSP+SADAR H    1435450          0     .00       
+02A23 02FV5 Mr. Md. Tarikul Islam (20352)    MURADNAGAR               8030          0     .00       
+20033 02PR9 Mr. Md. Manzur Rahman (27034)    BARURA THC              14524          0     .00       
+20033 08265 Mr. Md. Faruk Mia (21258)        BRAMMANPARA THC        610509          0     .00       
+20033 08265 Mr. Md. Zonee Ahmed (28578)      BANGURA BAZER         1677320          0     .00       
+20033 20134 Mr. Md. Moniruzzaman (05207)     CHANDINA TOWN         1172041          0     .00       
+20033 20142 Mr. Md. Saiful Islam (21799)     CUMILLA SADAR HOSP     718299          0     .00       
+20033 02BN2 Mr. Dhiman Chandra  Adhi (06787) RAMKRISHNAPUR           11373          0     .00       
+20033 20134 Mr. Md. Amran Hossain (22648)    CHANDINA THC          1166224          0     .00       
+20033 20142 Mr. Saju Miah (50185)            CUMILLA TRAUMA CEN     825228          0     .00       
+20033 26393 Mr. Mizanur Rahman (50026)       CUMCH-MOON HOSP       1376927          0     .00       
+20033 08265 Mr. Md. Rokonuzzaman (20793)     DEVIDWAR THC           621985          0     .00       
+20033 08265 Mr. Md. Sariful Islam (26687)    DEVIDWAR SQUARE HO    2420678          0     .00       
+
+96 rows selected.
+
+
+                                             DEPOT: 11.                                             
+                                           FP WISE RETURN                                           
+                                       PERIOD:010125-TO-310125                                      
+                                                                                                    
+RM_ID FM_NM                            FMBS_NM                          SAL        RTN     ACV      
+===== ================================ ========================= ========== ========== =======      
+20033 Mr. Md. Ataur Rahman (26384)     CUMILLA MOON HOSPITAL              0      66094 #######      
+20033 Mr. Zahir Ahammed Bhuiya (20134) DEBIDWAR                     7262416     346086    4.77      
+20033 Mr. Md. Faridul Islam (02FL9)    GOURIPUR                     5572689     149773    2.69      
+02A23 Mr. Md. Ayub Ali (02FV5)         BANCHARAMPUR                 7409150     169371    2.29      
+20033 Mr. Rezaul Karim (02AL6)         CUMILLA MEDICAL CENTER       5432996     107726    1.98      
+20033 Mr. Md. Anwar Sadat (26016)      CUMILLA MCH-1                5033057      74049    1.47      
+20033 Mr. Md. Abul Kalam Azad (08265)  CHANDINA                     9430032     107197    1.14      
+20033 Mr. Sushil Patwary (20033)       COMILLA W/S(HUMAN)-1         1261207      13201    1.05      
+20033 Mr. Mohammed Hamdu Miah (02PR9)  BARURA                       7041177      64106     .91      
+20033 Mr. Md. Amir Hossain (02BN2)     HOMNA                        6280460      54008     .86      
+20033 Mr. Mohammad Nazer Hossa (21187) COMILLA DIAB.HOSP.           4435802      37805     .85      
+20033 Mr. Abdullah Al Mamun (26393)    CUMILLA MCH-2                5654745      42027     .74      
+
+12 rows selected.
+
+
+                                             DEPOT: 11.                                             
+                                           FP WISE RETURN                                           
+                                       PERIOD:010125-TO-310125                                      
+                                                                                                    
+RM_NM                            RMBS_NM                          SAL        RTN     ACV            
+================================ ========================= ========== ========== =======            
+Mr. Md. Mahbubur Rahman (02A23)  B.BARIA                      7409150     169371    2.29            
+Mr. Sushil Patwary (20033)       CUMILLA                     63317099    1062073    1.68            
+

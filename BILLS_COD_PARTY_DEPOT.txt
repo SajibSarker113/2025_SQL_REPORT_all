@@ -1,0 +1,288 @@
+--- SALES OF COD N RS OF ALL PARTY OF A DEPOT
+
+
+DROP TABLE SS
+/
+CREATE TABLE SS AS
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, SUM(SALE_NET)SALE_NOV, COUNT(BILL_NO)BILL_NOV, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01JAN2025','DDMMYYYY') AND TO_DATE ('31JAN2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC, 0 BILL_DEC, SUM(B.RTN_NET)RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01JAN2025','DDMMYYYY') AND TO_DATE ('31JAN2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, SUM(SALE_NET) SALE_DEC, COUNT(BILL_NO)BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01FEB2025','DDMMYYYY') AND TO_DATE ('28FEB2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, SUM(B.RTN_NET) RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01FEB2025','DDMMYYYY') AND TO_DATE ('28FEB2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, SUM(SALE_NET) SALE_JAN, COUNT(BILL_NO)BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01MAR2025','DDMMYYYY') AND TO_DATE ('31MAR2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, SUM(B.RTN_NET) RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01MAR2025','DDMMYYYY') AND TO_DATE ('31MAR2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+SUM(SALE_NET) SALE_FEB, COUNT(BILL_NO) BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01APR2025','DDMMYYYY') AND TO_DATE ('30APR2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, SUM(B.RTN_NET) RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01APR2025','DDMMYYYY') AND TO_DATE ('30APR2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, SUM(SALE_NET) SALE_MAR, COUNT(BILL_NO) BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD' 
+  AND DELI_DT BETWEEN TO_DATE ('01MAY2025','DDMMYYYY') AND TO_DATE ('31MAY2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, SUM(B.RTN_NET) RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01MAY2025','DDMMYYYY') AND TO_DATE ('31MAY2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, SUM(SALE_NET) SALE_APR, COUNT(BILL_NO) BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD' 
+  AND DELI_DT BETWEEN TO_DATE ('01JUN2025','DDMMYYYY') AND TO_DATE ('30JUN2025','DDMMYYYY')
+  AND SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, SUM(B.RTN_NET) RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01JUN2025','DDMMYYYY') AND TO_DATE ('30JUN2025','DDMMYYYY')
+  AND A.SALE_CD NOT IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID 
+
+
+/
+
+DROP TABLE S1
+/
+CREATE TABLE S1 AS
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, SUM(SALE_NOV-RTN_NOV)NOV, SUM(BILL_NOV)BILL_NOV, SUM(SALE_DEC-RTN_DEC)DEC, SUM(BILL_DEC)BILL_DEC, SUM(SALE_JAN-RTN_JAN)JAN,
+       SUM(BILL_JAN)BILL_JAN, SUM(SALE_FEB-RTN_FEB)FEB, SUM(BILL_FEB)BILL_FEB, SUM(SALE_MAR-RTN_MAR)MAR, SUM(BILL_MAR)BILL_MAR, SUM(SALE_APR-RTN_APR)APR, SUM(BILL_APR)BILL_APR, 
+       SUM(SALE_MAY-RTN_MAY)MAY, SUM(BILL_MAY)BILL_MAY, SUM(SALE_JUN-RTN_JUN)JUN, SUM(BILL_JUN)BILL_JUN, SUM(SALE_JUL-RTN_JUL)JUL, SUM(BILL_JUL)BILL_JUL,
+       SUM(SALE_AUG-RTN_AUG)AUG, SUM(BILL_AUG)BILL_AUG, SUM(SALE_SEP-RTN_SEP)SEP, SUM(BILL_SEP)BILL_SEP, SUM(SALE_OCT-RTN_OCT)OCT, SUM(BILL_OCT)BILL_OCT
+FROM SS
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+/
+
+DROP TABLE S2
+/
+CREATE TABLE S2 AS
+SELECT A.MKT_CD, B.FL_MVH, B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID CLIENT, B.NOV, B.BILL_NOV NOV_QTY, B.DEC, B.BILL_DEC DEC_QTY, B.JAN, B.BILL_JAN JAN_QTY, B.FEB, B.BILL_FEB FEB_QTY, B.MAR, B.BILL_MAR MAR_QTY, B.APR, B.BILL_APR APR_QTY, B.MAY, B.BILL_MAY MAY_QTY, B.JUN, B.BILL_JUN JUN_QTY, B.JUL, B.BILL_JUL JUL_QTY, B.AUG, B.BILL_AUG AUG_QTY, B.SEP, B.BILL_SEP SEP_QTY, B.OCT, B.BILL_OCT OCT_QTY
+FROM SCENT.EMP_AREA A,
+     S1 B
+WHERE A.SC_CD='&&SC_CD'
+  AND A.DIST_CD||A.THA_CD||A.UN_CD=B.DIST_CD||B.THA_CD||B.UN_CD
+  AND A.PERFORM='A'
+  AND A.END_DT IS NULL
+GROUP BY A.MKT_CD, B.FL_MVH, B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID, B.NOV, B.BILL_NOV, B.DEC, B.BILL_DEC, B.JAN, B.BILL_JAN, B.FEB, B.BILL_FEB, B.MAR, B.BILL_MAR, B.APR, B.BILL_APR, B.MAY, B.BILL_MAY, B.JUN, B.BILL_JUN, B.JUL, B.BILL_JUL, B.AUG, B.BILL_AUG, B.SEP, B.BILL_SEP, B.OCT, B.BILL_OCT
+/
+
+DROP TABLE S3
+/
+CREATE TABLE S3 AS
+SELECT B.FL_MVH, A.BS_CD, B.MKT_CD, B.CLIENT, B.NOV, B.NOV_QTY, B.DEC, B.DEC_QTY, B.JAN, B.JAN_QTY, B.FEB, B.FEB_QTY, B.MAR, B.MAR_QTY, B.APR, B.APR_QTY, B.MAY, B.MAY_QTY, B.JUN, B.JUN_QTY, B.JUL, B.JUL_QTY, B.AUG, B.AUG_QTY, B.SEP, B.SEP_QTY, B.OCT, B.OCT_QTY
+FROM SCENT.FP_MGR A,
+     S2 B
+WHERE A.SC_CD='&&SC_CD'
+  AND A.MKT_CD=B.MKT_CD
+  AND A.FL_MVH='1'
+  AND A.FL_MVH=B.FL_MVH
+GROUP BY B.FL_MVH, A.BS_CD, B.MKT_CD, B.CLIENT, B.NOV, B.NOV_QTY, B.DEC, B.DEC_QTY, B.JAN, B.JAN_QTY, B.FEB, B.FEB_QTY, B.MAR, B.MAR_QTY, B.APR, B.APR_QTY, B.MAY, B.MAY_QTY, B.JUN, B.JUN_QTY, B.JUL, B.JUL_QTY, B.AUG, B.AUG_QTY, B.SEP, B.SEP_QTY, B.OCT, B.OCT_QTY
+/
+
+SET LINE 450
+SET PAGES 1000
+
+SPOOL ON
+
+BREAK ON REPORT SKIP-2
+COMPUTE SUM OF NOV ON REPORT
+COMPUTE SUM OF DEC ON REPORT
+
+---TTITLE CENTER 'CLIENT SALES REPORT FROM 01JAN2025 AND 01JAN2025' SKIP2
+ 
+SELECT SUBSTR(RPAD(A.FPBS_NM,'25'),1,25)FPBS_NM, D.CLIENT CLIENT_CD, SUBSTR(RPAD(E.CL_NM,'25'),1,25)CL_NAME, D.NOV ONE_MS, D.NOV_QTY ONEQ, D.DEC TWO_MS, D.DEC_QTY TWOQ,
+       D.JAN THR_MS, D.MAR_QTY THRQ, D.FEB FOU_MS, D.FEB_QTY FOUQ, D.MAR FIV_MS, D.MAR_QTY FIVQ, D.APR SIX_MS, D.APR_QTY SIXQ, D.MAY SEV_MS, D.MAY_QTY SEVQ, D.JUN EIG_MS,
+       D.JUN_QTY EIGQ, D.JUL NIN_MS, D.JUL_QTY NINQ, D.AUG TEN_MS, D.AUG_QTY TENQ, D.SEP ELE_MS, D.SEP_QTY ELEQ, D.OCT TWE_MS, D.OCT_QTY TWEQ, E.CREDIT_LIMIT
+FROM SCENT.FP_BASE A,
+     SCENT.RM_BASE B,
+     SCENT.FM_BASE C,
+     S3 D,
+     SCENT.CL_INFO E,
+     SCENT.UN_AREA F
+WHERE A.SC_CD='&&SC_CD'
+  AND A.SC_CD=C.SC_CD
+  AND A.SC_CD=E.SC_CD
+  AND A.SC_CD=F.SC_CD
+  AND E.DIST_CD=F.DIST_CD          
+  AND E.THA_CD=F.THA_CD                 
+  AND E.UN_CD=F.UN_CD                  
+  AND A.FPBS_CD=D.BS_CD
+  AND A.RMBS_CD=B.RMBS_CD
+  AND A.FMBS_CD=C.FMBS_CD
+  AND D.CLIENT=E.DIST_CD||E.THA_CD||E.UN_CD||E.CL_ID
+  AND D.FL_MVH='1'
+  AND E.STATUS IS NULL
+  AND E.CREDIT_LIMIT>'0'
+GROUP BY A.FPBS_NM, D.CLIENT, E.CL_NM, D.NOV, D.DEC, D.NOV_QTY, D.DEC_QTY, D.JAN, D.JAN_QTY, D.FEB, D.FEB_QTY, D.MAR, D.MAR_QTY,
+         D.APR, D.APR_QTY, D.MAY, D.MAY_QTY, D.JUN, D.JUN_QTY, D.JUL, D.JUL_QTY, D.AUG, D.AUG_QTY, D.SEP, D.SEP_QTY, D.OCT, D.OCT_QTY, E.CREDIT_LIMIT
+ORDER BY CL_NM
+/
+   
+SPOOL OFF
+
+ED ON.LST
+   
+====================================================================================================
+
+
+
+old  10: WHERE A.SC_CD='&&SC_CD'
+new  10: WHERE A.SC_CD='11'
+
+FPBS_NM                   CLIENT_CD  CL_NAME                       ONE_MS       ONEQ     TWO_MS       TWOQ     THR_MS       THRQ     FOU_MS       FOUQ     FIV_MS       FIVQ     SIX_MS       SIXQ     SEV_MS       SEVQ     EIG_MS       EIGQ     NIN_MS       NINQ     TEN_MS       TENQ     ELE_MS       ELEQ     TWE_MS       TWEQ CREDIT_LIMIT                                                                                                               
+------------------------- ---------- ------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ------------                                                                                                               
+JHAWTOLA-CUMCH            5513007043 3M BROTHERS PHARMACY        39789.69          2   47401.62          1   52931.57          1   60323.78          3   64120.99          1   63328.98          3          0          0          0          0          0          0          0          0          0          0          0          0        73000                                                                                                               
+GOURIPUR THC-2            5515053004 A RAZZAK PHARMACY                  0          2          0          1       1991          2    6565.99          2   46119.09          2   29314.73          2          0          0          0          0          0          0          0          0          0          0          0          0        10000                                                                                                               
+CUMILLA TRAUMA CENTER     5513042006 A.B.PHARMACY                34535.02          1   45065.08          1   30458.33          1   23139.46          1     628.79          1    1116.75          1          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+MEGHNA THC                5507216004 A.R AMRIN MEDICAL HALL      10063.45          2   27441.13          2   23651.56          2   14509.25          1    48223.5          2          0          0          0          0          0          0          0          0          0          0          0          0          0          0        25300                                                                                                               
+BARURA APPOLO HOSP.       5502057052 ABDUL HAMID PHARMECY        29760.51          9   42386.95          8   37418.61          9   34694.06          8   48114.28          9   35519.48          8          0          0          0          0          0          0          0          0          0          0          0          0       110000                                                                                                               
+BRAMMANPARA THC           5503033018 ABDUL PHARMACY              13640.05          1   15598.75          3   24781.05          0   30005.31          2          0          0   31506.65          2          0          0          0          0          0          0          0          0          0          0          0          0        22600                                                                                                               
+TITAS THC                 5507043087 ABDULLA PHARMACY            33903.53          4   29728.64          2   32121.14          2   16303.72          2   27534.01          2   46930.26          4          0          0          0          0          0          0          0          0          0          0          0          0        27500                                                                                                               
+BURICHANG THC             5504118024 ABDULLAH MEDICAL HALL       85008.88          3   60975.81          4   70350.27          3   75459.76          4    63464.3          3   83010.26          4          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+NAWABPUR                  5505115013 ABDULLAH MEDICAL HALL       54030.19          4   52035.91          5   47072.83          6   58456.54          5    70753.8          6   27815.96          5          0          0          0          0          0          0          0          0          0          0          0          0        45000                                                                                                               
+FENI SADAR HOSP-2         5511037060 ABDULLAH MEDICAL HALL       53140.97          8   75838.72          4    4281.76          4   47898.51          2    79219.4          4   64707.98          4          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+MURADNAGAR                5511037060 ABDULLAH MEDICAL HALL       53140.97          8   75838.72          4    4281.76          4   47898.51          2    79219.4          4   64707.98          4          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501034099 ABDULLAH PHARMACY           19899.64          3   57019.49          6   64154.62          5   44487.38          3   52495.57          5   10210.29          2          0          0          0          0          0          0          0          0          0          0          0          0        70000                                                                                                               
+CUMILLA CANT+EMCH         5501189026 ABDULLAH PHARMACY           22169.14          3   14494.72          2          0          3    25261.8          3   22724.59          3   22922.18          3          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+BARURA APPOLO HOSP.       5502057056 ABDULLAH PHARMACY           23923.61          2          0          0   33822.49          3   31535.71          1   64227.62          3    7922.68          2          0          0          0          0          0          0          0          0          0          0          0          0        40000                                                                                                               
+RAMKRISHNAPUR             5509009003 ABDULLAH PHARMACY           11630.23          1   13147.46          2    6041.22          0   11627.59          1          0          0   10562.42          1          0          0          0          0          0          0          0          0          0          0          0          0        22000                                                                                                               
+BANGURA BAZER             5511011066 ABDULLHA PHARMACY           21306.98          2   22474.98          2   18851.88          1   15745.41          1   17675.45          1   19700.19          2          0          0          0          0          0          0          0          0          0          0          0          0        16500                                                                                                               
+HOMNA THC                 5509012121 ABDULLLA PHARMACY               6920          1  168074.72          3          0          1  100946.45          4  142547.85          1  148094.15          3          0          0          0          0          0          0          0          0          0          0          0          0       132000                                                                                                               
+NATIONAL INS              5509012121 ABDULLLA PHARMACY               6920          1  168074.72          3          0          1  100946.45          4  142547.85          1  148094.15          3          0          0          0          0          0          0          0          0          0          0          0          0       132000                                                                                                               
+DEBIDWAR TOWER HOSP.      5508039027 ABDULLLAH MEDICAL HALL      39631.13          1   23569.93          2   25963.52          3    51165.2          2   78246.89          3    8702.25          2          0          0          0          0          0          0          0          0          0          0          0          0        52800                                                                                                               
+BANCHARAMPUR THC          5403015059 ABDUR ROUF MASTER MEDICAL   26348.73          2   20914.03          1   19532.05          1          0          0   24264.65          1    3709.02          2          0          0          0          0          0          0          0          0          0          0          0          0        33900                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501197018 ABEDIN MEDICAL HALL          5403.16          1    4659.13          1    4266.04          1    3059.02          1    3844.89          1    5588.33          1          0          0          0          0          0          0          0          0          0          0          0          0        16500                                                                                                               
+CUMILLA POPULAR HOSP      5513048051 ABEDIN PHARMACY             14731.48          2   23778.76          2   18601.69          3    1076.92          1   17705.85          3          0          0          0          0          0          0          0          0          0          0          0          0          0          0        23000                                                                                                               
+SALIMGONJ                 5403008046 ABID MEDICAL HALL           10176.18          3   23074.21          7   53313.56          9   19175.03          4   44482.09          9   23184.92          5          0          0          0          0          0          0          0          0          0          0          0          0        13000                                                                                                               
+NAWABPUR                  5505040002 ABU HANIF PHARMACY          13749.29          1    8684.59          1   23650.81          1     9012.6          1   14072.38          1   13143.92          1          0          0          0          0          0          0          0          0          0          0          0          0        15400                                                                                                               
+DEVIDWAR SQUARE HOSP      5511017133 AC PHARMACY                  1428.75          1          0          0          0          0      849.4          1          0          0     379.63          1          0          0          0          0          0          0          0          0          0          0          0          0        11000                                                                                                               
+CHANDINA MEDICAL CENTRE   5505006013 ACHARJYEE  PHARMACY(DR.BA          0          0          0          0          0          1    3221.17          1    3625.28          1    3177.49          1          0          0          0          0          0          0          0          0          0          0          0          0        10000                                                                                                               
+BURICHANG THC             5504118013 ADARESH MEDICAL HALL         18192.8          2   21131.73          2   19618.82          4   15574.96          3    8809.71          4   10242.73          2          0          0          0          0          0          0          0          0          0          0          0          0        20900                                                                                                               
+HOMNA THC                 5509047005 ADARSHA AUSHADALAYA          8099.71          1    8111.36          1    12951.3          2    7414.32          2   19275.08          2   20252.83          3          0          0          0          0          0          0          0          0          0          0          0          0         8800                                                                                                               
+BANCHARAMPUR THC          5403015012 ADARSHA MEDICAL HALL            1236          1   40788.53          1   13939.65          1   11458.05          2     3345.6          1   33566.01          3          0          0          0          0          0          0          0          0          0          0          0          0        64200                                                                                                               
+DAUDKANDI                 5507018022 ADARSHA PHARMACY            45913.45          2    36372.1          1   36982.02          1   26031.74          1   32383.33          1   43342.74          3          0          0          0          0          0          0          0          0          0          0          0          0        57200                                                                                                               
+CUMILLA CANT+EMCH         5501109008 UMAMA MEDICAL HALL            8057.5          1    5832.59          1    4540.37          1    5740.05          1    6296.01          1    4261.81          1          0          0          0          0          0          0          0          0          0          0          0          0        55000                                                                                                               
+CUMCH-MOON HOSP           5513017003 UNITED  MEDICAL  HALL        5967.06          1    6423.22          1   16864.78          1     6147.2          1   12566.49          1    9855.69          1          0          0          0          0          0          0          0          0          0          0          0          0        16500                                                                                                               
+CUMILLA CANT+EMCH         5504022004 UNITED MEDICAL HALL         84251.56          2   91562.92          2   76909.74          1   99010.97          4   88036.06          1   79751.23          2          0          0          0          0          0          0          0          0          0          0          0          0       110000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513255009 UPSOM MEDICAL HALL           2983.18          1    3186.85          1          0          1    8286.85          2    3711.12          1     5791.5          1          0          0          0          0          0          0          0          0          0          0          0          0        22000                                                                                                               
+CHANDINA TOWN             5505149001 UTTAM MEDICAL HALL         241568.33          3  414697.15          3   40983.46          3  236628.02          3  224991.99          3  297075.51          2          0          0          0          0          0          0          0          0          0          0          0          0       175500                                                                                                               
+COMILLA W/S(HUMAN)-2      5513077234 VAI VAI MEDICAL HALL          7978.8          1    5142.74          1    5585.84          1   12804.99          1   13422.26          1    6584.72          1          0          0          0          0          0          0          0          0          0          0          0          0        55000                                                                                                               
+BANCHARAMPUR THC          5403019086 VAI VAI MEDICINE AND DENT   29906.77          2          0          0   33864.34          4    3402.35          2   34088.89          4          0          0          0          0          0          0          0          0          0          0          0          0          0          0        27500                                                                                                               
+BANCHARAMPUR THC          5403013028 VAI VAI MEDICINE CORNER            0          0          0          0   25771.92          2   20552.82          1    21750.9          2   21553.99          2          0          0          0          0          0          0          0          0          0          0          0          0        52000                                                                                                               
+BANGURA BAZER             5511011065 VAI VAI PHARMACY            23456.07          1   51192.93          2    3475.88          3   29004.49          2   25622.26          3   31525.89          2          0          0          0          0          0          0          0          0          0          0          0          0        24200                                                                                                               
+GOURIPUR THC-1            5515001139 VIVA MEDICAL HALL           22459.52          4   29447.36          3   31370.02          4   34150.96          5   19996.28          4   25880.83          4          0          0          0          0          0          0          0          0          0          0          0          0        22000                                                                                                               
+DEVIDWAR SQUARE HOSP      5511017161 VUIYAN PHARMACY             45090.24          3      19405          2    26452.3          2   21015.32          3   30949.75          2   33749.21          2          0          0          0          0          0          0          0          0          0          0          0          0        20000                                                                                                               
+ELIOTGANJ                 5505080004 WADUD M/H                   10597.09          1   15621.04          2    7393.85          1          0          0    7088.72          1    6497.14          1          0          0          0          0          0          0          0          0          0          0          0          0        14300                                                                                                               
+MOINAMOTI GEN HOSP        5504069004 WAHID MEDICAL HALL          38021.72          2          0          0   12458.61          0    12357.1          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        55000                                                                                                               
+BURICHANG THC             5504116007 WAKIA MEDICAL HALL           6954.42          1    3047.51          1    5306.22          1    6895.96          1    1162.56          1    3290.65          1          0          0          0          0          0          0          0          0          0          0          0          0        11000                                                                                                               
+CHANDINA MEDICAL CENTRE   5504031034 ZAIMA ZAWHAR MEDICAL HALL    8128.71          3    9030.13          2   20906.89          4   32746.66          3   45110.09          4     908.53          2          0          0          0          0          0          0          0          0          0          0          0          0        36300                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031030 ZAKARIA PHARMACY                   0          0          0          0    1060.65          2   24145.99          5   16538.32          2    7910.36          1          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+NAWABPUR                  5505057003 ZAKIR MEDICAL HALL           8933.85          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        15000                                                                                                               
+CUMILLA POPULAR HOSP      5513067034 ZAKIR MEDICAL HALL          64805.39          3   75325.71          3  117618.92          4   85073.69          4  123657.35          4   37106.01          1          0          0          0          0          0          0          0          0          0          0          0          0        84700                                                                                                               
+TITAS THC                 5507013014 ZAKIR PHARMACY              40096.16          3   40800.58          4   50482.82          2   49099.06          3   62757.52          2   67145.84          4          0          0          0          0          0          0          0          0          0          0          0          0        34100                                                                                                               
+CUMILLA CANT+EMCH         5501189015 ZAMAN MEDICAL HALL          32825.89          1          0          0   92462.51          1          0          0   47999.39          1   48955.85          1          0          0          0          0          0          0          0          0          0          0          0          0        40000                                                                                                               
+FENI SADAR HOSP-2         5511043014 ZANNAT MEDICAL HALL         35907.74          2   32786.36          1   55179.45          3     3597.5          1   89634.93          3   47914.58          1          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+MURADNAGAR                5511043014 ZANNAT MEDICAL HALL         35907.74          2   32786.36          1   55179.45          3     3597.5          1   89634.93          3   47914.58          1          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+BANCHARAMPUR THC          5403017028 ZANNAT PHARMACY              3243.92          1     3080.2          1    10549.6          1          0          0    3511.58          1    5044.92          2          0          0          0          0          0          0          0          0          0          0          0          0        13000                                                                                                               
+SALIMGONJ                 5405037153 ZAWAD MEDICAL HALL          23380.26          1    27972.2          1   28927.58          1   19563.55          1   22635.75          1   22187.03          1          0          0          0          0          0          0          0          0          0          0          0          0        40000                                                                                                               
+CHANDINA MEDICAL CENTRE   5505006024 ZEHAD MEDICAL HALL          48701.13          1   28153.76          1   46210.93          1    9782.03          1   49343.51          1   26746.83          2          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+
+1951 rows selected.
+

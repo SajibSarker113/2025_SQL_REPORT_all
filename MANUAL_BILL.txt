@@ -1,0 +1,158 @@
+
+SET LINE 84
+SET PAGES 2500
+COLUMN SALE_NET FORMAT 99,99,999.99
+
+COMPUTE COUNT OF BILL_NO ON REPORT
+COMPUTE SUM OF SALE_NET ON REPORT
+COMPUTE MAX OF SALE_NET ON FL_MVH
+COMPUTE COUNT OF BILL_NO ON FL_MVH
+BREAK ON REPORT ON FL_MVH
+
+
+TTITLE center 'Depot:'&&SC_CD', Manual Bill' SKIP2
+
+SPOOL ON
+
+SELECT A.fl_mvh,A.FP_ID,A.BILL_NO,A.DELI_DT,B.CL_NM,A.SALE_CD,A.SALE_NET
+	FROM SCENT.BILL_MAS A,SCENT.CL_INFO B
+	WHERE A.SC_CD='&&SC_CD'
+	AND A.DIST_CD=B.DIST_CD
+	AND A.THA_CD=B.THA_CD
+	AND A.UN_CD=B.UN_CD
+	AND A.CL_ID=B.CL_ID
+	AND A.SC_CD=B.SC_CD
+	AND A.DELI_DT BETWEEN '&DATE1' AND '&DATE2' 
+	AND (USER_CD IS NULL OR USER_CD<>'MB')
+	AND A.CANCL IS NULL 
+	AND A.SALE_CD NOT IN ('ER')
+	ORDER BY A.fl_mvh,A.SALE_CD,A.SALE_NET
+/
+
+
+ 
+SPOOL OFF
+
+ED ON.LST
+
+=======================================================================
+
+
+old   3: 	WHERE A.SC_CD='&&SC_CD'
+new   3: 	WHERE A.SC_CD='11'
+Enter value for date1: 01jan25
+Enter value for date2: 30jun25
+old   9: 	AND A.DELI_DT BETWEEN '&DATE1' AND '&DATE2'
+new   9: 	AND A.DELI_DT BETWEEN '01jan25' AND '30jun25'
+
+                                Depot:11, Manual Bill                               
+                                                                                    
+F FP_ID BILL_NO DELI_DT   CL_NM                                    SA      SALE_NET 
+- ----- ------- --------- ---------------------------------------- -- ------------- 
+1 02992 1553982 23-APR-25 ASA                                      IM     14,402.60 
+  02992 1554050 23-APR-25 ASA JHALOM HEALTH CARE CENTER.           IM     57,971.77 
+*       -------                                                       ------------- 
+c             2                                                                     
+m                                                                         57,971.77 
+2 28157 1528134 28-JAN-25 CHANDINA MEDICAL HALL                    IM     21,500.00 
+  21487 1530749 05-FEB-25 ABIDPUR MEDICAL HALL                     IM     21,500.00 
+  21487 1527930 27-JAN-25 TANVIR ENTERPRIZE                        IM     21,500.00 
+  02EB1 1527122 25-JAN-25 MAA  MEDICAL HALL                        IM     21,500.00 
+  02N55 1525899 20-JAN-25 SUNRISE ENTERPRISE                       IM     21,500.00 
+  28157 1526213 21-JAN-25 CHANDINA MEDICAL HALL                    IM     43,000.00 
+  21487 1544655 19-MAR-25 GRAMEEN LAYER                            RS      4,180.65 
+  02BM1 1522310 08-JAN-25 ANANDO PHARMACY                          WM        826.80 
+  02BM1 1524340 15-JAN-25 MONIR POULTRY MEDICINE                   WM      1,455.00 
+  02BM1 1521643 06-JAN-25 ANANDO PHARMACY                          WM      1,526.20 
+  28548 1524709 15-JAN-25 NOOR DAIRY PHARMACY                      WM      2,328.00 
+  21538 1524708 15-JAN-25 HASAN POULTRY                            WM      2,328.00 
+  21538 1524707 15-JAN-25 APU VETERINARIAN                         WM      2,328.00 
+  02BM1 1522309 08-JAN-25 PAL PHARMACY                             WM      2,328.00 
+  02EB1 1553787 22-APR-25 BAYSHAKHI PHARMACY                       WM      2,328.00 
+  02EB1 1549517 08-APR-25 C/O MILITRY FARM CUMILLA                 WM      2,328.00 
+  02N55 1546288 25-MAR-25 SUNRISE ENTERPRISE                       WM      2,328.00 
+  28065 1543221 15-MAR-25 DESH DAIRY POULTRY                       WM      2,328.00 
+  28065 1545258 22-MAR-25 AL AMIN PHARMACY                         WM      2,560.00 
+  27631 1545397 22-MAR-25 ANISHA VET.PHARMACY                      WM      2,878.55 
+  27631 1545395 22-MAR-25 BISMILLAH TRADERS                        WM      2,937.18 
+  21487 1544651 19-MAR-25 ABDUR RASHID AGRO                        WM      3,009.89 
+  02BM1 1523285 12-JAN-25 ANANDO PHARMACY                          WM      3,150.00 
+  21538 1544641 19-MAR-25 MIM POULTRY                              WM      3,152.00 
+  28548 1544987 20-MAR-25 RIAJ MEDICNE CORNER                      WM      3,719.20 
+  22606 1545011 21-MAR-25 BISMILLAH PHARMACY                       WM      3,833.45 
+  27631 1545391 22-MAR-25 LUCKY MEDICAL HALL                       WM      3,837.90 
+  21487 1544660 19-MAR-25 GRAMEEN LAYER                            WM      4,180.65 
+  02BM1 1522993 11-JAN-25 BIBEKANDO PHARMACY                       WM      4,425.00 
+  02N55 1545110 22-MAR-25 IBNE SINA MEDICAL HALL                   WM      4,651.62 
+  27631 1536520 23-FEB-25 DR MD SAMSUL ISLAM                       WM      4,656.00 
+  27631 1527274 25-JAN-25 LUCKY MEDICAL HALL                       WM      4,656.00 
+  21672 1545261 22-MAR-25 ADARSHO MEDICAL HOUSE                    WM      4,905.60 
+  28157 1545257 22-MAR-25 MAYER  DHOU                              WM      5,869.24 
+  28548 1544638 19-MAR-25 SABIR STOR                               WM      5,873.25 
+  21487 1544654 19-MAR-25 AFRIN DAIRY & MEDICINE                   WM      5,894.89 
+  21487 1544652 19-MAR-25 HOSSAN ENTERPRISE                        WM      6,045.90 
+  02BM1 1522975 11-JAN-25 SRABONTI MEDICAL HALL                    WM      6,132.44 
+  28065 1544981 20-MAR-25 GILD BIRD POULTRY                        WM      6,431.80 
+  28157 1545392 22-MAR-25 FRIENDS POULTRY & MEDICINE               WM      6,883.60 
+  28548 1544985 20-MAR-25 STAR POULTRY &DAIRY MEDICINE             WM      8,000.43 
+  02BM1 1521089 04-JAN-25 PAL PHARMACY                             WM      8,105.98 
+  21487 1545101 22-MAR-25 DR JAHANGIR                              WM      8,676.80 
+  27811 1545544 23-MAR-25 VAI VAI FISHARI                          WM      8,976.60 
+  02EB1 1544747 20-MAR-25 M.S OMAR POUL. DAIRY FEED & MED          WM      8,976.60 
+  28065 1544982 20-MAR-25 ADUNIC MEDICAL HALL                      WM      9,405.60 
+  27811 1545545 23-MAR-25 TASNIM VETERINARY                        WM      9,696.10 
+  27811 1545546 23-MAR-25 MASTER AGROVET                           WM      9,718.04 
+  22153 1544979 20-MAR-25 TISHA MEDICAL HALL                       WM     10,564.80 
+  28548 1544986 20-MAR-25 M/S. AL- IMRAN POULTRY FARM              WM     11,175.80 
+  21487 1544650 19-MAR-25 BISMILLAH POULTRY                        WM     11,640.00 
+  27631 1545396 22-MAR-25 RASHED TRADERS                           WM     11,754.80 
+  21538 1544640 19-MAR-25 PASHU CHIKITSALOY                        WM     11,792.00 
+  02EB1 1544748 20-MAR-25 MD ULLAH POULTRY FEED                    WM     11,830.00 
+  21487 1545102 22-MAR-25 VTN PHARMACY                             WM     12,862.50 
+  21487 1545466 23-MAR-25 BHUIYAN PHARMACY                         WM     13,666.50 
+  02BM1 1520936 04-JAN-25 PAL PHARMACY                             WM     13,891.80 
+  21487 1544653 19-MAR-25 RAFIQUE VETENARI MEDICINE                WM     14,620.80 
+  02BM1 1521090 04-JAN-25 SRABONTI MEDICAL HALL                    WM     15,576.50 
+  27631 1545394 22-MAR-25 MOCCA VETERINARY                         WM     15,714.10 
+  21672 1545259 22-MAR-25 RAZZAK TRADERS                           WM     17,059.90 
+  02BM1 1521988 07-JAN-25 PAL PHARMACY                             WM     18,780.40 
+  22153 1544645 19-MAR-25 TARIQ ANIMAL HEALTH                      WM     20,554.35 
+  02BM1 1521989 07-JAN-25 SRABONTI MEDICAL HALL                    WM     21,068.20 
+  02HQ3 1573161 26-JUN-25 HOMNA POULTRY                            WM     21,785.80 
+  28548 1544639 19-MAR-25 ABED POULTRY FEED & MEDICINE             WM     22,818.87 
+  02BM1 1524037 14-JAN-25 PAL PHARMACY                             WM     24,861.46 
+  02BM1 1522974 11-JAN-25 PAL PHARMACY                             WM     24,887.64 
+  02BM1 1523286 12-JAN-25 PAL PHARMACY                             WM     25,441.77 
+  02BM1 1520383 02-JAN-25 SRABONTI MEDICAL HALL                    WM     26,610.40 
+  28548 1544984 20-MAR-25 MOHSIN MEDICAL HALL                      WM     31,292.20 
+  02BM1 1521253 05-JAN-25 PAL PHARMACY                             WM     31,943.36 
+  02EB1 1544746 20-MAR-25 BAYSHAKHI PHARMACY                       WM     32,180.85 
+  27631 1572838 25-JUN-25 DR MD SAMSUL ISLAM                       WM     35,798.43 
+  21487 1545103 22-MAR-25 TANVIR ENTERPRIZE                        WM     35,827.85 
+  02HQ3 1544980 20-MAR-25 BISMILAH VET PHARMACY                    WM     37,624.10 
+  02BM1 1521091 04-JAN-25 BIBEKANDO PHARMACY                       WM     40,160.60 
+  02BM1 1522311 08-JAN-25 PAL PHARMACY                             WM     44,378.40 
+  02HQ3 1544649 19-MAR-25 HASHEM MEDICAL HALL                      WM     46,229.11 
+  02BM1 1520380 02-JAN-25 PAL PHARMACY                             WM     51,692.08 
+  02EB1 1573730 29-JUN-25 MAA  MEDICAL HALL                        WM     52,400.00 
+  28157 1573327 27-JUN-25 SARODA PHARMACY                          WM     58,650.25 
+  02BM1 1519839 01-JAN-25 PAL PHARMACY                             WM     58,683.30 
+  28157 1573307 27-JUN-25 MADINA POULTRY                           WM     60,864.40 
+  27631 1545489 23-MAR-25 DR MD SAMSUL ISLAM                       WM     76,201.10 
+  27811 1545543 23-MAR-25 DR.MONIR HOSSAIN                         WM     97,509.96 
+  02HQ3 1544646 19-MAR-25 HOMNA POULTRY                            WM   1,01,516.30 
+  02BM1 1523999 14-JAN-25 BIBEKANDO PHARMACY                       WM   1,11,892.53 
+  02BM1 1521990 07-JAN-25 BIBEKANDO PHARMACY                       WM   1,22,680.98 
+  21672 1545260 22-MAR-25 WOOHIDA VETERINARY                       WM   1,29,190.91 
+  02BM1 1520385 02-JAN-25 BIBEKANDO PHARMACY                       WM   2,07,667.53 
+  28157 1545256 22-MAR-25 CHANDINA MEDICAL HALL                    WM   3,10,018.00 
+  02BM1 1524032 14-JAN-25 MONIR POULTRY MEDICINE                   WO      1,455.00 
+*       -------                                                       ------------- 
+c            93                                                                     
+m                                                                       3,10,018.00 
+        -------                                                       ------------- 
+c            95                                                                     
+s                                                                      25,75,542.96 
+
+95 rows selected.
+

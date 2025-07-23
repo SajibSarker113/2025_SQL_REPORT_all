@@ -1,0 +1,102 @@
+SET LINES 74
+SET PAGES 5000
+SET NUMFORMAT 999999.99
+
+
+
+
+TTITLE CENTER 'DEPOT: '&&SC_CD', Short Date Medicine' SKIP2
+
+SPOOL ON 
+
+SELECT 
+    A.DIV_CD, B.CAT_CD,A.DIV_CD || B.CAT_CD,
+    TO_CHAR(A.DIV_CD || B.CAT_CD || B.PRD_CD) AS DCP_CD, 
+    INITCAP(SUBSTR(C.PROD_NM, 1, 25)) AS MEDICINE_NAME, 
+    ---NULL AS Blank_column, -- for creating a blank  row
+    B.B_NO,  
+    SUM(B.RV_BAL) AS STOK_QTY, 
+    TO_CHAR(B.EXP_DT,'DD.MM.YY') EXP_DT
+FROM 
+    INV.FG_RV1 A, 
+    INV.FG_RV2 B, 
+    SCENT.INV_PROD C, 
+    SCENT.PROD_RATE D 
+WHERE 
+    A.RV_NO = B.RV_NO 
+    AND A.LOC_CD = '&&SC_CD' 
+    AND (B.RV_BAL) > '0' 
+    AND B.CAT_CD = C.CAT_CD 
+    AND B.PRD_CD = C.PRD_CD 
+    AND B.TYP_CD = C.TYP_CD 
+    AND A.LOC_CD = B.LOC_CD 
+    AND B.CAT_CD = D.CAT_CD 
+    AND B.PRD_CD = D.PRD_CD 
+    AND B.TYP_CD = D.TYP_CD 
+    AND A.RV_DT BETWEEN '01-JAN-19' AND '31-DEC-26' 
+    AND B.CAT_CD > '0'
+    AND B.TYP_CD = '09' 
+    AND A.RV_TYPE NOT IN ('0') 
+    AND B.EXP_DT <= LAST_DAY(SYSDATE) + 184
+GROUP BY
+    A.DIV_CD, B.CAT_CD, 
+    A.DIV_CD || B.CAT_CD || B.PRD_CD, 
+    C.PROD_NM, 
+    B.B_NO, 
+    B.RV_BAL,
+    B.EXP_DT
+ORDER BY 
+    A.DIV_CD, B.EXP_DT, A.DIV_CD || B.CAT_CD || B.PRD_CD 
+/
+
+
+
+
+SPOOL OFF
+ED ON.LST
+
+
+
+====================================
+
+
+old  16:     AND A.LOC_CD = '&&SC_CD'
+new  16:     AND A.LOC_CD = '11'
+
+                      DEPOT: 11, Short Date Medicine                      
+                                                                          
+D CA A.D DCP_CD  MEDICINE_NAME             B_NO         STOK_QTY EXP_DT   
+- -- --- ------- ------------------------- ---------- ---------- -------- 
+1 08 108 1081242 Losart Plus 100/12.5      T2423011         6.00 30.08.25 
+1 08 108 1081242 Losart Plus 100/12.5      T2423011         4.00 30.08.25 
+1 08 108 1081242 Losart Plus 100/12.5      T2423011        10.00 30.08.25 
+1 01 101 1011090 Medozil 21/10             C0903001         1.00 30.09.25 
+1 01 101 1011090 Medozil 21/10             C0903001        54.00 30.09.25 
+1 08 108 1081162 Mizolam 7.5mg             T1623003         3.00 30.09.25 
+1 08 108 1081162 Mizolam 7.5mg             T1623003         5.00 30.09.25 
+1 11 111 1111008 Zero 12mg                 X0083002         1.00 30.10.25 
+1 11 111 1111008 Zero 12mg                 X0083002         5.00 30.10.25 
+1 08 108 1081506 Ticaflow 60 Tablet        T5063001         1.00 30.11.25 
+1 16 116 1161008 Progel Vaginal Gel 22.5g  G0083010         9.00 30.11.25 
+1 06 106 1061093 Rebreath Nebulizer Soluti L0934002         1.00 30.01.26 
+1 06 106 1061093 Rebreath Nebulizer Soluti L0934002         4.00 30.01.26 
+1 06 106 1061093 Rebreath Nebulizer Soluti L0934002         3.00 30.01.26 
+1 06 106 1061093 Rebreath Nebulizer Soluti L0934003        48.00 30.01.26 
+1 08 108 1081187 Zero Tab.(Container)      T1875001         1.00 31.01.26 
+1 08 108 1081187 Zero Tab.(Container)      T1875001        20.00 31.01.26 
+1 08 108 1081187 Zero Tab.(Container)      T1875001       227.00 31.01.26 
+2 05 205 2054014 Sulfasol Vet 30ml         V0143002         1.00 30.08.25 
+2 11 211 2114038 Vitamix Db Super 500gm    X0383049         1.00 30.11.25 
+2 11 211 2114038 Vitamix Db Super 500gm    X0383050         8.00 30.11.25 
+2 10 210 2104040 Arbocin Vet Ds Bolus      T0404001         1.00 30.12.25 
+2 11 211 2114050 Biovigor Gel 1ltr         X0504002        20.00 31.12.25 
+2 11 211 2114050 Biovigor Gel 1ltr         X0504002        44.00 31.12.25 
+2 12 212 2124113 Tim-Ac Wsp 20gm           W1134003       809.00 30.01.26 
+2 05 205 2054077 Amflor Vet Injection 10ml V0774001         9.00 31.01.26 
+2 05 205 2054077 Amflor Vet Injection 10ml V0774001        30.00 31.01.26 
+2 06 206 2064060 Fenazol Vet 100ml         L0604001        22.00 31.01.26 
+2 12 212 2124078 Prozyme Vet 100gm         W0785004        57.00 31.01.26 
+2 12 212 2124078 Prozyme Vet 100gm         W0785004       120.00 31.01.26 
+
+30 rows selected.
+

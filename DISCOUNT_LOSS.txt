@@ -1,0 +1,871 @@
+DROP TABLE SS;
+
+CREATE TABLE SS AS
+SELECT DISTINCT A.FP_ID, A.CL_ID, SUBSTR(INITCAP(C.CL_NM),1,20)CL_NM, A.FL_MVH, A.SALE_CD, A.BILL_NO, A.DELI_DT, NVL(SUM(A.SALE_NET),0)BILL_AMNT, (SELECT NVL(SUM(AMNT),0)
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='R')RTN, (NVL(SUM(A.SALE_NET),0))-(SELECT (NVL(SUM(AMNT),0))
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='R')NET_SALE, TO_DATE(B.OUT_DT)COLLEC_DATE, (SELECT SUM(AMNT)
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='C' AND D.OUT_DT BETWEEN '&&DATE1' AND '&&DATE2')COLLEC_AMNT, TO_DATE(B.OUT_DT)-TO_DATE(A.DELI_DT)DAYS
+FROM SCENT.BILL_MAS A,
+     SCENT.OUT_DET B,
+     SCENT.CL_INFO C
+WHERE A.SC_CD='&&SC_CD'
+  AND A.SC_CD=B.SC_CD
+  AND A.SC_CD=C.SC_CD
+  AND B.OUT_DT BETWEEN '&&DATE1' AND '&&DATE2'
+  AND A.BILL_NO=B.BILL_NO
+  AND A.DIST_CD=C.DIST_CD
+  AND A.THA_CD=C.THA_CD
+  AND A.UN_CD=C.UN_CD
+  AND A.CL_ID=C.CL_ID
+  AND SEQ=(SELECT MAX(SEQ) FROM SCENT.OUT_DET WHERE A.SC_CD=SC_CD AND A.BILL_NO=BILL_NO AND SC_CD='&&SC_CD') 
+GROUP BY A.FP_ID, A.CL_ID,A.FL_MVH, A.SALE_CD, A.BILL_NO, A.DELI_DT, C.CL_NM, B.OUT_DT
+HAVING (B.OUT_DT-A.DELI_DT)>'1'
+ORDER BY A.FP_ID
+/
+
+SET LINES 145
+SET PAGES 4000
+COL BILL_AMNT FORMAT 99,99,999.99
+COL RTN FORMAT 99,99,999.99
+COL NET_SALE FORMAT 99,99,999.99
+
+
+COLUMN RTN FORMAT 9,99,99,999.99
+COLUMN NET_SALE FORMAT 9,99,99,999.99
+
+COMPUTE SUM OF BILL_AMNT RTN NET_SALE COLLEC_AMNT ON REPORT
+COMPUTE COUNT OF BILL_NO ON REPORT
+BREAK ON REPORT ON REPORT SKIP-1
+
+TTITLE CENTER 'Depot: '&&SC_CD' ' SKIP 1 -
+CENTER 'Delay Collection' SKIP 1 CENTER ''Period :  ''&&DATE1'' -to- ''&&DATE2'' -
+RIGHT 'More than Days' SKIP 2
+
+
+SPOOL ON
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('WM','WO') AND FL_MVH='1' AND NET_SALE > 0
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+HAVING RTN >'0'
+ORDER BY SALE_CD, NET_SALE
+/
+
+
+SPOOL OFF
+
+ED ON.LST
+
+DROP TABLE SS
+/
+
+======================================================================
+
+
+                                                                    Depot: 11                                                                    
+                                                                 Delay Collection                                                                
+                                                            Period:01jan25-to-31jan25                                              More than Days
+                                                                                                                                                 
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT       BILL_AMNT             RTN        NET_SALE COLLEC_DA       COLLEC_AMNT        PER       
+----- --- -------------------- - -- ------- --------- ------------- --------------- --------------- --------- ----------------- ----------       
+      DAYS                                                                                                                                       
+----------                                                                                                                                       
+27585 009 Khan Pahramcy        1 WM 1521458 05-JAN-25      4,269.92        1,260.00        3,009.92 08-JAN-25          3,009.92         70       
+         3                                                                                                                                       
+                                                                                                                                                 
+05S49 029 Master Medical Hall  1 WM 1523887 13-JAN-25     12,876.49        9,826.94        3,049.55 29-JAN-25          3,049.55         24       
+        16                                                                                                                                       
+                                                                                                                                                 
+20123 044 Nava Medical Hall    1 WM 1525900 20-JAN-25      6,761.52        3,690.76        3,070.76 31-JAN-25          3,070.76         45       
+        11                                                                                                                                       
+                                                                                                                                                 
+05418 045 Khorsheda Pharmacy   1 WM 1521569 05-JAN-25      4,527.82        1,421.63        3,106.19 12-JAN-25          3,106.19         69       
+         7                                                                                                                                       
+                                                                                                                                                 
+21906 045 New Masum Medical Ha 1 WM 1520515 02-JAN-25      3,967.95          840.35        3,127.60 11-JAN-25          3,127.60         79       
+         9                                                                                                                                       
+                                                                                                                                                 
+20793 031 Munshi Pharmacy Dr A 1 WM 1525327 18-JAN-25      3,714.87          566.55        3,148.32 22-JAN-25          3,148.32         85       
+         4                                                                                                                                       
+                                                                                                                                                 
+22026 027 Lokman Hakim Pharmac 1 WM 1522332 08-JAN-25      3,581.96          429.25        3,152.71 12-JAN-25          3,152.71         88       
+         4                                                                                                                                       
+                                                                                                                                                 
+22702 003 Modern Medical Hall  1 WM 1520978 04-JAN-25      3,320.06          151.04        3,169.02 07-JAN-25          3,169.02         95       
+         3                                                                                                                                       
+                                                                                                                                                 
+22027 058 Momota Medical Hall  1 WM 1522346 08-JAN-25      3,522.81          309.58        3,213.23 13-JAN-25          3,213.23         91       
+         5                                                                                                                                       
+                                                                                                                                                 
+20508 044 Moinia Pharmacy      1 WM 1521786 06-JAN-25      3,543.40          283.27        3,260.13 11-JAN-25          3,260.13         92       
+         5                                                                                                                                       
+                                                                                                                                                 
+21799 003 Rakhi Medical Hall   1 WM 1525775 20-JAN-25      3,651.01          376.32        3,274.69 23-JAN-25          3,274.69         90       
+         3                                                                                                                                       
+                                                                                                                                                 
+02Q72 014 Sarker Medical Hall  1 WM 1526544 22-JAN-25      4,363.67        1,080.46        3,283.21 31-JAN-25          3,283.21         75       
+         9                                                                                                                                       
+                                                                                                                                                 
+02Q72 004 Dr. Sholoman Hossain 1 WM 1526545 22-JAN-25      4,232.06          900.38        3,331.68 28-JAN-25          3,331.68         79       
+         6                                                                                                                                       
+                                                                                                                                                 
+21799 002 Mr Medicine Corner   1 WM 1522727 09-JAN-25      3,701.46          360.14        3,341.32 11-JAN-25          3,341.32         90       
+         2                                                                                                                                       
+                                                                                                                                                 
+21906 047 Bismillah Medical Ha 1 WM 1524843 16-JAN-25      3,926.94          566.55        3,360.39 18-JAN-25          3,360.39         86       
+         2                                                                                                                                       
+                                                                                                                                                 
+02YS8 012 Mayer Dowya Pharmacy 1 WM 1526081 20-JAN-25      4,612.15        1,231.79        3,380.36 29-JAN-25          3,380.36         73       
+         9                                                                                                                                       
+                                                                                                                                                 
+02Q72 081 Selim Pharmacy       1 WM 1526602 22-JAN-25      4,417.88        1,030.00        3,387.88 28-JAN-25          3,387.88         77       
+         6                                                                                                                                       
+                                                                                                                                                 
+26648 017 Padma Pharmacy-2     1 WM 1524561 15-JAN-25      3,535.34          128.63        3,406.71 22-JAN-25          3,406.71         96       
+         7                                                                                                                                       
+                                                                                                                                                 
+02YS8 112 Safa Pharmacy        1 WM 1520723 02-JAN-25      3,475.87           42.88        3,432.99 12-JAN-25          3,432.99         99       
+        10                                                                                                                                       
+                                                                                                                                                 
+05X38 016 New Cheap Medical Ha 1 WM 1518552 26-DEC-24     12,562.68        9,115.51        3,447.17 28-JAN-25          3,447.17         27       
+        33                                                                                                                                       
+                                                                                                                                                 
+28578 067 Hazi Pharmacy        1 WM 1526958 23-JAN-25      4,237.10          720.37        3,516.73 27-JAN-25          3,516.73         83       
+         4                                                                                                                                       
+                                                                                                                                                 
+05X38 030 Ebrahim Madecal Hall 1 WM 1523800 13-JAN-25      5,625.52        2,101.60        3,523.92 25-JAN-25          3,523.92         63       
+        12                                                                                                                                       
+                                                                                                                                                 
+05137 018 Nahar Medical Hall   1 WM 1523041 11-JAN-25      3,941.16          385.88        3,555.28 19-JAN-25          3,555.28         90       
+         8                                                                                                                                       
+                                                                                                                                                 
+05X38 054 Brothers Pharmacy    1 WM 1521942 06-JAN-25      4,477.17          905.10        3,572.07 12-JAN-25          3,572.07         80       
+         6                                                                                                                                       
+                                                                                                                                                 
+22970 010 Shingo Pharmacy      1 WM 1524239 14-JAN-25      4,202.50          595.66        3,606.84 20-JAN-25          3,606.84         86       
+         6                                                                                                                                       
+                                                                                                                                                 
+26687 003 Mayer Doa Medical Ha 1 WM 1525227 18-JAN-25      4,772.78        1,157.64        3,615.14 22-JAN-25          3,615.14         76       
+         4                                                                                                                                       
+                                                                                                                                                 
+27517 051 Bismillah Medicin Co 1 WM 1525507 19-JAN-25      6,124.85        2,482.64        3,642.21 26-JAN-25          3,642.21         59       
+         7                                                                                                                                       
+                                                                                                                                                 
+50091 002 Sarker Pharmacy      1 WM 1526946 23-JAN-25      4,017.65          343.00        3,674.65 27-JAN-25          3,674.65         91       
+         4                                                                                                                                       
+                                                                                                                                                 
+21906 081 Famous Medical Hall  1 WM 1523232 11-JAN-25      3,965.59          257.55        3,708.04 13-JAN-25          3,708.04         94       
+         2                                                                                                                                       
+                                                                                                                                                 
+21015 076 Sayed Medical Point  1 WM 1525777 20-JAN-25      4,475.36          683.82        3,791.54 22-JAN-25          3,791.54         85       
+         2                                                                                                                                       
+                                                                                                                                                 
+50026 010 Ms Mohin Medical Hal 1 WM 1524354 15-JAN-25      4,231.55          420.32        3,811.23 21-JAN-25          3,811.23         90       
+         6                                                                                                                                       
+                                                                                                                                                 
+22970 002 K.S Pharmacy         1 WM 1525287 18-JAN-25      4,238.19          414.72        3,823.47 31-JAN-25          3,823.47         90       
+        13                                                                                                                                       
+                                                                                                                                                 
+22512 033 Samia Pharmacy       1 WM 1527184 25-JAN-25      4,959.85        1,131.95        3,827.90 27-JAN-25          3,827.90         77       
+         2                                                                                                                                       
+                                                                                                                                                 
+22512 004 Seba Pharmacy        1 WM 1526340 21-JAN-25      4,221.75          385.88        3,835.87 27-JAN-25          3,835.87         91       
+         6                                                                                                                                       
+                                                                                                                                                 
+21738 002 Janani Pharmacy      1 WM 1528040 28-JAN-25      4,481.76          643.11        3,838.65 30-JAN-25          3,838.65         86       
+         2                                                                                                                                       
+                                                                                                                                                 
+21906 106 Shalghor Pharmacy    1 WM 1523139 11-JAN-25      4,562.80          720.45        3,842.35 20-JAN-25          3,842.35         84       
+         9                                                                                                                                       
+                                                                                                                                                 
+50102 011 Mohammadia Medical H 1 WM 1525345 18-JAN-25      3,876.92           30.02        3,846.90 22-JAN-25          3,846.90         99       
+         4                                                                                                                                       
+                                                                                                                                                 
+20542 062 Ridoy Pharmacy       1 WM 1522994 11-JAN-25      4,517.57          627.10        3,890.47 14-JAN-25          3,890.47         86       
+         3                                                                                                                                       
+                                                                                                                                                 
+21799 077 Aysha Pharmacy       1 WM 1526166 21-JAN-25      4,412.87          514.51        3,898.36 25-JAN-25          3,898.36         88       
+         4                                                                                                                                       
+                                                                                                                                                 
+05X32 008 Munshi Medical Hall  1 WM 1527218 25-JAN-25      4,589.15          646.60        3,942.55 27-JAN-25          3,942.55         86       
+         2                                                                                                                                       
+                                                                                                                                                 
+05418 126 Bhai Bhai Pharmacy   1 WM 1528533 29-JAN-25      4,172.14          189.05        3,983.09 31-JAN-25          3,983.09         95       
+         2                                                                                                                                       
+                                                                                                                                                 
+08006 011 M.S Drug Center      1 WM 1524765 16-JAN-25      4,122.38          129.48        3,992.90 18-JAN-25          3,992.90         97       
+         2                                                                                                                                       
+                                                                                                                                                 
+26687 003 Mayer Doa Medical Ha 1 WM 1522810 09-JAN-25      5,916.70        1,887.70        4,029.00 15-JAN-25          4,029.00         68       
+         6                                                                                                                                       
+                                                                                                                                                 
+05X38 011 Dr. Humayan Kabir    1 WM 1524874 16-JAN-25      4,240.17          171.50        4,068.67 22-JAN-25          4,068.67         96       
+         6                                                                                                                                       
+                                                                                                                                                 
+22083 013 Fahim Medical Hall   1 WM 1524598 15-JAN-25      4,918.31          840.35        4,077.96 31-JAN-25          4,077.96         83       
+        16                                                                                                                                       
+                                                                                                                                                 
+05X38 038 Hasan Medicine Corne 1 WM 1518414 26-DEC-24      6,111.15        1,936.97        4,174.18 23-JAN-25          4,174.18         68       
+        28                                                                                                                                       
+                                                                                                                                                 
+22116 023 Sarker Jobeda Mdicin 1 WM 1521557 05-JAN-25      4,448.94          258.64        4,190.30 12-JAN-25          4,190.30         94       
+         7                                                                                                                                       
+                                                                                                                                                 
+22026 022 Estarn Pharmacy      1 WM 1521305 05-JAN-25      4,544.93          343.00        4,201.93 08-JAN-25          4,201.93         92       
+         3                                                                                                                                       
+                                                                                                                                                 
+21646 002 Seba Pharmacy        1 WM 1521832 06-JAN-25      4,423.16          125.43        4,297.73 12-JAN-25          4,297.73         97       
+         6                                                                                                                                       
+                                                                                                                                                 
+21258 081 Momotaj Medical Hall 1 WM 1525908 20-JAN-25      4,755.38          450.19        4,305.19 28-JAN-25          4,305.19         91       
+         8                                                                                                                                       
+                                                                                                                                                 
+21906 086 New Janata Medical H 1 WM 1521107 04-JAN-25      4,962.34          591.68        4,370.66 20-JAN-25          4,370.66         88       
+        16                                                                                                                                       
+                                                                                                                                                 
+21497 007 Aroti Drug House     1 WM 1523300 12-JAN-25      7,079.58        2,707.90        4,371.68 14-JAN-25          4,371.68         62       
+         2                                                                                                                                       
+                                                                                                                                                 
+21666 058 Janoseba Medical Hal 1 WM 1523410 12-JAN-25      5,442.58        1,003.37        4,439.21 22-JAN-25          4,439.21         82       
+        10                                                                                                                                       
+                                                                                                                                                 
+05207 047 Jayprodip Pharmacy   1 WM 1521227 04-JAN-25      6,992.65        2,521.05        4,471.60 11-JAN-25          4,471.60         64       
+         7                                                                                                                                       
+                                                                                                                                                 
+22702 003 Modern Medical Hall  1 WM 1524098 14-JAN-25      5,305.65          771.76        4,533.89 22-JAN-25          4,533.89         85       
+         8                                                                                                                                       
+                                                                                                                                                 
+21258 002 Seba Medical Hall    1 WM 1524492 15-JAN-25      6,850.71        2,255.12        4,595.59 25-JAN-25          4,595.59         67       
+        10                                                                                                                                       
+                                                                                                                                                 
+26615 092 Chowdhury Medical Ha 1 WM 1519772 01-JAN-25      5,099.32          463.14        4,636.18 04-JAN-25          4,636.18         91       
+         3                                                                                                                                       
+                                                                                                                                                 
+02MK2 012 Akter Pharmacy       1 WM 1524446 15-JAN-25      5,183.44          514.51        4,668.93 22-JAN-25          4,668.93         90       
+         7                                                                                                                                       
+                                                                                                                                                 
+22648 028 Purobi Medical Hall  1 WM 1524289 14-JAN-25      5,516.87          706.16        4,810.71 20-JAN-25          4,810.71         87       
+         6                                                                                                                                       
+                                                                                                                                                 
+05418 016 Bismillah Aman Sah M 1 WM 1521522 05-JAN-25      5,419.46          514.51        4,904.95 12-JAN-25          4,904.95         91       
+         7                                                                                                                                       
+                                                                                                                                                 
+05X38 067 Sondha Medical Hall  1 WM 1521828 06-JAN-25      5,760.10          754.69        5,005.41 08-JAN-25          5,005.41         87       
+         2                                                                                                                                       
+                                                                                                                                                 
+02Q72 028 Jonoprio Pharmacy    1 WM 1524628 15-JAN-25      5,535.72          488.78        5,046.94 18-JAN-25          5,046.94         91       
+         3                                                                                                                                       
+                                                                                                                                                 
+05X38 011 Khidma Medical Hall  1 WM 1526035 20-JAN-25      5,922.33          660.00        5,262.33 22-JAN-25          5,262.33         89       
+         2                                                                                                                                       
+                                                                                                                                                 
+21720 050 Amin Pharmacy        1 WM 1526774 23-JAN-25      5,597.33          234.12        5,363.21 27-JAN-25          5,363.21         96       
+         4                                                                                                                                       
+                                                                                                                                                 
+22512 191 Sadesh Pharmacy      1 WM 1524209 14-JAN-25      6,613.87        1,227.42        5,386.45 23-JAN-25          5,386.45         81       
+         9                                                                                                                                       
+                                                                                                                                                 
+21906 086 New Janata Medical H 1 WM 1525949 20-JAN-25      5,950.62          514.51        5,436.11 29-JAN-25          5,436.11         91       
+         9                                                                                                                                       
+                                                                                                                                                 
+22516 055 Momotaz Medical Hall 1 WM 1520276 01-JAN-25      9,835.21        4,330.04        5,505.17 31-JAN-25          5,505.17         56       
+        30                                                                                                                                       
+                                                                                                                                                 
+05X38 005 Dr. Shohan Pharmecy  1 WM 1525963 20-JAN-25      8,536.55        3,017.00        5,519.55 22-JAN-25          5,519.55         65       
+         2                                                                                                                                       
+                                                                                                                                                 
+02Q72 022 Adarsha Pharmacy     1 WM 1524627 15-JAN-25      7,019.00        1,481.77        5,537.23 26-JAN-25          5,537.23         79       
+        11                                                                                                                                       
+                                                                                                                                                 
+22970 037 Bushira Medicine Cor 1 WM 1527247 25-JAN-25      6,162.28          414.72        5,747.56 28-JAN-25          5,747.56         93       
+         3                                                                                                                                       
+                                                                                                                                                 
+27517 002 Maa Medical Hall     1 WM 1524689 15-JAN-25      6,319.04          557.42        5,761.62 22-JAN-25          5,761.62         91       
+         7                                                                                                                                       
+                                                                                                                                                 
+28578 066 Abdullha Pharmacy    1 WM 1523881 13-JAN-25      5,941.99          172.02        5,769.97 19-JAN-25          5,769.97         97       
+         6                                                                                                                                       
+                                                                                                                                                 
+21467 062 B-7 Medical Hall     1 WM 1526105 20-JAN-25      6,927.48        1,106.19        5,821.29 26-JAN-25          5,821.29         84       
+         6                                                                                                                                       
+                                                                                                                                                 
+02MK2 063 Fatema Medical Hall  1 WM 1525528 19-JAN-25      6,290.83          266.20        6,024.63 31-JAN-25          6,024.63         96       
+        12                                                                                                                                       
+                                                                                                                                                 
+26384 005 Sosmita Pharmacy     1 WM 1528160 29-JAN-25      6,117.65           60.04        6,057.61 31-JAN-25          6,057.61         99       
+         2                                                                                                                                       
+                                                                                                                                                 
+20793 086 New Janata Medical H 1 WM 1520553 02-JAN-25      6,823.02          763.22        6,059.80 18-JAN-25          6,059.80         89       
+        16                                                                                                                                       
+                                                                                                                                                 
+22970 023 Kazi Pharmacy        1 WM 1519710 01-JAN-25      6,726.85          514.56        6,212.29 30-JAN-25          6,212.29         92       
+        29                                                                                                                                       
+                                                                                                                                                 
+21666 087 Mocca Medical Hall   1 WM 1521473 05-JAN-25      7,134.27          900.38        6,233.89 12-JAN-25          6,233.89         87       
+         7                                                                                                                                       
+                                                                                                                                                 
+28578 012 Kotha Pharmacy       1 WM 1520492 02-JAN-25      7,513.14        1,267.05        6,246.09 31-JAN-25          6,246.09         83       
+        29                                                                                                                                       
+                                                                                                                                                 
+02YS8 110 Sharif Pharmacy      1 WM 1521745 06-JAN-25      9,163.97        2,909.35        6,254.62 14-JAN-25          6,254.62         68       
+         8                                                                                                                                       
+                                                                                                                                                 
+20508 012 Bhuiyan Medical Hall 1 WM 1524133 14-JAN-25      6,801.35          514.50        6,286.85 26-JAN-25          6,286.85         92       
+        12                                                                                                                                       
+                                                                                                                                                 
+20123 001 Delta Medical Hall   1 WM 1525905 20-JAN-25      7,374.83        1,029.20        6,345.63 30-JAN-25          6,345.63         86       
+        10                                                                                                                                       
+                                                                                                                                                 
+05418 127 New Barek Pharmacy   1 WM 1523583 12-JAN-25      7,496.60        1,133.10        6,363.50 18-JAN-25          6,363.50         85       
+         6                                                                                                                                       
+                                                                                                                                                 
+02YS8 048 Navy Pharmacy        1 WM 1524991 16-JAN-25      8,394.06        2,024.10        6,369.96 18-JAN-25          6,369.96         76       
+         2                                                                                                                                       
+                                                                                                                                                 
+20793 117 D H Pharmacy         1 WM 1523928 13-JAN-25      6,833.01          428.76        6,404.25 30-JAN-25          6,404.25         94       
+        17                                                                                                                                       
+                                                                                                                                                 
+21738 079 Makka Pharmacy       1 WM 1522719 09-JAN-25      7,319.97          771.76        6,548.21 11-JAN-25          6,548.21         89       
+         2                                                                                                                                       
+                                                                                                                                                 
+21906 068 Bijoy Pharmacy       1 WM 1525279 18-JAN-25      7,165.54          566.55        6,598.99 27-JAN-25          6,598.99         92       
+         9                                                                                                                                       
+                                                                                                                                                 
+50026 010 Ms Mohin Medical Hal 1 WM 1523654 13-JAN-25      7,064.33          420.32        6,644.01 15-JAN-25          6,644.01         94       
+         2                                                                                                                                       
+                                                                                                                                                 
+21467 056 Rahamania Arroga Sod 1 WM 1527005 23-JAN-25      6,973.63          180.07        6,793.56 29-JAN-25          6,793.56         97       
+         6                                                                                                                                       
+                                                                                                                                                 
+22512 041 Dawenjy Medical Hall 1 WM 1519787 01-JAN-25      7,588.12          734.68        6,853.44 27-JAN-25          6,853.44         90       
+        26                                                                                                                                       
+                                                                                                                                                 
+27517 084 Modina Pahrmacy      1 WM 1522509 08-JAN-25      7,340.46          206.00        7,134.46 14-JAN-25          7,134.46         97       
+         6                                                                                                                                       
+                                                                                                                                                 
+06928 071 Bhuiya Pharmacy      1 WM 1524702 15-JAN-25      7,684.00          511.79        7,172.21 26-JAN-25          7,172.21         93       
+        11                                                                                                                                       
+                                                                                                                                                 
+21738 075 Modina Pharmacy      1 WM 1524084 14-JAN-25      7,935.23          686.80        7,248.43 16-JAN-25          7,248.43         91       
+         2                                                                                                                                       
+                                                                                                                                                 
+28578 020 Sheuli  Pharmacy     1 WM 1526905 23-JAN-25      7,971.06          720.37        7,250.69 29-JAN-25          7,250.69         91       
+         6                                                                                                                                       
+                                                                                                                                                 
+26648 006 Seba Pharmacy. (Dr.  1 WM 1520002 01-JAN-25      8,206.18          905.10        7,301.08 31-JAN-25          7,301.08         89       
+        30                                                                                                                                       
+                                                                                                                                                 
+28578 087 Baba Mar Dowya Pharm 1 WM 1524891 16-JAN-25      7,766.92          429.25        7,337.67 26-JAN-25          7,337.67         94       
+        10                                                                                                                                       
+                                                                                                                                                 
+27517 084 Modina Pahrmacy      1 WM 1525649 19-JAN-25      7,887.02          224.04        7,662.98 26-JAN-25          7,662.98         97       
+         7                                                                                                                                       
+                                                                                                                                                 
+27585 010 Incaf Pharmacy       1 WM 1522505 08-JAN-25     13,614.20        5,791.34        7,822.86 31-JAN-25          7,822.86         57       
+        23                                                                                                                                       
+                                                                                                                                                 
+21906 017 Nahid Medical Hall ( 1 WM 1525225 18-JAN-25      8,504.25          566.55        7,937.70 29-JAN-25          7,937.70         93       
+        11                                                                                                                                       
+                                                                                                                                                 
+06834 153 Bebakaloy Pharmacy   1 WM 1524299 14-JAN-25      8,428.62          309.58        8,119.04 20-JAN-25          8,119.04         96       
+         6                                                                                                                                       
+                                                                                                                                                 
+28578 087 Baba Mar Dowya Pharm 1 WM 1525218 18-JAN-25      8,961.20          566.54        8,394.66 22-JAN-25          8,394.66         94       
+         4                                                                                                                                       
+                                                                                                                                                 
+50026 005 Sosmita Pharmacy     1 WM 1525072 18-JAN-25      9,351.73          952.00        8,399.73 20-JAN-25          8,399.73         90       
+         2                                                                                                                                       
+                                                                                                                                                 
+21720 048 Fazor Ali Drug House 1 WM 1524731 16-JAN-25      9,053.17          497.40        8,555.77 18-JAN-25          8,555.77         95       
+         2                                                                                                                                       
+                                                                                                                                                 
+21666 002 Dipak Medical Hall   1 WM 1520025 01-JAN-25      9,228.27          617.40        8,610.87 31-JAN-25          8,610.87         93       
+        30                                                                                                                                       
+                                                                                                                                                 
+28578 087 Baba Mar Dowya Pharm 1 WM 1522800 09-JAN-25      9,175.98          171.50        9,004.48 13-JAN-25          9,004.48         98       
+         4                                                                                                                                       
+                                                                                                                                                 
+26615 103 Ecera Medicine Corne 1 WM 1525249 18-JAN-25      9,738.34          428.74        9,309.60 23-JAN-25          9,309.60         96       
+         5                                                                                                                                       
+                                                                                                                                                 
+05418 012 Polly Clinic         1 WM 1519267 29-DEC-24     10,305.92          858.50        9,447.42 27-JAN-25          9,435.77         92       
+        29                                                                                                                                       
+                                                                                                                                                 
+05418 002 Mita Pharmacy        1 WM 1522617 08-JAN-25      9,950.88          488.77        9,462.11 31-JAN-25          9,462.11         95       
+        23                                                                                                                                       
+                                                                                                                                                 
+05418 010 Dr. Musa             1 WM 1522650 08-JAN-25     10,433.58          857.58        9,576.00 15-JAN-25          9,576.00         92       
+         7                                                                                                                                       
+                                                                                                                                                 
+20123 035 Maa Medical Hall     1 WM 1523740 13-JAN-25     14,201.15        4,553.68        9,647.47 19-JAN-25          9,647.47         68       
+         6                                                                                                                                       
+                                                                                                                                                 
+05X38 037 New Khan Med Hall    1 WM 1518531 26-DEC-24     13,528.91        3,542.50        9,986.41 27-JAN-25          9,986.41         74       
+        32                                                                                                                                       
+                                                                                                                                                 
+22516 011 Khan Pharmacy        1 WM 1522555 08-JAN-25     10,380.33          385.89        9,994.44 30-JAN-25          9,994.44         96       
+        22                                                                                                                                       
+                                                                                                                                                 
+05S49 029 Master Medical Hall  1 WM 1526931 23-JAN-25     10,612.87          591.68       10,021.19 28-JAN-25         10,021.19         94       
+         5                                                                                                                                       
+                                                                                                                                                 
+27585 057 Radhika Medical Hall 1 WM 1520150 01-JAN-25     11,417.35        1,157.61       10,259.74 26-JAN-25         10,259.74         90       
+        25                                                                                                                                       
+                                                                                                                                                 
+02Q72 003 Latif Medical Hall   1 WM 1520139 01-JAN-25     11,702.40        1,414.91       10,287.49 07-JAN-25         10,287.49         88       
+         6                                                                                                                                       
+                                                                                                                                                 
+05207 054 Mostak Medical Hall  1 WM 1525334 18-JAN-25     10,640.77          343.40       10,297.37 23-JAN-25         10,297.37         97       
+         5                                                                                                                                       
+                                                                                                                                                 
+05X32 008 Munshi Medical Hall  1 WM 1518243 25-DEC-24     12,350.66        2,024.10       10,326.56 08-JAN-25         10,326.56         84       
+        14                                                                                                                                       
+                                                                                                                                                 
+22512 191 Sadesh Pharmacy      1 WM 1526242 21-JAN-25     12,601.40        2,264.07       10,337.33 29-JAN-25         10,337.33         82       
+         8                                                                                                                                       
+                                                                                                                                                 
+05X32 003 Delower Pharmacy     1 WM 1518270 25-DEC-24     14,405.31        4,051.71       10,353.60 25-JAN-25         10,353.60         72       
+        31                                                                                                                                       
+                                                                                                                                                 
+21906 117 D H Pharmacy         1 WM 1521106 04-JAN-25     10,760.24          360.15       10,400.09 16-JAN-25         10,400.09         97       
+        12                                                                                                                                       
+                                                                                                                                                 
+05X32 022 Alif Drug Center     1 WM 1521754 06-JAN-25     11,515.68        1,029.00       10,486.68 12-JAN-25         10,486.68         91       
+         6                                                                                                                                       
+                                                                                                                                                 
+20611 006 Maa Pharmacy         1 WM 1524640 15-JAN-25     15,879.56        5,113.05       10,766.51 23-JAN-25         10,766.51         68       
+         8                                                                                                                                       
+                                                                                                                                                 
+02YS8 006 Bandon Lab Hospital  1 WM 1519392 30-DEC-24     13,722.91        2,881.80       10,841.11 29-JAN-25         10,841.11         79       
+        30                                                                                                                                       
+                                                                                                                                                 
+02MK2 013 Matri Medical Hall   1 WM 1519105 29-DEC-24     12,587.67        1,621.08       10,966.59 31-JAN-25         10,966.59         87       
+        33                                                                                                                                       
+                                                                                                                                                 
+05418 069 Palash Medical Hall  1 WM 1522616 08-JAN-25     11,328.17          317.30       11,010.87 15-JAN-25         11,010.87         97       
+         7                                                                                                                                       
+                                                                                                                                                 
+21678 006 Jahanara Medical Hal 1 WM 1519835 01-JAN-25     11,405.69          351.18       11,054.51 29-JAN-25         11,054.51         97       
+        28                                                                                                                                       
+                                                                                                                                                 
+06928 028 Dr. Motiur           1 WM 1518170 25-DEC-24     12,283.51        1,179.20       11,104.31 26-JAN-25         11,104.31         90       
+        32                                                                                                                                       
+                                                                                                                                                 
+20542 002 Suman Medical Hall   1 WM 1517952 25-DEC-24     11,516.14          309.00       11,207.14 31-JAN-25         11,207.14         97       
+        37                                                                                                                                       
+                                                                                                                                                 
+21799 029 Medicine Center      1 WM 1519870 01-JAN-25     11,868.14          428.76       11,439.38 27-JAN-25         11,439.38         96       
+        26                                                                                                                                       
+                                                                                                                                                 
+22512 061 Bismillah Pharmacy   1 WM 1524217 14-JAN-25     11,782.16          321.57       11,460.59 31-JAN-25         11,460.59         97       
+        17                                                                                                                                       
+                                                                                                                                                 
+28578 074 The Ibne Sina Medica 1 WM 1523170 11-JAN-25     12,091.95          566.55       11,525.40 14-JAN-25         11,525.40         95       
+         3                                                                                                                                       
+                                                                                                                                                 
+27517 038 Ghosh Pharmacy       1 WM 1519207 29-DEC-24     11,769.84          169.20       11,600.64 26-JAN-25         11,600.64         99       
+        28                                                                                                                                       
+                                                                                                                                                 
+20793 023 Jubayer Medical Hall 1 WM 1520507 02-JAN-25     12,764.85        1,133.10       11,631.75 31-JAN-25         11,631.75         91       
+        29                                                                                                                                       
+                                                                                                                                                 
+02VL8 004 Khondakar Pharmacy   1 WM 1522293 08-JAN-25     12,707.00          720.45       11,986.55 25-JAN-25         11,986.55         94       
+        17                                                                                                                                       
+                                                                                                                                                 
+20508 035 Maa Medical Hall     1 WM 1522929 11-JAN-25     16,720.70        4,561.92       12,158.78 15-JAN-25         12,158.78         73       
+         4                                                                                                                                       
+                                                                                                                                                 
+21666 026 Boishakhi Medical Ha 1 WM 1522402 08-JAN-25     13,422.34        1,221.95       12,200.39 15-JAN-25         12,200.39         91       
+         7                                                                                                                                       
+                                                                                                                                                 
+06834 043 Islam Medical Hall   1 WM 1526304 21-JAN-25     13,055.69          752.53       12,303.16 25-JAN-25         12,303.16         94       
+         4                                                                                                                                       
+                                                                                                                                                 
+20123 010 Ratna Medical Hall   1 WM 1521794 06-JAN-25     13,123.08          756.80       12,366.28 31-JAN-25         12,366.28         94       
+        25                                                                                                                                       
+                                                                                                                                                 
+21799 033 Sordar Medicine      1 WM 1527997 28-JAN-25     13,133.30          686.02       12,447.28 30-JAN-25         12,447.28         95       
+         2                                                                                                                                       
+                                                                                                                                                 
+26688 030 Robel Clinic         1 WM 1520284 01-JAN-25     12,839.59          167.22       12,672.37 31-JAN-25         12,672.37         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+21258 109 Lokh Nath Pharmacy   1 WM 1520065 01-JAN-25     13,426.23          450.00       12,976.23 30-JAN-25         12,976.23         97       
+        29                                                                                                                                       
+                                                                                                                                                 
+26879 004 Hannan Medical Hall  1 WM 1519977 01-JAN-25     14,097.01          643.14       13,453.87 30-JAN-25         13,453.87         95       
+        29                                                                                                                                       
+                                                                                                                                                 
+21258 141 Friends Medical Hall 1 WM 1520064 01-JAN-25     14,309.27          720.37       13,588.90 16-JAN-25         13,588.90         95       
+        15                                                                                                                                       
+                                                                                                                                                 
+22648 006 Doya  Moy Pharmacy   1 WM 1522212 07-JAN-25     14,019.09          343.00       13,676.09 31-JAN-25         13,676.09         98       
+        24                                                                                                                                       
+                                                                                                                                                 
+22083 029 Maa Telecom          1 WM 1519122 29-DEC-24     16,015.73        2,315.28       13,700.45 30-JAN-25         13,700.45         86       
+        32                                                                                                                                       
+                                                                                                                                                 
+27517 043 Mayer Doya M Hall    1 WM 1525623 19-JAN-25     14,575.36          377.70       14,197.66 26-JAN-25         14,197.66         97       
+         7                                                                                                                                       
+                                                                                                                                                 
+21738 079 Makka Pharmacy       1 WM 1525146 18-JAN-25     14,716.53          430.10       14,286.43 21-JAN-25         14,286.43         97       
+         3                                                                                                                                       
+                                                                                                                                                 
+02YS8 028 Maria Thasin Medical 1 WM 1511959 02-DEC-24     17,480.24        3,191.05       14,289.19 12-JAN-25         14,289.19         82       
+        41                                                                                                                                       
+                                                                                                                                                 
+06928 038 Shaha Medical Hall   1 WM 1519972 01-JAN-25     14,958.42          643.14       14,315.28 26-JAN-25         14,315.28         96       
+        25                                                                                                                                       
+                                                                                                                                                 
+21678 090 Bahar Medical Hall   1 WM 1519593 31-DEC-24     17,794.21        3,423.44       14,370.77 31-JAN-25         14,370.77         81       
+        31                                                                                                                                       
+                                                                                                                                                 
+26687 026 Tanmay Medical Hall  1 WM 1520485 02-JAN-25     14,972.47          309.00       14,663.47 30-JAN-25         14,663.47         98       
+        28                                                                                                                                       
+                                                                                                                                                 
+20611 001 J.M. Medicine        1 WM 1524638 15-JAN-25     16,268.49        1,476.50       14,791.99 21-JAN-25         14,791.99         91       
+         6                                                                                                                                       
+                                                                                                                                                 
+06928 011 Nahar Pharmacy       1 WM 1519963 01-JAN-25     15,930.87        1,117.00       14,813.87 30-JAN-25         14,813.87         93       
+        29                                                                                                                                       
+                                                                                                                                                 
+05207 101 Jaydam Medical Hall  1 WM 1522203 07-JAN-25     17,470.95        2,250.95       15,220.00 31-JAN-25         15,220.00         87       
+        24                                                                                                                                       
+                                                                                                                                                 
+02Q72 004 Shrabony Medical Hal 1 WM 1522556 08-JAN-25     15,724.28          411.20       15,313.08 31-JAN-25         15,313.08         97       
+        23                                                                                                                                       
+                                                                                                                                                 
+21015 081 Sazzat Medical       1 WM 1526796 23-JAN-25     15,859.70          415.20       15,444.50 27-JAN-25         15,444.50         97       
+         4                                                                                                                                       
+                                                                                                                                                 
+27517 043 Mayer Doya M Hall    1 WM 1523478 12-JAN-25     15,995.21          445.91       15,549.30 18-JAN-25         15,549.30         97       
+         6                                                                                                                                       
+                                                                                                                                                 
+50185 018 Surma  Drug House    1 WM 1526816 23-JAN-25     16,668.24          475.92       16,192.32 30-JAN-25         16,192.32         97       
+         7                                                                                                                                       
+                                                                                                                                                 
+26687 056 Ma Pharmacy          1 WM 1519506 30-DEC-24     16,510.89          257.25       16,253.64 29-JAN-25         16,253.64         98       
+        30                                                                                                                                       
+                                                                                                                                                 
+02VL8 025 Mukti Medical Hall   1 WM 1521645 06-JAN-25     18,249.59          720.32       17,529.27 31-JAN-25         17,529.27         96       
+        25                                                                                                                                       
+                                                                                                                                                 
+20793 003 Islamia Medical Hall 1 WM 1521029 04-JAN-25     19,037.60        1,254.20       17,783.40 14-JAN-25         17,783.40         93       
+        10                                                                                                                                       
+                                                                                                                                                 
+26879 024 Janasheba Pharmacy   1 WM 1518271 25-DEC-24     19,176.99          698.16       18,478.83 26-JAN-25         18,478.83         96       
+        32                                                                                                                                       
+                                                                                                                                                 
+05X38 043 Sree Guro Phar       1 WM 1519255 29-DEC-24     19,303.12          627.10       18,676.02 25-JAN-25         18,676.02         97       
+        27                                                                                                                                       
+                                                                                                                                                 
+21467 002 Jahirul Medical Hall 1 WM 1521910 06-JAN-25     24,666.38        5,402.28       19,264.10 15-JAN-25         19,264.10         78       
+         9                                                                                                                                       
+                                                                                                                                                 
+22083 006 Shaila Medical Hall  1 WM 1519951 01-JAN-25     21,243.27        1,742.28       19,500.99 30-JAN-25         19,500.99         92       
+        29                                                                                                                                       
+                                                                                                                                                 
+06928 067 Sotata Pharmacy      1 WM 1519051 29-DEC-24     19,923.11          345.93       19,577.18 26-JAN-25         19,577.18         98       
+        28                                                                                                                                       
+                                                                                                                                                 
+26688 052 Dr Habib Pharmacy    1 WM 1520285 01-JAN-25     21,430.59        1,697.87       19,732.72 31-JAN-25         19,732.72         92       
+        30                                                                                                                                       
+                                                                                                                                                 
+20542 026 Abdullah Pharmacy    1 WM 1519379 30-DEC-24     22,930.27        2,572.74       20,357.53 30-JAN-25         20,357.53         89       
+        31                                                                                                                                       
+                                                                                                                                                 
+20611 002 Kusum Pharamcy       1 WM 1519518 30-DEC-24     23,646.72        2,882.32       20,764.40 29-JAN-25         20,764.40         88       
+        30                                                                                                                                       
+                                                                                                                                                 
+22083 009 Sadek Med Hall       1 WM 1520179 01-JAN-25     21,414.02          278.71       21,135.31 31-JAN-25         21,135.31         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+26879 047 Popular Pharmacy     1 WM 1521589 05-JAN-25     27,218.55        5,665.50       21,553.05 29-JAN-25         21,553.05         79       
+        24                                                                                                                                       
+                                                                                                                                                 
+07137 060 Shefa Medical Hall   1 WM 1520459 02-JAN-25     26,557.90        4,962.01       21,595.89 31-JAN-25         21,595.89         81       
+        29                                                                                                                                       
+                                                                                                                                                 
+21467 017 Roy Medical Hall     1 WM 1520716 02-JAN-25     22,013.84           51.62       21,962.22 31-JAN-25         21,962.22        100       
+        29                                                                                                                                       
+                                                                                                                                                 
+22970 004 Alif Medical Hall    1 WM 1519658 31-DEC-24     23,738.13        1,628.10       22,110.03 19-JAN-25         22,110.03         93       
+        19                                                                                                                                       
+                                                                                                                                                 
+22512 199 Popular Pharmacy     1 WM 1520303 01-JAN-25     22,582.63          167.24       22,415.39 31-JAN-25         22,415.39         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+05418 004 Matri Pharmacy       1 WM 1520290 01-JAN-25     24,422.67        1,929.39       22,493.28 31-JAN-25         22,493.28         92       
+        30                                                                                                                                       
+                                                                                                                                                 
+06928 027 Ataullah Medical Hal 1 WM 1525672 19-JAN-25     24,450.81          428.75       24,022.06 25-JAN-25         24,022.06         98       
+         6                                                                                                                                       
+                                                                                                                                                 
+22026 018 Surma  Drug House    1 WM 1523667 13-JAN-25     25,376.65        1,029.02       24,347.63 30-JAN-25         24,347.63         96       
+        17                                                                                                                                       
+                                                                                                                                                 
+28037 035 Anika Pharmacy       1 WM 1519633 31-DEC-24     26,002.79        1,422.45       24,580.34 30-JAN-25         24,580.34         95       
+        30                                                                                                                                       
+                                                                                                                                                 
+02MK2 011 Economic Pharmacy    1 WM 1521535 05-JAN-25     34,989.70       10,290.20       24,699.50 22-JAN-25         24,699.50         71       
+        17                                                                                                                                       
+                                                                                                                                                 
+02MK2 032 Bismillah Medical Ha 1 WM 1520324 01-JAN-25     32,446.94        7,159.09       25,287.85 31-JAN-25         25,287.85         78       
+        30                                                                                                                                       
+                                                                                                                                                 
+22083 022 Dr Anil Pharmacy     1 WM 1519019 29-DEC-24     26,132.81          724.14       25,408.67 30-JAN-25         25,408.67         97       
+        32                                                                                                                                       
+                                                                                                                                                 
+05X32 020 Mahammadia Pharmacy  1 WM 1518448 26-DEC-24     27,111.11        1,113.72       25,997.39 11-JAN-25         25,997.39         96       
+        16                                                                                                                                       
+                                                                                                                                                 
+22295 115 Mojumder Medical Hal 1 WM 1520836 03-JAN-25     31,874.59        5,520.87       26,353.72 31-JAN-25         26,353.72         83       
+        28                                                                                                                                       
+                                                                                                                                                 
+22295 001 Dr. Billal Hossain   1 WM 1519701 01-JAN-25     36,913.55        8,439.97       28,473.58 28-JAN-25         28,473.58         77       
+        27                                                                                                                                       
+                                                                                                                                                 
+21799 029 Alif Pharma          1 WM 1521276 05-JAN-25     29,314.54          343.01       28,971.53 27-JAN-25         28,971.53         99       
+        22                                                                                                                                       
+                                                                                                                                                 
+02Q72 028 Medeco Pharmacy      1 WM 1520077 01-JAN-25     33,026.22        3,722.85       29,303.37 31-JAN-25         29,303.37         89       
+        30                                                                                                                                       
+                                                                                                                                                 
+06834 050 Sarker Pharmacy      1 WM 1521189 04-JAN-25     31,457.82          343.00       31,114.82 31-JAN-25         31,114.82         99       
+        27                                                                                                                                       
+                                                                                                                                                 
+22026 021 Shawon Drug House    1 WM 1519896 01-JAN-25     32,033.29          686.00       31,347.29 31-JAN-25         31,347.29         98       
+        30                                                                                                                                       
+                                                                                                                                                 
+26879 127 New Salimgonj Oshudh 1 WM 1519183 29-DEC-24     33,817.03          900.69       32,916.34 26-JAN-25         32,916.34         97       
+        28                                                                                                                                       
+                                                                                                                                                 
+26687 010 Narayan Pharmacy     1 WM 1526117 20-JAN-25     34,517.48          309.00       34,208.48 31-JAN-25         34,208.48         99       
+        11                                                                                                                                       
+                                                                                                                                                 
+50185 006 A.B.Pharmacy         1 WM 1520412 02-JAN-25     35,306.78          771.76       34,535.02 30-JAN-25         34,535.02         98       
+        28                                                                                                                                       
+                                                                                                                                                 
+02Q72 018 Janata Pharmacy      1 WM 1520078 01-JAN-25     41,722.31        7,174.69       34,547.62 31-JAN-25         34,547.62         83       
+        30                                                                                                                                       
+                                                                                                                                                 
+05418 001 Janata Pharmacy      1 WM 1513871 08-DEC-24     38,391.40        3,233.00       35,158.40 05-JAN-25         34,391.00         90       
+        28                                                                                                                                       
+                                                                                                                                                 
+21906 106 Shalghor Pharmacy    1 WM 1520637 02-JAN-25     38,639.27        2,829.75       35,809.52 31-JAN-25         35,809.52         93       
+        29                                                                                                                                       
+                                                                                                                                                 
+27585 008 Dewan Pharmacy       1 WM 1519762 31-DEC-24     38,464.23        1,286.26       37,177.97 30-JAN-25         37,177.97         97       
+        30                                                                                                                                       
+                                                                                                                                                 
+20542 020 Bakul Medical Hall   1 WM 1519003 29-DEC-24     38,131.00          686.00       37,445.00 31-JAN-25         37,445.00         98       
+        33                                                                                                                                       
+                                                                                                                                                 
+20611 003 New Popular Medicine 1 WM 1519190 29-DEC-24     38,803.04          135.65       38,667.39 29-JAN-25         38,667.39        100       
+        31                                                                                                                                       
+                                                                                                                                                 
+02455 013 Subarna Medical Hall 1 WM 1520754 03-JAN-25     41,705.40        2,829.80       38,875.60 31-JAN-25         38,875.60         93       
+        28                                                                                                                                       
+                                                                                                                                                 
+22970 001 Roy Medical Hall     1 WM 1521118 04-JAN-25     39,899.66          686.08       39,213.58 31-JAN-25         39,213.58         98       
+        27                                                                                                                                       
+                                                                                                                                                 
+02Q72 022 Adarsha Pharmacy     1 WM 1521503 05-JAN-25     49,639.39        9,263.17       40,376.22 31-JAN-25         40,376.22         81       
+        26                                                                                                                                       
+                                                                                                                                                 
+26688 057 Mokka Medical Hall   1 WM 1518694 28-DEC-24     42,677.65           58.46       42,619.19 26-JAN-25         42,619.19        100       
+        29                                                                                                                                       
+                                                                                                                                                 
+27517 019 Shikder M Hall       1 WM 1525698 19-JAN-25     47,143.89          207.56       46,936.33 26-JAN-25         46,936.33        100       
+         7                                                                                                                                       
+                                                                                                                                                 
+02455 045 Moon Medical Hall    1 WM 1519611 31-DEC-24     49,009.06        1,131.92       47,877.14 30-JAN-25         47,877.14         98       
+        30                                                                                                                                       
+                                                                                                                                                 
+22970 024 Zehad Medical Hall   1 WM 1522216 07-JAN-25     50,399.01        1,697.88       48,701.13 31-JAN-25         48,701.13         97       
+        24                                                                                                                                       
+                                                                                                                                                 
+05X38 023 Bismillah Medical Ha 1 WM 1512021 02-DEC-24     57,394.01        7,392.56       50,001.45 06-JAN-25         40,391.45         70       
+        35                                                                                                                                       
+                                                                                                                                                 
+02FT8 043 3m Brothers Pharmacy 1 WM 1517973 25-DEC-24     54,134.18        1,749.32       52,384.86 28-JAN-25         52,384.86         97       
+        34                                                                                                                                       
+                                                                                                                                                 
+21799 001 Amin Pharmacy        1 WM 1519926 01-JAN-25     54,702.43        1,493.26       53,209.17 27-JAN-25         53,209.17         97       
+        26                                                                                                                                       
+                                                                                                                                                 
+22512 191 Sadesh Pharmacy      1 WM 1520306 01-JAN-25     53,836.59          361.26       53,475.33 31-JAN-25         53,475.33         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+20611 001 Raza Pharmacy        1 WM 1527724 26-JAN-25     57,421.01        3,873.64       53,547.37 30-JAN-25         53,547.37         93       
+         4                                                                                                                                       
+                                                                                                                                                 
+22116 014 Shaha Pharmacy       1 WM 1511325 01-DEC-24     55,832.13        1,886.75       53,945.38 02-JAN-25         13,986.74         25       
+        32                                                                                                                                       
+                                                                                                                                                 
+05418 014 Gazi Medical Hall    1 WM 1520863 03-JAN-25     55,774.70        1,509.38       54,265.32 31-JAN-25         54,265.32         97       
+        28                                                                                                                                       
+                                                                                                                                                 
+20611 001 J.M. Medicine        1 WM 1519517 30-DEC-24     60,364.29        5,273.74       55,090.55 29-JAN-25         55,090.55         91       
+        30                                                                                                                                       
+                                                                                                                                                 
+20542 060 Haji Abdur Rahman Me 1 WM 1520972 04-JAN-25     56,669.57        1,286.26       55,383.31 31-JAN-25         55,383.31         98       
+        27                                                                                                                                       
+                                                                                                                                                 
+22027 003 Rahmania Medical Hal 1 WM 1520464 02-JAN-25     57,378.16          900.98       56,477.18 31-JAN-25         56,477.18         98       
+        29                                                                                                                                       
+                                                                                                                                                 
+22116 023 Sarker Jobeda Mdicin 1 WM 1520851 03-JAN-25     57,650.27          295.80       57,354.47 31-JAN-25         57,354.47         99       
+        28                                                                                                                                       
+                                                                                                                                                 
+22083 005 Master Pharmacy      1 WM 1519181 29-DEC-24     69,682.35        5,379.00       64,303.35 26-JAN-25         64,303.35         92       
+        28                                                                                                                                       
+                                                                                                                                                 
+02Q72 020 Fatema Medical Hall  1 WM 1523472 12-JAN-25     68,666.50        2,575.50       66,091.00 31-JAN-25         66,091.00         96       
+        19                                                                                                                                       
+                                                                                                                                                 
+05137 021 S. Das Medical Hall  1 WM 1522054 07-JAN-25     70,145.95        1,106.96       69,038.99 31-JAN-25         69,038.99         98       
+        24                                                                                                                                       
+                                                                                                                                                 
+22970 002 Neramoy Medical Hall 1 WM 1526297 21-JAN-25     82,945.59       10,054.89       72,890.70 30-JAN-25         72,890.70         88       
+         9                                                                                                                                       
+                                                                                                                                                 
+26384 020 Hazi Safar Ali Medic 1 WM 1519807 01-JAN-25     79,265.45          180.07       79,085.38 31-JAN-25         79,085.38        100       
+        30                                                                                                                                       
+                                                                                                                                                 
+05418 016 Shajahan Medical Hal 1 WM 1519173 29-DEC-24     81,298.52        1,240.08       80,058.44 29-JAN-25         80,058.44         98       
+        31                                                                                                                                       
+                                                                                                                                                 
+21799 014 Islam Medical Hall   1 WM 1519739 01-JAN-25     92,426.87       10,824.15       81,602.72 28-JAN-25         81,602.72         88       
+        27                                                                                                                                       
+                                                                                                                                                 
+21678 017 Asia Drug House      1 WM 1519046 29-DEC-24     99,047.38        2,272.50       96,774.88 28-JAN-25         96,774.88         98       
+        30                                                                                                                                       
+                                                                                                                                                 
+05X38 042 The New Pharmacy     1 WM 1519435 30-DEC-24   1,00,442.88        2,458.94       97,983.94 30-JAN-25         97,983.94         98       
+        31                                                                                                                                       
+                                                                                                                                                 
+22702 030 Datta Medical Hall   1 WM 1518731 28-DEC-24   1,05,834.83        6,079.80       99,755.03 26-JAN-25         99,755.03         94       
+        29                                                                                                                                       
+                                                                                                                                                 
+22027 019 Mokka Pharmacy       1 WM 1519889 01-JAN-25   1,04,866.13        1,254.20     1,03,611.93 31-JAN-25       1,03,611.93         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+27517 046 Molla Pharmacy       1 WM 1519760 31-DEC-24   1,06,729.93        3,002.30     1,03,727.63 31-JAN-25       1,03,727.63         97       
+        31                                                                                                                                       
+                                                                                                                                                 
+26688 016 Belal Medical Hall   1 WM 1518294 25-DEC-24   1,07,135.35        2,060.00     1,05,075.35 31-JAN-25       1,05,075.35         98       
+        37                                                                                                                                       
+                                                                                                                                                 
+22970 007 Priya Medical Hall   1 WM 1518679 28-DEC-24   1,11,189.47          467.36     1,10,722.11 28-JAN-25       1,10,722.11        100       
+        31                                                                                                                                       
+                                                                                                                                                 
+21646 003 Al Shams Pharmacy    1 WM 1519496 30-DEC-24   1,17,863.41          771.76     1,17,091.65 25-JAN-25       1,17,091.65         99       
+        26                                                                                                                                       
+                                                                                                                                                 
+21258 027 Ibne Sina Medical Ha 1 WM 1518291 25-DEC-24   1,22,220.82        4,500.00     1,17,720.82 29-JAN-25       1,17,720.82         96       
+        35                                                                                                                                       
+                                                                                                                                                 
+21799 079 Imran Medical Hall   1 WM 1519811 01-JAN-25   1,37,135.08          841.40     1,36,293.68 31-JAN-25       1,36,293.68         99       
+        30                                                                                                                                       
+                                                                                                                                                 
+05137 014 Bondashahi Drug Hous 1 WM 1518609 27-DEC-24   1,51,058.83       13,043.02     1,38,015.81 29-JAN-25       1,38,015.81         91       
+        33                                                                                                                                       
+                                                                                                                                                 
+21678 147 Shahin Pharmacy      1 WM 1519894 01-JAN-25   1,45,907.78        5,693.84     1,40,213.94 31-JAN-25       1,40,213.94         96       
+        30                                                                                                                                       
+                                                                                                                                                 
+05137 011 Azad Medical Hall    1 WM 1520477 02-JAN-25   2,44,135.98        1,548.20     2,42,587.78 31-JAN-25       2,42,587.78         99       
+        29                                                                                                                                       
+                                                                                                                                                 
+06928 021 Hafsa Hamidia Medica 1 WO 1520189 01-JAN-25      1,513.66          501.30        1,012.36 12-JAN-25          1,012.36         67       
+        11                                                                                                                                       
+                                                                                                                                                 
+21906 039 Selim Medical Hall   1 WO 1527809 27-JAN-25      1,612.13          571.50        1,040.63 29-JAN-25          1,040.63         65       
+         2                                                                                                                                       
+                                                                                                                                                 
+21799 089 Royel Pharmacy       1 WO 1521697 06-JAN-25      2,443.65        1,362.39        1,081.26 08-JAN-25          1,081.26         44       
+         2                                                                                                                                       
+                                                                                                                                                 
+21799 089 Royel Pharmacy       1 WO 1525392 19-JAN-25      1,674.09          454.13        1,219.96 25-JAN-25          1,219.96         73       
+         6                                                                                                                                       
+                                                                                                                                                 
+21906 047 Bismillah Medical Ha 1 WO 1523214 11-JAN-25      1,678.55          454.13        1,224.42 18-JAN-25          1,224.42         73       
+         7                                                                                                                                       
+                                                                                                                                                 
+22295 035 Al Shifa Medical Car 1 WO 1526284 21-JAN-25      2,369.36        1,132.77        1,236.59 27-JAN-25          1,236.59         52       
+         6                                                                                                                                       
+                                                                                                                                                 
+02Q72 034 Medicine Corner      1 WO 1521449 05-JAN-25      1,626.96          389.25        1,237.71 07-JAN-25          1,237.71         76       
+         2                                                                                                                                       
+                                                                                                                                                 
+05X38 055 Bakul Eye Care       1 WO 1521825 06-JAN-25      1,660.80          415.20        1,245.60 08-JAN-25          1,245.60         75       
+         2                                                                                                                                       
+                                                                                                                                                 
+22116 001 Anowara Central Hosp 1 WO 1526606 22-JAN-25      1,662.02          415.21        1,246.81 29-JAN-25          1,246.81         75       
+         7                                                                                                                                       
+                                                                                                                                                 
+06928 004 Hridoy Medical Hall  1 WO 1525581 19-JAN-25      1,674.51          389.25        1,285.26 25-JAN-25          1,285.26         77       
+         6                                                                                                                                       
+                                                                                                                                                 
+22702 059 Omar Pharmacy(Sondhr 1 WO 1524777 16-JAN-25      2,171.16          847.70        1,323.46 22-JAN-25          1,323.46         61       
+         6                                                                                                                                       
+                                                                                                                                                 
+02Q72 028 Ruma Medical Hall    1 WO 1524499 15-JAN-25      1,527.55           76.12        1,451.43 18-JAN-25          1,451.43         95       
+         3                                                                                                                                       
+                                                                                                                                                 
+02YS8 104 Bismiallah Pharmacy  1 WO 1527890 27-JAN-25      2,567.27        1,012.36        1,554.91 30-JAN-25          1,554.91         61       
+         3                                                                                                                                       
+                                                                                                                                                 
+22516 055 Doyal Medical Hall   1 WO 1527815 27-JAN-25      1,982.75          259.50        1,723.25 30-JAN-25          1,723.25         87       
+         3                                                                                                                                       
+                                                                                                                                                 
+21646 038 Biazid Medical Hall  1 WO 1523593 12-JAN-25      2,138.06          389.26        1,748.80 14-JAN-25          1,748.80         82       
+         2                                                                                                                                       
+                                                                                                                                                 
+27517 070 Al Modina Pharmacy   1 WO 1523479 12-JAN-25      1,979.62          139.60        1,840.02 19-JAN-25          1,840.02         93       
+         7                                                                                                                                       
+                                                                                                                                                 
+50091 006 Mohananda Pharmacy   1 WO 1527891 27-JAN-25      2,644.30          726.75        1,917.55 31-JAN-25          1,917.55         73       
+         4                                                                                                                                       
+                                                                                                                                                 
+21015 014 Islam Medical Hall   1 WO 1523330 12-JAN-25      2,430.85          467.11        1,963.74 16-JAN-25          1,963.74         81       
+         4                                                                                                                                       
+                                                                                                                                                 
+02Q72 011 Niramoy M/H          1 WO 1526655 22-JAN-25      2,892.56          882.32        2,010.24 28-JAN-25          2,010.24         69       
+         6                                                                                                                                       
+                                                                                                                                                 
+02Q72 019 Satata Pharmacy      1 WO 1526543 22-JAN-25      2,415.22          216.27        2,198.95 28-JAN-25          2,198.95         91       
+         6                                                                                                                                       
+                                                                                                                                                 
+21678 001 Al Hasan Pharmacy    1 WO 1527990 28-JAN-25      2,682.70          454.13        2,228.57 30-JAN-25          2,228.57         83       
+         2                                                                                                                                       
+                                                                                                                                                 
+28578 028 Bangladesh Medical H 1 WO 1526834 23-JAN-25      2,530.97          260.32        2,270.65 26-JAN-25          2,270.65         90       
+         3                                                                                                                                       
+                                                                                                                                                 
+05207 011 Selina And Peara Med 1 WO 1525332 18-JAN-25      2,854.57          493.06        2,361.51 23-JAN-25          2,361.51         83       
+         5                                                                                                                                       
+                                                                                                                                                 
+27585 054 Dr Delowar Hossain   1 WO 1523505 12-JAN-25      2,902.44          519.01        2,383.43 14-JAN-25          2,383.43         82       
+         2                                                                                                                                       
+                                                                                                                                                 
+05207 038 Mojib Medical Hall   1 WO 1527372 25-JAN-25      2,648.13          123.36        2,524.77 29-JAN-25          2,524.77         95       
+         4                                                                                                                                       
+                                                                                                                                                 
+22702 050 Moynamoti Medicine C 1 WO 1526158 21-JAN-25      2,831.12           67.59        2,763.53 23-JAN-25          2,763.53         98       
+         2                                                                                                                                       
+                                                                                                                                                 
+                                    -------           ------------- --------------- ---------------           -----------------                  
+                                                                                                                                                 
+                                                                                                                                                 
+count                                   262                                                                                                      
+                                                                                                                                                 
+                                                                                                                                                 
+sum                                                    56,62,580.30     3,98,513.78    52,64,066.52                52,13,718.83                  
+                                                                                                                                                 
+                                                                                                                                                 
+
+262 rows selected.
+

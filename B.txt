@@ -1,0 +1,24 @@
+SET LINEs 150
+SET PAGES 20
+set numformat 9,99,999.99
+
+
+SELECT * FROM SCENT.OUT_DET WHERE SC_CD='&&SC_CD' AND BILL_NO='&B_NO' ORDER BY SEQ
+/
+
+==================================================================================
+
+
+Enter value for sc_cd: 11
+Enter value for b_no: 1155372
+old   1: SELECT * FROM SCENT.OUT_DET WHERE SC_CD='&&SC_CD' AND BILL_NO='&B_NO' 
+new   1: SELECT * FROM SCENT.OUT_DET WHERE SC_CD='11' AND BILL_NO='1155372' ORD
+
+SC          SEQ BILL_NO CMRTN_N OUT_DT    M         AMNT     OUT_AMNT W_DT
+-- ------------ ------- ------- --------- - ------------ ------------ ---------
+11         1.00 1155372 0       10-OCT-21 B          .00    64,211.54 09-OCT-21
+11         2.00 1155372 298535  31-DEC-22 C        56.94    64,154.60 01-JAN-23
+11         3.00 1155372 331398  19-FEB-24 C     1,000.00    63,154.60 19-FEB-24
+11         4.00 1155372 349630  16-SEP-24 C     2,000.00    61,154.60 16-SEP-24
+11         5.00 1155372 352825  21-OCT-24 C     1,000.00    60,154.60 21-OCT-24
+11         6.00 1155372 361895  22-JAN-25 C     1,000.00    59,154.60 22-JAN-25

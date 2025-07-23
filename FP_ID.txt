@@ -1,0 +1,1 @@
+select * from scent.bill_mas where sc_cd='&sc_cd' and bill_no='&BILL_NO';

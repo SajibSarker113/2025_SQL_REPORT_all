@@ -1,0 +1,107 @@
+SET LINES 92
+SET PAGES 4000
+SET NUMFORMAT 999999.99
+
+COMPUTE SUM OF VAL ON PRD_CD CAT_CD PETTY
+COMPUTE SUM OF VAL RMT_AMT ON REPORT
+BREAK ON REPORT ON CAT_CD
+COMPUTE SUM OF STK_QTY RV_QTY1 PETTY ON PRD_CD CAT_CD 
+COMPUTE SUM OF STK_QTY RV_QTY1 PETTY ON REPORT
+BREAK ON REPORT ON PRD_CD 
+
+TTITLE CENTER 'DEPOT: '&&SC_CD' BATCH WISE STOCK DATE: &CURRENT_DATE ' SKIP2
+
+SPOOL ON 
+
+
+SELECT DISTINCT B.CAT_CD, B.PRD_CD, SUBSTR(RPAD(C.PROD_NM,'30','-------------'),1,30)NAME, B.B_NO, SUM(B.RV_QTY)RV_QTY1, SUM(B.RV_BAL)STK_QTY, (SUM(B.RV_BAL/D.MST_PK))PETTY, SUM(B.RV_QTY-B.RV_BAL) DIFF 
+FROM INV.FG_RV1 A, INV.FG_RV2 B, SCENT.INV_PROD C, SCENT.PROD_RATE D 
+WHERE A.RV_NO=B.RV_NO AND
+A.LOC_CD='&&SC_CD' AND
+(B.RV_BAL)>'0' AND
+B.CAT_CD=C.CAT_CD AND
+B.PRD_CD=C.PRD_CD AND
+B.TYP_CD=C.TYP_CD AND
+A.LOC_CD=B.LOC_CD AND
+B.CAT_CD=D.CAT_CD AND
+B.PRD_CD=D.PRD_CD AND
+B.TYP_CD=D.TYP_CD AND
+A.RV_DT BETWEEN '01-JAN-19' AND '31-DEC-26' AND 
+B.CAT_CD>'0' AND
+A.DIV_CD='&&DIV_CD' AND 
+B.TYP_CD='09' AND 
+A.RV_TYPE NOT IN('0')
+GROUP BY B.CAT_CD,B.PRD_CD,C.PROD_NM,B.B_NO,B.RV_QTY,B.RV_BAL 
+---HAVING (B.RV_QTY-B.RV_BAL)>'0'
+ORDER BY B.CAT_CD, B.PRD_CD
+/
+ 
+SPOOL OFF
+ED ON.LST
+=======================================================================================
+
+SQL> @BATCH_DIFF
+Enter value for sc_cd: 11
+Enter value for current_date: 15jul25
+old   4: A.LOC_CD='&&SC_CD' AND
+new   4: A.LOC_CD='11' AND
+Enter value for div_cd: 2
+old  15: A.DIV_CD='&&DIV_CD' AND
+new  15: A.DIV_CD='2' AND
+
+                          DEPOT: 11 BATCH WISE STOCK DATE: 15jul25
+
+CA PRD_ NAME                           B_NO          RV_QTY1    STK_QTY      PETTY
+-- ---- ------------------------------ ---------- ---------- ---------- ----------
+      DIFF
+----------
+04 4001 04CIPRO-D VET EYE DROP 5ML---- D0014035       840.00     268.00       3.19
+    572.00
+
+05 4005 05V-PLEX VET 10ML------------- V0055002       144.00     139.00        .97
+      5.00
+
+05 4006 05VITA-ADE 10ML--------------- V0065005       216.00     168.00       1.56
+     48.00
+
+05 4007 05VITA-ADE 100ML-------------- V0075014       160.00      96.00       3.00
+     64.00
+
+05 4011 05SP-VET 2.5GM---------------- V0115002       880.00     544.00       6.18
+    336.00
+
+05 4012 05COMBIPEN VET 40 LACS-------- V0124078      1760.00     175.00       1.99
+   1585.00
+
+05 4013 05V-PLEX VET 100ML------------ V0135018       320.00     216.00       6.75
+    104.00
+
+05 4014 05SULFASOL VET 30ML----------- V0143002        10.00       1.00        .08
+      9.00
+
+05 4015 05SULFASOL VET 100ML---------- V0155004       128.00      90.00       2.81
+     38.00
+
+05 4016 05A-SOL VET 100ML------------- V0165014       320.00     229.00       7.16
+     91.00
+
+05 4017 05DECAM VET 200ML------------- V0175002        60.00      45.00       3.75
+     15.00
+
+05 4018 05ASTA-VET 100ML-------------- V0185004        64.00      61.00       1.91
+      3.00
+
+05 4019 05A-SOL VET 30ML-------------- V0195004       120.00     118.00       1.97
+      2.00
+
+05 4021 05GENTA 10ML------------------ V0215001       147.00     122.00        .83
+     25.00
+
+05 4022 05CIPRO-A VET 100ML----------- V0225002        32.00       8.00        .25
+     24.00
+
+05 4023 05A-MECTIN 5ML---------------- V0235001       189.00     116.00        .61
+     73.00
+
+05 4025 05CIPRO-A VET 30ML------------ V0255001       120.00       5.00        .08
+

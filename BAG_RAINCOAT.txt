@@ -1,0 +1,152 @@
+ACCEPT SC_NO CHAR PROMPT 'ENTER YOUR DEPOT CODE : '
+set pages 5000
+SET LINES 93
+
+
+SPOOL ON
+
+SELECT M.FP_ID,S.CAT_CD||S.PRD_CD,INITCAP(N.PROD_NM),SUM(SAM_QTY) SAM_QTY,SUM(SAM_QTY*SAM_VAL) SAM_VAL
+FROM SCENT.SAMP_DET S,SCENT.INV_PROD N,SCENT.SAMP_MAS M
+WHERE S.SC_NO='&SC_NO' AND M.SC_NO='&SC_NO' 
+AND S.BILL_V_NO=M.BILL_V_NO
+AND M.BILL_V_DT BETWEEN '&&Date1' AND '&&Date2' AND M.CANCL IS NULL
+AND S.CAT_CD||S.PRD_CD IN('011018','051056','011010') 
+AND S.TYP_CD='06'
+AND N.TYP_CD='06'
+AND S.CAT_CD||S.PRD_CD=N.CAT_CD||N.PRD_CD
+GROUP BY  M.FP_ID,S.CAT_CD||S.PRD_CD,N.PROD_NM
+ORDER BY  SAM_QTY, N.PROD_NM, M.FP_ID
+/
+
+
+--with Bill_no
+set pages 5000
+SET LINES 93
+SELECT M.FP_ID,S.CAT_CD||S.PRD_CD,INITCAP(N.PROD_NM),M.BILL_V_NO, M.BILL_V_DT, SUM(SAM_QTY) SAM_QTY,SUM(SAM_QTY*SAM_VAL) SAM_VAL
+FROM SCENT.SAMP_DET S,SCENT.INV_PROD N,SCENT.SAMP_MAS M
+WHERE S.SC_NO='&SC_NO' AND M.SC_NO='&SC_NO' 
+AND S.BILL_V_NO=M.BILL_V_NO
+AND M.BILL_V_DT BETWEEN '&&Date1' AND '&&Date2' AND M.CANCL IS NULL
+AND S.CAT_CD||S.PRD_CD IN('011018','051056','011010') 
+AND S.TYP_CD='06'
+AND N.TYP_CD='06'
+AND S.CAT_CD||S.PRD_CD=N.CAT_CD||N.PRD_CD
+GROUP BY  M.FP_ID,S.CAT_CD||S.PRD_CD,N.PROD_NM,M.BILL_V_NO, M.BILL_V_DT
+ORDER BY  M.FP_ID,S.CAT_CD||S.PRD_CD,N.PROD_NM,M.BILL_V_NO
+/
+
+SPOOL OFF
+
+ED ON.LST
+
+
+=========================================================
+
+old   3: WHERE S.SC_NO='&SC_NO' AND M.SC_NO='&SC_NO'
+new   3: WHERE S.SC_NO='31' AND M.SC_NO='31'
+Enter value for date1: 01jan24
+Enter value for date2: 31dec24
+old   5: AND M.BILL_V_DT BETWEEN '&&Date1' AND '&&Date2' AND M.CANCL IS NULL
+new   5: AND M.BILL_V_DT BETWEEN '01jan24' AND '31dec24' AND M.CANCL IS NULL
+
+FP_ID S.CAT_ INITCAP(N.PROD_NM)                          SAM_QTY    SAM_VAL                  
+----- ------ ---------------------------------------- ---------- ----------                  
+02Z16 011018 Chrome Leather Med. Bag                           1        865                  
+06820 011018 Chrome Leather Med. Bag                           1        865                  
+20697 011018 Chrome Leather Med. Bag                           1        865                  
+20809 011018 Chrome Leather Med. Bag                           1        865                  
+22338 011018 Chrome Leather Med. Bag                           1        865                  
+22364 011018 Chrome Leather Med. Bag                           1      51.79                  
+22444 011018 Chrome Leather Med. Bag                           1      51.79                  
+22579 011018 Chrome Leather Med. Bag                           1        865                  
+22594 011018 Chrome Leather Med. Bag                           1        865                  
+22709 011018 Chrome Leather Med. Bag                           1        865                  
+22864 011018 Chrome Leather Med. Bag                           1        865                  
+22902 011018 Chrome Leather Med. Bag                           1        865                  
+22971 011018 Chrome Leather Med. Bag                           1        865                  
+22982 011018 Chrome Leather Med. Bag                           1        865                  
+26168 011018 Chrome Leather Med. Bag                           1        865                  
+27290 011018 Chrome Leather Med. Bag                           1        865                  
+27566 011018 Chrome Leather Med. Bag                           1        865                  
+27911 011018 Chrome Leather Med. Bag                           1        865                  
+28604 011018 Chrome Leather Med. Bag                           1        865                  
+02RG9 051056 Rain Coat                                         1        720                  
+02Z16 051056 Rain Coat                                         1        720                  
+05M01 051056 Rain Coat                                         1        720                  
+20497 051056 Rain Coat                                         1        720                  
+21986 051056 Rain Coat                                         1        720                  
+22338 051056 Rain Coat                                         1        720                  
+22364 051056 Rain Coat                                         1        720                  
+22444 051056 Rain Coat                                         1        720                  
+22486 051056 Rain Coat                                         1        720                  
+22579 051056 Rain Coat                                         1        720                  
+22709 051056 Rain Coat                                         1        720                  
+22787 051056 Rain Coat                                         1        720                  
+22864 051056 Rain Coat                                         1        720                  
+22902 051056 Rain Coat                                         1        720                  
+22971 051056 Rain Coat                                         1        720                  
+22982 051056 Rain Coat                                         1        720                  
+23447 051056 Rain Coat                                         1        720                  
+27566 051056 Rain Coat                                         1        720                  
+27911 051056 Rain Coat                                         1        720                  
+28138 051056 Rain Coat                                         1        720                  
+28604 051056 Rain Coat                                         1        720                  
+22862 011018 Chrome Leather Med. Bag                           2       1730                  
+22862 051056 Rain Coat                                         2       1440                  
+
+42 rows selected.
+
+old   3: WHERE S.SC_NO='&SC_NO' AND M.SC_NO='&SC_NO'
+new   3: WHERE S.SC_NO='31' AND M.SC_NO='31'
+old   5: AND M.BILL_V_DT BETWEEN '&&Date1' AND '&&Date2' AND M.CANCL IS NULL
+new   5: AND M.BILL_V_DT BETWEEN '01jan24' AND '31dec24' AND M.CANCL IS NULL
+
+FP_ID S.CAT_ INITCAP(N.PROD_NM)                       BILL_V BILL_V_DT    SAM_QTY    SAM_VAL 
+----- ------ ---------------------------------------- ------ --------- ---------- ---------- 
+02RG9 051056 Rain Coat                                022855 24-JUL-24          1        720 
+02Z16 011018 Chrome Leather Med. Bag                  023050 08-AUG-24          1        865 
+02Z16 051056 Rain Coat                                023050 08-AUG-24          1        720 
+05M01 051056 Rain Coat                                018460 10-FEB-24          1        720 
+06820 011018 Chrome Leather Med. Bag                  023034 03-AUG-24          1        865 
+20497 051056 Rain Coat                                018461 10-FEB-24          1        720 
+20697 011018 Chrome Leather Med. Bag                  019179 05-MAR-24          1        865 
+20809 011018 Chrome Leather Med. Bag                  020581 23-APR-24          1        865 
+21986 051056 Rain Coat                                023033 03-AUG-24          1        720 
+22338 011018 Chrome Leather Med. Bag                  020579 23-APR-24          1        865 
+22338 051056 Rain Coat                                020579 23-APR-24          1        720 
+22364 011018 Chrome Leather Med. Bag                  017317 03-JAN-24          1      51.79 
+22364 051056 Rain Coat                                018767 14-FEB-24          1        720 
+22444 011018 Chrome Leather Med. Bag                  018072 27-JAN-24          1      51.79 
+22444 051056 Rain Coat                                018794 17-FEB-24          1        720 
+22486 051056 Rain Coat                                018766 14-FEB-24          1        720 
+22579 011018 Chrome Leather Med. Bag                  018862 21-FEB-24          1        865 
+22579 051056 Rain Coat                                023035 04-AUG-24          1        720 
+22594 011018 Chrome Leather Med. Bag                  019178 05-MAR-24          1        865 
+22709 011018 Chrome Leather Med. Bag                  021147 16-MAY-24          1        865 
+22709 051056 Rain Coat                                021147 16-MAY-24          1        720 
+22787 051056 Rain Coat                                023032 03-AUG-24          1        720 
+22862 011018 Chrome Leather Med. Bag                  023585 24-AUG-24          1        865 
+22862 011018 Chrome Leather Med. Bag                  023921 08-SEP-24          1        865 
+22862 051056 Rain Coat                                023921 08-SEP-24          1        720 
+22862 051056 Rain Coat                                024433 26-SEP-24          1        720 
+22864 011018 Chrome Leather Med. Bag                  023920 08-SEP-24          1        865 
+22864 051056 Rain Coat                                023920 08-SEP-24          1        720 
+22902 011018 Chrome Leather Med. Bag                  023922 08-SEP-24          1        865 
+22902 051056 Rain Coat                                023922 08-SEP-24          1        720 
+22971 011018 Chrome Leather Med. Bag                  025631 05-NOV-24          1        865 
+22971 051056 Rain Coat                                025631 05-NOV-24          1        720 
+22982 011018 Chrome Leather Med. Bag                  025658 06-NOV-24          1        865 
+22982 051056 Rain Coat                                025658 06-NOV-24          1        720 
+23447 051056 Rain Coat                                023923 09-SEP-24          1        720 
+26168 011018 Chrome Leather Med. Bag                  024098 15-SEP-24          1        865 
+27290 011018 Chrome Leather Med. Bag                  024099 15-SEP-24          1        865 
+27566 011018 Chrome Leather Med. Bag                  020861 05-MAY-24          1        865 
+27566 051056 Rain Coat                                020861 05-MAY-24          1        720 
+27911 011018 Chrome Leather Med. Bag                  020860 05-MAY-24          1        865 
+27911 051056 Rain Coat                                020860 05-MAY-24          1        720 
+28138 051056 Rain Coat                                025630 05-NOV-24          1        720 
+28604 011018 Chrome Leather Med. Bag                  020580 23-APR-24          1        865 
+28604 051056 Rain Coat                                020580 23-APR-24          1        720 
+
+44 rows selected.
+

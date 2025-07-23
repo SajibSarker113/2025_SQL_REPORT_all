@@ -1,0 +1,353 @@
+DROP TABLE SS
+/
+CREATE TABLE SS AS
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, SUM(SALE_NET)SALE_NOV, COUNT(BILL_NO)BILL_NOV, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01JAN2025','DDMMYYYY') AND TO_DATE ('31JAN2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC, 0 BILL_DEC, SUM(B.RTN_NET)RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01JAN2025','DDMMYYYY') AND TO_DATE ('31JAN2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, SUM(SALE_NET) SALE_DEC, COUNT(BILL_NO)BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01FEB2025','DDMMYYYY') AND TO_DATE ('28FEB2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, SUM(B.RTN_NET) RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01FEB2025','DDMMYYYY') AND TO_DATE ('28FEB2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, SUM(SALE_NET) SALE_JAN, COUNT(BILL_NO)BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01MAR2025','DDMMYYYY') AND TO_DATE ('31MAR2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, SUM(B.RTN_NET) RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD 
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01MAR2025','DDMMYYYY') AND TO_DATE ('31MAR2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+SUM(SALE_NET) SALE_FEB, COUNT(BILL_NO) BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD'
+  AND DELI_DT BETWEEN TO_DATE ('01APR2025','DDMMYYYY') AND TO_DATE ('30APR2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, SUM(B.RTN_NET) RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01APR2025','DDMMYYYY') AND TO_DATE ('30APR2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, SUM(SALE_NET) SALE_MAR, COUNT(BILL_NO) BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD' 
+  AND DELI_DT BETWEEN TO_DATE ('01MAY2025','DDMMYYYY') AND TO_DATE ('31MAY2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, SUM(B.RTN_NET) RTN_MAR, 0 SALE_APR, 0 BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01MAY2025','DDMMYYYY') AND TO_DATE ('31MAY2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID
+UNION
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, 0 SALE_NOV, 0 BILL_NO, 0 SALE_DEC, 0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, SUM(SALE_NET) SALE_APR, COUNT(BILL_NO) BILL_APR, 0 RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 
+0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN, 0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS
+WHERE SC_CD='&&SC_CD' 
+  AND DELI_DT BETWEEN TO_DATE ('01JUN2025','DDMMYYYY') AND TO_DATE ('30JUN2025','DDMMYYYY')
+  AND SALE_CD IN ('IC','IM','IN') 
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+UNION
+SELECT A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID, 0 SALE_NOV, 0 BILL_NOV, 0 SALE_DEC,  0 BILL_DEC, 0 RTN_NOV, 0 RTN_DEC, 0 SALE_JAN, 0 BILL_JAN, 0 RTN_JAN, 
+0 SALE_FEB, 0 BILL_FEB, 0 RTN_FEB, 0 SALE_MAR, 0 BILL_MAR, 0 RTN_MAR, 0 SALE_APR, 0 BILL_APR, SUM(B.RTN_NET) RTN_APR, 0 SALE_MAY, 0 BILL_MAY, 0 RTN_MAY, 0 SALE_JUN, 0 BILL_JUN, 0 RTN_JUN,
+0 SALE_JUL, 0 BILL_JUL, 0 RTN_JUL, 0 SALE_AUG, 0 BILL_AUG, 0 RTN_AUG, 0 SALE_SEP, 0 BILL_SEP, 0 RTN_SEP, 0 SALE_OCT, 0 BILL_OCT, 0 RTN_OCT
+FROM SCENT.BILL_MAS A,
+     SCENT.RTN_MAS B
+WHERE A.SC_CD='&&SC_CD' 
+  AND A.SC_CD=B.SC_CD
+  AND A.BILL_NO=B.BILL_NO
+  AND B.CANCL IS NULL
+  AND B.RTN_DT BETWEEN TO_DATE ('01JUN2025','DDMMYYYY') AND TO_DATE ('30JUN2025','DDMMYYYY')
+  AND A.SALE_CD IN ('IC','IM','IN') 
+GROUP BY A.FL_MVH, A.DIST_CD, A.THA_CD, A.UN_CD, A.CL_ID 
+
+
+/
+
+DROP TABLE S1
+/
+CREATE TABLE S1 AS
+SELECT FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID, SUM(SALE_NOV-RTN_NOV)NOV, SUM(BILL_NOV)BILL_NOV, SUM(SALE_DEC-RTN_DEC)DEC, SUM(BILL_DEC)BILL_DEC, SUM(SALE_JAN-RTN_JAN)JAN,
+       SUM(BILL_JAN)BILL_JAN, SUM(SALE_FEB-RTN_FEB)FEB, SUM(BILL_FEB)BILL_FEB, SUM(SALE_MAR-RTN_MAR)MAR, SUM(BILL_MAR)BILL_MAR, SUM(SALE_APR-RTN_APR)APR, SUM(BILL_APR)BILL_APR, 
+       SUM(SALE_MAY-RTN_MAY)MAY, SUM(BILL_MAY)BILL_MAY, SUM(SALE_JUN-RTN_JUN)JUN, SUM(BILL_JUN)BILL_JUN, SUM(SALE_JUL-RTN_JUL)JUL, SUM(BILL_JUL)BILL_JUL,
+       SUM(SALE_AUG-RTN_AUG)AUG, SUM(BILL_AUG)BILL_AUG, SUM(SALE_SEP-RTN_SEP)SEP, SUM(BILL_SEP)BILL_SEP, SUM(SALE_OCT-RTN_OCT)OCT, SUM(BILL_OCT)BILL_OCT
+FROM SS
+GROUP BY FL_MVH, DIST_CD, THA_CD, UN_CD, CL_ID
+/
+
+DROP TABLE S2
+/
+CREATE TABLE S2 AS
+SELECT A.MKT_CD, B.FL_MVH, B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID CLIENT, B.NOV, B.BILL_NOV NOV_QTY, B.DEC, B.BILL_DEC DEC_QTY, B.JAN, B.BILL_JAN JAN_QTY, B.FEB, B.BILL_FEB FEB_QTY, B.MAR, B.BILL_MAR MAR_QTY, B.APR, B.BILL_APR APR_QTY, B.MAY, B.BILL_MAY MAY_QTY, B.JUN, B.BILL_JUN JUN_QTY, B.JUL, B.BILL_JUL JUL_QTY, B.AUG, B.BILL_AUG AUG_QTY, B.SEP, B.BILL_SEP SEP_QTY, B.OCT, B.BILL_OCT OCT_QTY
+FROM SCENT.EMP_AREA A,
+     S1 B
+WHERE A.SC_CD='&&SC_CD'
+  AND A.DIST_CD||A.THA_CD||A.UN_CD=B.DIST_CD||B.THA_CD||B.UN_CD
+  AND A.PERFORM='A'
+  AND A.END_DT IS NULL
+GROUP BY A.MKT_CD, B.FL_MVH, B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID, B.NOV, B.BILL_NOV, B.DEC, B.BILL_DEC, B.JAN, B.BILL_JAN, B.FEB, B.BILL_FEB, B.MAR, B.BILL_MAR, B.APR, B.BILL_APR, B.MAY, B.BILL_MAY, B.JUN, B.BILL_JUN, B.JUL, B.BILL_JUL, B.AUG, B.BILL_AUG, B.SEP, B.BILL_SEP, B.OCT, B.BILL_OCT
+/
+
+DROP TABLE S3
+/
+CREATE TABLE S3 AS
+SELECT B.FL_MVH, A.BS_CD, B.MKT_CD, B.CLIENT, B.NOV, B.NOV_QTY, B.DEC, B.DEC_QTY, B.JAN, B.JAN_QTY, B.FEB, B.FEB_QTY, B.MAR, B.MAR_QTY, B.APR, B.APR_QTY, B.MAY, B.MAY_QTY, B.JUN, B.JUN_QTY, B.JUL, B.JUL_QTY, B.AUG, B.AUG_QTY, B.SEP, B.SEP_QTY, B.OCT, B.OCT_QTY
+FROM SCENT.FP_MGR A,
+     S2 B
+WHERE A.SC_CD='&&SC_CD'
+  AND A.MKT_CD=B.MKT_CD
+  AND A.FL_MVH='1'
+  AND A.FL_MVH=B.FL_MVH
+GROUP BY B.FL_MVH, A.BS_CD, B.MKT_CD, B.CLIENT, B.NOV, B.NOV_QTY, B.DEC, B.DEC_QTY, B.JAN, B.JAN_QTY, B.FEB, B.FEB_QTY, B.MAR, B.MAR_QTY, B.APR, B.APR_QTY, B.MAY, B.MAY_QTY, B.JUN, B.JUN_QTY, B.JUL, B.JUL_QTY, B.AUG, B.AUG_QTY, B.SEP, B.SEP_QTY, B.OCT, B.OCT_QTY
+/
+
+SET LINE 450
+SET PAGES 1000
+
+SPOOL ON
+
+BREAK ON REPORT SKIP-2
+COMPUTE SUM OF NOV ON REPORT
+COMPUTE SUM OF DEC ON REPORT
+
+---TTITLE CENTER 'CLIENT SALES REPORT FROM 01JAN2025 AND 01JAN2025' SKIP2
+ 
+SELECT SUBSTR(RPAD(A.FPBS_NM,'25'),1,25)FPBS_NM, D.CLIENT CLIENT_CD, SUBSTR(RPAD(E.CL_NM,'25'),1,25)CL_NAME, D.NOV ONE_MS, D.NOV_QTY ONEQ, D.DEC TWO_MS, D.DEC_QTY TWOQ,
+       D.JAN THR_MS, D.MAR_QTY THRQ, D.FEB FOU_MS, D.FEB_QTY FOUQ, D.MAR FIV_MS, D.MAR_QTY FIVQ, D.APR SIX_MS, D.APR_QTY SIXQ, D.MAY SEV_MS, D.MAY_QTY SEVQ, D.JUN EIG_MS,
+       D.JUN_QTY EIGQ, D.JUL NIN_MS, D.JUL_QTY NINQ, D.AUG TEN_MS, D.AUG_QTY TENQ, D.SEP ELE_MS, D.SEP_QTY ELEQ, D.OCT TWE_MS, D.OCT_QTY TWEQ, E.CREDIT_LIMIT
+FROM SCENT.FP_BASE A,
+     SCENT.RM_BASE B,
+     SCENT.FM_BASE C,
+     S3 D,
+     SCENT.CL_INFO E,
+     SCENT.UN_AREA F
+WHERE A.SC_CD='&&SC_CD'
+  AND A.SC_CD=C.SC_CD
+  AND A.SC_CD=E.SC_CD
+  AND A.SC_CD=F.SC_CD
+  AND E.DIST_CD=F.DIST_CD          
+  AND E.THA_CD=F.THA_CD                 
+  AND E.UN_CD=F.UN_CD                  
+  AND A.FPBS_CD=D.BS_CD
+  AND A.RMBS_CD=B.RMBS_CD
+  AND A.FMBS_CD=C.FMBS_CD
+  AND D.CLIENT=E.DIST_CD||E.THA_CD||E.UN_CD||E.CL_ID
+  AND D.FL_MVH='1'
+  AND E.STATUS IS NULL
+  AND E.CREDIT_LIMIT>'0'
+GROUP BY A.FPBS_NM, D.CLIENT, E.CL_NM, D.NOV, D.DEC, D.NOV_QTY, D.DEC_QTY, D.JAN, D.JAN_QTY, D.FEB, D.FEB_QTY, D.MAR, D.MAR_QTY,
+         D.APR, D.APR_QTY, D.MAY, D.MAY_QTY, D.JUN, D.JUN_QTY, D.JUL, D.JUL_QTY, D.AUG, D.AUG_QTY, D.SEP, D.SEP_QTY, D.OCT, D.OCT_QTY, E.CREDIT_LIMIT
+ORDER BY CL_NM
+/
+   
+SPOOL OFF
+
+ED ON.LST
+   
+
+=============================================================
+
+old  10: WHERE A.SC_CD='&&SC_CD'
+new  10: WHERE A.SC_CD='11'
+
+FPBS_NM                   CLIENT_CD  CL_NAME                       ONE_MS       ONEQ     TWO_MS       TWOQ     THR_MS       THRQ     FOU_MS       FOUQ     FIV_MS       FIVQ     SIX_MS       SIXQ     SEV_MS       SEVQ     EIG_MS       EIGQ     NIN_MS       NINQ     TEN_MS       TENQ     ELE_MS       ELEQ     TWE_MS       TWEQ CREDIT_LIMIT                                                                                                               
+------------------------- ---------- ------------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ------------                                                                                                               
+JHAWTOLA-CUMCH            5513039059 A K S PHARMACY                     0          0  116010.05          2   33143.32          2   43523.58          2   82808.18          2   38115.21          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031036 A ONE HOSPITAL                 12200          3       5900          2      29900          1      13400          3       5000          1      10400          2          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031032 ADARS HOSPITAL PHARMACY            0          0          0          0    12967.9          2          0          0   13309.11          2          0          0          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+BURICHANG THC             5504117012 ADHUNIK HOSPITAL            18776.37          1       9750          1          0          2   36032.98          2   22319.49          2   33615.15          1          0          0          0          0          0          0          0          0          0          0          0          0       180000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501126002 ADORSHO PHARMACY            14776.35          2    2191.83          1    4826.01          1   23880.61          2    5412.65          1   19386.41          2          0          0          0          0          0          0          0          0          0          0          0          0        70000                                                                                                               
+MUKTI HOSP+SADAR HOS      5513064018 AL NOOR HOSPITAL PHARMACY   18553.07          1   24366.06          2   10943.64          3       2500          1   39322.63          3          0          0          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+CUMILLA POPULAR HOSP      5513276013 AL RAZI GENERAL HOSPITAL    56476.08          1          0          0   30637.19          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+DEVIDWAR SQUARE HOSP      5511019063 AMENA KHATUN RED CRESENT           0          0          0          0          0          0          0          0          0          0   18494.13          1          0          0          0          0          0          0          0          0          0          0          0          0        20000                                                                                                               
+JHAWTOLA-CUMCH            5513263002 APPOLO HOSPITAL              3974.79          1    6785.89          1      788.9          1     5686.7          1       2400          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+BURICHANG THC             5504006071 ASA                                0          0          0          0          0          0    14402.6          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0       500000                                                                                                               
+NATIONAL INS              5504006071 ASA                                0          0          0          0          0          0    14402.6          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0       500000                                                                                                               
+BURICHANG THC             5504117003 AZIZ CLINIC                 55210.11          3   61278.67          2   49050.33          4   39826.05          1   91644.22          4          0          0          0          0          0          0          0          0          0          0          0          0          0          0       120000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501092011 B J A K S(OUTDOOR PHARMAC    29881.5          1    39198.9          1    33300.9          2   50537.17          1   46653.05          2   70026.85          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501092002 BANGLADESH JATIYA ANDHA K    94041.3          1          0          0          0          1          0          0   119592.5          1   16639.77          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+BURICHANG THC             5504117016 BURICHONG MEDICAL CENTER           0          0   26204.65          3   18601.96          2          0          0   41554.13          2          0          0          0          0          0          0          0          0          0          0          0          0          0          0       120000                                                                                                               
+JHAWTOLA-CUMCH            5513101003 CD PATH & HOSP.(GRAND FLO   46086.06          3   84136.24          5       7889          2   37809.22          1    3994.62          2   27121.49          3          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+HOMNA THC                 5509015065 CENTRAL HOSPITAL            59251.32          1       9000          1          0          2          0          0    8878.53          2          0          0          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA POPULAR HOSP      5513152001 CENTRAL HOSPITAL            32194.22          2      71300          4   32403.54          5   99437.93          8   41538.99          5   98143.89          6          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA TOWER+CUMCH       5501116003 CENTRAL MED COLLEGE & HOS    43266.7         14   80355.52          7   27311.56          6    46485.5          5   70974.08          6   90630.02          5          0          0          0          0          0          0          0          0          0          0          0          0       120000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501249001 CENTRAL MED. COLL & HOSP.   20009.04          2   25234.34          2   19971.32          0   18465.97          2          0          0   13022.28          1          0          0          0          0          0          0          0          0          0          0          0          0       120000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5513252001 COM.MEDICAL CENTRE 6TH FL  739698.03         13  709445.74         12  484928.58         14  524912.45         11  679776.06         14  579118.12         14          0          0          0          0          0          0          0          0          0          0          0          0       800000                                                                                                               
+JHAWTOLA-CUMCH            5513170001 COM.NIRAMOY DIAG.CEN & HO          0          0          0          0          0          0    5010.59          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+CUMILLA DIABEITC HOSP     5513043030 COMFORT HOSPITAL              8225.4          1   17177.12          1    9480.88          0   32338.38          2          0          0   14550.16          1          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+CUMILLA DIABEITC HOSP     5513130001 COMILLA DIABETIC HOSPITAL   47338.54          1    53533.6          1   87560.99          1   12791.23          1   58161.29          1   92562.39          3          0          0          0          0          0          0          0          0          0          0          0          0       250000                                                                                                               
+CUMILLA POPULAR HOSP      5513067027 COMILLA ISLAMIA HOSPITAL    24686.54          2   11119.87          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        75000                                                                                                               
+CUMILLA TOWER+CUMCH       5513251001 COMILLA MEDICAL CENTRE-3R   344828.3         11   352750.6         11  471223.38         14  354216.88         10  539088.43         14  295297.11          8          0          0          0          0          0          0          0          0          0          0          0          0       650000                                                                                                               
+CUMILLA TRAUMA CENTER     5513169001 COMILLA TRAUMA CENTER-1(M  355731.81         25  415471.26         26  285437.14         29   90979.16         12  334712.98         29  320462.23         21          0          0          0          0          0          0          0          0          0          0          0          0       500000                                                                                                               
+CUMILLA TRAUMA CENTER     5513169002 COMILLA TRAUMA CENTER-2(M  687312.54         24  684725.37         22  522164.44         29  461194.96         28  639062.18         29  606439.84         23          0          0          0          0          0          0          0          0          0          0          0          0       700000                                                                                                               
+CUMILLA POPULAR HOSP      5513276005 CUMILLA ALIF DIAG & CONS       32500          1   31373.46          2    26688.2          5    10188.2          2  111833.76          5   78087.91          3          0          0          0          0          0          0          0          0          0          0          0          0       180000                                                                                                               
+CUMILLA TOWER+CUMCH       5513251002 CUMILLA MEDICAL CENTER(GR  519639.56         15  472017.48         12  336465.62         10   350913.9         10  400000.85         10  500181.16         11          0          0          0          0          0          0          0          0          0          0          0          0       650000                                                                                                               
+MUKTI HOSP+SADAR HOS      5513064017 CUMILLA TITAS PHARMACY      32859.67          3   16718.25          1   26698.25          1          0          0   20910.75          1   20827.57          1          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+DAUDKANDI                 5507146009 D K HOSPITAL                34973.35          1   33286.63          1   69654.13          1   31954.87          1   28997.07          1  164855.35          2          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CUMCH-MOON HOSP           5513063048 D ROY & CO.                598918.27          9  472635.15         11  380121.02          2   145966.3          7  352639.81          2  241539.34         11          0          0          0          0          0          0          0          0          0          0          0          0       600000                                                                                                               
+CHANDINA THC              5505016012 DATTA MEDICAL HALL         282077.17          4  319600.77          4  237916.88          3  220576.68          3  280104.61          3   371821.5          1          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+NATIONAL INS              5505016012 DATTA MEDICAL HALL         282077.17          4  319600.77          4  237916.88          3  220576.68          3  280104.61          3   371821.5          1          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CUMILLA DIABEITC HOSP     5513210001 DELTA HOSPITAL              64465.12          1  103819.92          1          0          1   96163.67          1   82990.16          1  106984.11          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+FENI SADAR HOSP-2         5511037050 DOCTORS AND DIAGNOSTIC HO          0          0          0          0          0          0    5777.13          1          0          0     2572.6          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+MURADNAGAR                5511037050 DOCTORS AND DIAGNOSTIC HO          0          0          0          0          0          0    5777.13          1          0          0     2572.6          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+BARURA THC                5502115008 DOCTORS COMMUNITY HOS              0          0          0          0          0          2    4301.41          1    10052.1          2   18108.42          3          0          0          0          0          0          0          0          0          0          0          0          0        60000                                                                                                               
+HOMNA THC                 5509070015 DOCTORS HOSPITAL                   0          0          0          0          0          0          0          0          0          0   99702.36          2          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA TRAUMA CENTER     5513169003 DR ABU HASANATH                    0          0      19500          1      13000          1      19500          1      26000          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+CUMILLA POPULAR HOSP      5513276008 DR AHSANULLAH ROMI                 0          0   51551.75          2      65000          1   33843.94          2      32500          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+BURICHANG THC             5504006029 DR. NASIR UDDIN             43521.64          5   41241.07          4   45215.61          5   54558.42          3    50408.5          5   89039.68          3          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+NATIONAL INS              5504006029 DR. NASIR UDDIN             43521.64          5   41241.07          4   45215.61          5   54558.42          3    50408.5          5   89039.68          3          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA CANT+EMCH         5504064001 EASTERN MEAD. COLL & HOSP   115893.7          7  120479.06          9  115837.32          7   77124.75          8   72219.57          7  104707.02          8          0          0          0          0          0          0          0          0          0          0          0          0       600000                                                                                                               
+CUMILLA TRAUMA CENTER     5513057007 ECONOMIC DRUG HOUSE        240541.63          2  210155.05          2  138222.03          1  142481.95          1  154742.99          1  174747.97          1          0          0          0          0          0          0          0          0          0          0          0          0       300000                                                                                                               
+CUMILLA TOWER+CUMCH       5513232001 ENT CORNER                 299664.29         13  181274.33          8   38609.49          2  188164.71          8    18642.6          2  202515.93          6          0          0          0          0          0          0          0          0          0          0          0          0       300000                                                                                                               
+HOMNA THC                 5509070016 FIROZA KHATUN CENTRAL HOS          0          0          0          0          0          2          0          0   42092.69          2   24819.44          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA DIABEITC HOSP     5513033067 FRIENDS MEDICAL STORE      187475.61          1  298448.46          3  246029.79          2  292956.68          3  227950.78          2  264164.21          4          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CUMILLA TRAUMA CENTER     5513079001 GOMTI HOSPITAL              73533.28          5    81612.8          4   53420.01          7   76820.79          3  170897.58          7  199186.19          6          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+GOURIPUR BAZAR            5515026002 GOURIPUR MODERN D/C & DEN    2443.15          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+GOURIPUR BAZAR SOUTH      5515035015 GREEN LAB HOSPITAL           5454.49          2   13007.81          3    8735.82          5   12896.57          3   21056.54          5   26606.11          4          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031028 GREEN LIFE HOSPITAL                0          0    5792.62          2          0          2    9510.32          2   28121.02          2   24439.41          1          0          0          0          0          0          0          0          0          0          0          0          0        30000                                                                                                               
+GOURIPUR THC-1            5515041009 HASEM MODERN PHARMACY       81259.93          2   81253.87          2  100753.37          1   63271.01          2   95596.69          1    67227.3          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5513153001 HOLY CARE MEDICAL SERVICE          0          0   20781.14          2          0          0   28817.15          1          0          0   22842.74          1          0          0          0          0          0          0          0          0          0          0          0          0        38460                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5513309001 HOLY FAMILY HOSPITAL        96416.55          2  137987.71          3   96580.39          2   91129.73          2   81324.84          2  144468.47          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+HOMNA THC                 5509070019 HOMNA GENERAL HOSPITAL             0          0          0          0          0          3          0          0   58056.08          3   51410.33          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA TRAUMA CENTER     5513059029 HUMAN HOS & NTTA PHARMACY   13880.34          1   17509.22          2   21596.49          1   18103.88          1   30228.08          1    8384.74          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA DIABEITC HOSP     5513207004 HUMAN HOSPITAL & JAGONNAT          0          0   104819.5          3   50862.19          1      26961          2   97667.91          1   68359.19          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA POPULAR HOSP      5513010047 IBN SINA DIAG & CONSUL CE    52836.3          2   69167.83          3   69151.67          3   57613.99          3   87806.49          3   54910.28          2          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501008028 IMPERIAL SPECIALIZED HOSP          0          0    3094.93          1          0          1    8358.13          3    9655.73          1     4970.1          1          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501008020 INSAF HOSPITAL                     0          0    2250.95          1    2250.95          1    2477.99          1    2264.07          1    5719.55          1          0          0          0          0          0          0          0          0          0          0          0          0       110000                                                                                                               
+CUMCH-MOON HOSP           5513275015 K ALI PHARMACY              39401.22          5   61804.44          4   51545.35          5   58722.92          6   51689.14          5   67812.39          6          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMCH-MOON HOSP           5513063007 K.D.ROY & CO                31172.62          2          0          0          0          1  110136.13          6    1906.41          1   61272.74          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+BURICHANG THC             5504118029 LIZA CLINIC                 31337.47          1      17644          1          0          1    20141.7          1    12625.7          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0        80000                                                                                                               
+MAHBUBUR RAHMAN-MEMORIAL  5403031001 MAHBUBUR RAHMAN MEMORIAL   224429.94          2  223488.07          2  290926.32          3  342220.52          4   266967.5          3  139768.07          2          0          0          0          0          0          0          0          0          0          0          0          0       500000                                                                                                               
+MOINAMOTI GEN HOSP        5504092001 MAYNAMOTI CANT. GEN. HOSP   80457.97         10  108150.85          6  149981.32          8  101623.98          6   97212.25          8  106539.38         10          0          0          0          0          0          0          0          0          0          0          0          0       250000                                                                                                               
+CUMILLA CANT+EMCH         5501189031 MCGH PHARMACY(CLINIC A1)   101897.88          3   109709.2          5   58131.27          4   69903.65          2   98408.76          4   62268.61          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+JHAWTOLA-CUMCH            5513117001 MEDI HOSPITAL               49249.26          7    5885.72          1   24511.49          2    3945.97          1    6778.54          2    6688.54          4          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CHANDINA TOWN             5505149013 MEDICARE HOSPITAL PHARMAC   12891.95          1          0          0          0          0   25333.08          2          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        70000                                                                                                               
+JHAWTOLA-CUMCH            5513282001 MEDICEARE GENARAL HOSPITA   95614.68          2    78254.4          1          0          0   81547.44          1          0          0   67710.84          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA MCH               5513123002 MEDICINE SQUARE             558111.8         17  546071.14         23  474188.56         17  345174.12         21  416388.75         17  417865.45         15          0          0          0          0          0          0          0          0          0          0          0          0       800000                                                                                                               
+CUMILLA MCH               5513123009 MEDICINE SQUARE THREE      110109.48         14  191288.15         15   57324.57          8   20918.83          5   39544.62          8   46520.38         11          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA MCH               5513123008 MEDICINE SQUARE TWO        382314.33         16  396887.87         17  386046.34         19  225539.64         13  299681.11         19  333762.61         17          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CHANDINA THC              5505005026 MEDINOVA HOSP. PHARMACY    114068.07          1  127252.72          1   78709.34          3  121368.79          1    94268.3          3   67777.15          1          0          0          0          0          0          0          0          0          0          0          0          0       300000                                                                                                               
+CUMILLA TOWER+CUMCH       5513047061 MEDINOVA MEDICAL SERVICE     6359.16          3   19432.38          7    9488.97          5   17849.74          4     9030.8          5    15029.7          3          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+HOMNA THC                 5509012103 MEGHNA HOSPITAL            144809.08          1          0          0  149886.53          0  148911.92          1          0          0  151251.73          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+NATIONAL INS              5509012103 MEGHNA HOSPITAL            144809.08          1          0          0  149886.53          0  148911.92          1          0          0  151251.73          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+JHAWTOLA-CUMCH            5513039045 MEGHNA HOSPITAL PHARMACY    69697.15          1   34111.24          1          0          1   54318.01          1   17034.71          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031031 METRO POLITAN MODEL HOS     80969.78          4  113845.41          3  108625.91          2  121220.02          4   75444.24          2  100576.85          4          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+FENI SADAR HOSP-2         5511095001 MICROPATH HOSPITAL & MOON          0          0   38639.67          2   43626.66          2    37833.1          2   46089.01          2   46657.08          2          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+MURADNAGAR                5511095001 MICROPATH HOSPITAL & MOON          0          0   38639.67          2   43626.66          2    37833.1          2   46089.01          2   46657.08          2          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA TOWER+CUMCH       5513080001 MIDLAND HOSPITAL            41374.89         15     3791.4          1    15557.5          8    63463.7          5   29621.96          8    43548.2         10          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CHANDINA TOWN             5505150004 MIM HOSPITAL                38257.36          1    9747.09          1   35037.43          1   17270.21          1   13902.74          1   15999.87          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA DIABEITC HOSP     5513128001 MIM HOSPITAL                89400.05          2   94435.67          3   98914.48          1          0          0      81631          1   21381.63          2          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMCH-MOON HOSP           5513219001 MIM PHARMACY                 55347.3          1  302496.49          9  279008.26          4  170737.69          6  108664.63          4  321786.59          8          0          0          0          0          0          0          0          0          0          0          0          0       600000                                                                                                               
+MUKTI HOSP+SADAR HOS      5513292001 MISSION HOSPITAL COMILLA    69360.14          4   72959.04          3   65919.07          3   70193.03          2   65467.47          3      49950          2          0          0          0          0          0          0          0          0          0          0          0          0        90000                                                                                                               
+CUMILLA POPULAR HOSP      5513224001 MIZAN EYE CARE               32962.3          2   18306.58          1    7150.46          1   30353.11          2   15320.95          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0        46160                                                                                                               
+CUMILLA CANT+EMCH         5501053071 MODEL HOSPITAL              40074.38          3   24272.81          4   20047.67          5   24416.78          4   30105.61          5   30887.73          4          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA MCH               5513094001 MODERRN  HOSPITAL           53780.32          1  138811.35          5   45164.05          4   58096.32          2  121073.98          4   63503.04          4          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+HOMNA THC                 5509015073 MODINA GENERAL HOSPITAL     62102.93          2   53073.37          3   61290.17          3    10053.7          1   28541.68          3   27703.29          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5513311001 MODINA HOSPITAL            144034.32          5    45366.5          5   93684.12          3   68782.71          4   48461.47          3    79070.7          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA TRAUMA CENTER     5513059028 MOHANOGOR CHAKKU HOS         67083.7          2          0          0   52951.36          1   73664.73          2   46855.44          1   76191.24          1          0          0          0          0          0          0          0          0          0          0          0          0       120000                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501197025 MOKKA PHARMACY             287232.73          4  285208.51          3  254937.38          4  499618.67          4  301576.22          4   71829.48          2          0          0          0          0          0          0          0          0          0          0          0          0       500000                                                                                                               
+CUMCH-MOON HOSP           5513083001 MOON  HOSPITAL             486795.18         23  279899.32         21  297563.65         21   112097.8         16  165928.07         21  267562.32         21          0          0          0          0          0          0          0          0          0          0          0          0       600000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513135001 MOTHER CARE HOSPITAL               0          0          0          0   17266.88          0    20194.4          1          0          0   11766.84          1          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+MOINAMOTI MEDICAL COLLEGE 5501247004 MOYNAMOTY MEDICAL COLL &   234793.24          5   22932.64          5   96290.63          4   75720.78          7   96017.67          4  121075.34          6          0          0          0          0          0          0          0          0          0          0          0          0       250000                                                                                                               
+MUKTI HOSP+SADAR HOS      5513086001 MUKTI  HOSPITAL                    0          0          0          0          0          1   65007.68          3    23244.2          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA DIABEITC HOSP     5513207003 N S PHARMACY                55265.78          7  154235.15          3  239067.96          5   63881.58          4  233982.64          5  158479.13          6          0          0          0          0          0          0          0          0          0          0          0          0       350000                                                                                                               
+CHANDINA THC              5505091002 NAHA MEDICAL HALL          187950.24          3   93075.34          4   85003.58          2  128520.16          2  172326.28          2  195682.38          1          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+JHAWTOLA-CUMCH            5513039048 NAVANA HOSPITAL             42284.33         10   35971.51          9       5330          3   47456.45          8      20300          3    30266.5          2          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA POPULAR HOSP      5513310001 NEW VISITION HOSPITAL       55574.06          3    38034.6          3   66455.72          2   63711.68          4   48103.82          2   59965.42          2          0          0          0          0          0          0          0          0          0          0          0          0       180000                                                                                                               
+SALIMGONJ                 5405067025 OLIUR RAHMAN GENERAL HOSP   40180.59          1   35967.78          1          0          2   37251.22          1   79126.08          2   31799.93          1          0          0          0          0          0          0          0          0          0          0          0          0       150000                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501195015 PAYEL PHARMA               199744.76          5  275876.55          4  178082.22          3  220775.47          4  220096.99          3  135572.29          2          0          0          0          0          0          0          0          0          0          0          0          0       300000                                                                                                               
+MUKTI HOSP+SADAR HOS      5513298001 PEARLESS HOSPITAL PHARMAC   84062.73          4   88415.38          7  138270.55          5   10099.84          2    62386.9          5  106742.72          6          0          0          0          0          0          0          0          0          0          0          0          0       165000                                                                                                               
+CUMILLA POPULAR HOSP      5513105001 POPULAR HOSPITAL            37848.08          4   43460.03          5   19869.18          2    8845.62          2   16532.55          2   19214.13          2          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA TRAUMA CENTER     5513057041 PRIME HOSPITAL                     0          0          0          0          0          1          0          0   26722.31          1    18439.1          2          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+GOURIPUR BAZAR SOUTH      5515035016 RADIUM SPECIALIEST HOSPIT   -4149.98          1   38129.26          2   47450.19          3  163241.49          3   65048.85          3  114110.14          3          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA SADAR HOSP-MMCH   5513031034 RETINEL HOSPITAL             21443.9          1   43609.36          4     7572.6          2   18450.03          3   44235.53          2       1000          1          0          0          0          0          0          0          0          0          0          0          0          0        50000                                                                                                               
+JHAWTOLA-CUMCH            5513039049 ROYAL HOSPITAL              34458.81          1   79361.34          3   34147.06          1     3944.5          1   39199.78          1   36993.06          2          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CHANDINA MEDICAL CENTRE   5505916004 SAHA MEDICAL HALL          230452.73          2  338570.37          1  236735.86          1   141863.1          1  370472.92          1  363845.54          1          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CUMCH-MOON HOSP           5513063006 SAHA MEDICAL HALL           54292.77          1   40644.15          1   89588.27          3   78648.74          1   79659.83          3   218441.1          5          0          0          0          0          0          0          0          0          0          0          0          0       300000                                                                                                               
+GOURIPUR THC-1            5515001001 SARKER PHARMACY            346997.24          2   442180.6          4  345142.75          3  379903.89          3  367947.95          3   432802.8          3          0          0          0          0          0          0          0          0          0          0          0          0       550000                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501034028 SHAHIDA MEDICAL HALL       282835.41          8  265257.89          5  396511.25          6  304428.74          7  329562.01          6   176831.1          6          0          0          0          0          0          0          0          0          0          0          0          0       400000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501126001 SHAJALAL MEDICAL HALL        6624.35          1    5189.92          1    5788.25          1    5018.39          1    5317.45          1    4418.07          2          0          0          0          0          0          0          0          0          0          0          0          0        25000                                                                                                               
+CENTRAL MED. COLL.. HOSP. 5501126004 SHARIKA EYE CARE            19385.55          3          0          0          0          1          0          0    6345.59          1    6690.38          1          0          0          0          0          0          0          0          0          0          0          0          0        55000                                                                                                               
+JHAWTOLA-CUMCH            5513007042 SHOHARDOA HOSPITAL          80150.62          5  132668.88         10   22050.05         10  117676.78          6  123962.14         10   68445.42          4          0          0          0          0          0          0          0          0          0          0          0          0       200000                                                                                                               
+CUMILLA DIABEITC HOSP     5513043038 SQUARE HOSPITAL               1124.3          1          0          0          0          0     3524.3          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0        40000                                                                                                               
+JHAWTOLA-CUMCH            5513039056 STAR LIFE HOSPITAL         147415.16          4  130674.54          3  108666.44          1  135639.61          2  151609.12          1  136170.05          3          0          0          0          0          0          0          0          0          0          0          0          0       250000                                                                                                               
+CUMILLA SADAR DHAKHIN THC 5501034135 SUAGAZI DIAGNOSTIC CENTER   30457.74          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMILLA DIABEITC HOSP     5513161001 SUN MEDICAL SERVICE         10331.37          1   28903.08          2   24437.05          2   10142.41          1   30442.88          2   20771.51          3          0          0          0          0          0          0          0          0          0          0          0          0       100000                                                                                                               
+CUMCH-MOON HOSP           5513275018 SURJER HASHI CLINIC                0          0          0          0          0          0          0          0          0          0     7736.1          1          0          0          0          0          0          0          0          0          0          0          0          0        70000                                                                                                               
+JHAWTOLA-CUMCH            5513039046 TASLIMA MET. AND FER. CAR  129782.99          2  128215.29          3  110494.09          2  128878.33          2   32781.93          2   52460.98          2          0          0          0          0          0          0          0          0          0          0          0          0       130000                                                                                                               
+MOINAMOTI GEN HOSP        5504111010 UNIQUE HOSPITAL PHARMACY       10600          1          0          0       9700          1      13500          2       6300          1          0          0          0          0          0          0          0          0          0          0          0          0          0          0        40000                                                                                                               
+
+124 rows selected.
+

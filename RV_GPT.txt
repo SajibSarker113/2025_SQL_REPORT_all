@@ -1,0 +1,667 @@
+set ver off
+SET LINES 96
+SET PAGES 2000
+SET NUMFORMAT 99999.99
+
+COMPUTE COUNT OF B_NO ON PRD_CD  
+BREAK ON REPORT ON PRD_CD  
+
+TTITLE CENTER 'DEPOT: '&&SC_CD', RV' SKIP2
+
+SPOOL ON
+
+SELECT DISTINCT A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, SUM(RV_QTY) RV_QTY, A.ISS_FROM 
+---SUM(T_VAT*RV_QTY) T_VAL
+FROM INV.FG_RV1 A, INV.FG_RV2 B,SCENT.INV_PROD C
+WHERE A.LOC_CD='&&SC_CD'
+AND A.RV_DT>='&&RV_DATE_FROM'
+AND A.LOC_CD=B.LOC_CD
+AND A.DIV_CD='1'
+AND A.RV_NO=B.RV_NO
+AND C.CAT_CD=B.CAT_CD
+AND C.PRD_CD=B.PRD_CD
+AND B.TYP_CD=C.TYP_CD
+AND B.TYP_CD='09'
+---AND A.ISS_FROM IS NOT NULL
+AND B.CAT_CD||B.PRD_CD IN(&Hu_PROD)
+GROUP BY A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, RV_QTY, A.ISS_FROM
+ORDER BY C.CAT_CD, C.PRD_CD, B.B_NO, A.RV_DT, A.DIV_CD
+/
+
+
+SELECT DISTINCT A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, SUM(RV_QTY) RV_QTY, A.ISS_FROM 
+---SUM(T_VAT*RV_QTY) T_VAL
+FROM INV.FG_RV1 A, INV.FG_RV2 B,SCENT.INV_PROD C
+WHERE A.LOC_CD='&&SC_CD'
+AND A.RV_DT>='&&RV_DATE_FROM'
+AND A.LOC_CD=B.LOC_CD
+AND A.DIV_CD='2'
+AND A.RV_NO=B.RV_NO
+AND C.CAT_CD=B.CAT_CD
+AND C.PRD_CD=B.PRD_CD
+AND B.TYP_CD=C.TYP_CD
+AND B.TYP_CD='09'
+---AND A.ISS_FROM IS NOT NULL
+AND B.CAT_CD||B.PRD_CD IN(&VTN_PROD)
+GROUP BY A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, RV_QTY, A.ISS_FROM
+ORDER BY C.CAT_CD, C.PRD_CD, B.B_NO, A.RV_DT, A.DIV_CD
+/
+
+
+SPOOL OFF
+ED ON.LST
+
+
+=========================================================
+
+
+
+
+
+===========================================================
+
+Enter value for rv_date_from: 01feb25
+
+                                          DEPOT: 02, RV                                         
+                                                                                                
+D CA PRD_ PROD_NM                                  RV_NO   B_NO     RV_DT        RV_QTY IS      
+- -- ---- ---------------------------------------- ------- -------- --------- --------- --      
+1 03 1040 CLARICIN P/S 60ML                        0053303 F0402031 05-APR-25      1.00         
+1 03      CLARICIN P/S 60ML                        0052878 F0402033 11-FEB-25      2.00         
+1 03      CLARICIN P/S 60ML                        0053571 P0401019 04-MAY-25      3.00         
+1 03      CLARICIN P/S 60ML                        0052878 P0402009 11-FEB-25      1.00         
+1 03      CLARICIN P/S 60ML                        0052878 P0402010 11-FEB-25      1.00         
+1 03      CLARICIN P/S 60ML                        0053078 P0402032 05-MAR-25      2.00         
+1 03      CLARICIN P/S 60ML                        0053303 P0402032 05-APR-25      1.00         
+1 03      CLARICIN P/S 60ML                        0053571 P0402032 04-MAY-25      1.00         
+1 03      CLARICIN P/S 60ML                        0053303 P0403001 05-APR-25      1.00         
+1 03      CLARICIN P/S 60ML                        0053571 P0403001 04-MAY-25      1.00         
+1 03      CLARICIN P/S 60ML                        0053571 P0403004 04-MAY-25      1.00         
+1 03      CLARICIN P/S 60ML                        0052983 P0404045 23-FEB-25     36.00 21      
+1 03      CLARICIN P/S 60ML                        0053348 P0405001 10-APR-25     60.00 21      
+1 03      CLARICIN P/S 60ML                        0053371 P0405001 13-APR-25     72.00 21      
+1 03      CLARICIN P/S 60ML                        0053533 P0405001 29-APR-25      2.00         
+1 03      CLARICIN P/S 60ML                        0053226 P0405004 20-MAR-25     36.00 21      
+1 03      CLARICIN P/S 60ML                        0053165 P0405005 13-MAR-25     60.00 21      
+1 03      CLARICIN P/S 60ML                        0053303 P0462021 05-APR-25      1.00         
+     ****                                                  --------                             
+     coun                                                        18                             
+1 05 1069 PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0691011 11-FEB-25      4.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053571 V0691012 04-MAY-25      2.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0691017 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0691020 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692010 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053078 V0692010 05-MAR-25      2.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692018 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692022 11-FEB-25      2.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692028 11-FEB-25      4.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053078 V0692031 05-MAR-25      3.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692036 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692040 11-FEB-25      2.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692049 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692053 11-FEB-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052878 V0692061 11-FEB-25      4.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053571 V0693012 04-MAY-25      1.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052793 V0695001 04-FEB-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052820 V0695001 06-FEB-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052837 V0695001 06-FEB-25      6.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052883 V0695001 11-FEB-25      3.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052779 V0695002 02-FEB-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052935 V0695004 18-FEB-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052964 V0695004 20-FEB-25     10.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053016 V0695004 26-FEB-25     10.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052901 V0695006 15-FEB-25   1260.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052912 V0695006 16-FEB-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053054 V0695006 02-MAR-25     50.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053133 V0695006 10-MAR-25     20.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053150 V0695006 11-MAR-25      6.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052933 V0695007 18-FEB-25    945.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0052983 V0695007 23-FEB-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053029 V0695007 28-FEB-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053043 V0695007 02-MAR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053159 V0695007 12-MAR-25      6.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053178 V0695007 15-MAR-25      6.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053061 V0695008 04-MAR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053089 V0695009 06-MAR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053120 V0695009 09-MAR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053139 V0695009 11-MAR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053226 V0695011 20-MAR-25   1260.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053242 V0695011 23-MAR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053259 V0695011 24-MAR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053334 V0695011 08-APR-25     15.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053269 V0695012 25-MAR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053307 V0695012 06-APR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053325 V0695014 08-APR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053346 V0695014 10-APR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053494 V0695014 26-APR-25     20.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053371 V0695015 13-APR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053395 V0695016 15-APR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053411 V0695016 17-APR-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053435 V0695016 20-APR-25    189.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053457 V0695016 22-APR-25    189.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053476 V0695017 24-APR-25   1260.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053502 V0695018 27-APR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053518 V0695018 29-APR-25    630.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053695 V0695018 17-MAY-25    100.00         
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053570 V0695019 04-MAY-25    315.00 21      
+1 05      PPI 40 IV INJ.(LYOPHILIZED)              0053679 V0695020 15-MAY-25    630.00 21      
+     ****                                                  --------                             
+     coun                                                        59                             
+1 05 1080 MAXIMA 40 IV INJ. LYO 1X1S               0052811 V0804003 05-FEB-25     12.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0052779 V0804004 02-FEB-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0052803 V0804004 04-FEB-25     20.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0052820 V0804004 06-FEB-25    756.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053054 V0804004 02-MAR-25    100.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0052870 V0804005 11-FEB-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0052983 V0804005 23-FEB-25    189.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053043 V0804005 02-MAR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053230 V0804005 20-MAR-25     40.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053089 V0805001 06-MAR-25    315.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053120 V0805002 09-MAR-25    315.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053139 V0805002 11-MAR-25    315.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053200 V0805003 18-MAR-25    113.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053200 V0805004 18-MAR-25    517.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053259 V0805004 24-MAR-25    315.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053307 V0805005 06-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053325 V0805006 08-APR-25    945.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053346 V0805007 10-APR-25   1260.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053395 V0805008 15-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053435 V0805009 20-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053438 V0805009 20-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053630 V0805009 10-MAY-25     10.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053479 V0805010 24-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053549 V0805011 30-APR-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053570 V0805011 04-MAY-25   1260.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053695 V0805011 17-MAY-25     67.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053588 V0805013 06-MAY-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053695 V0805013 17-MAY-25    233.00         
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053613 V0805015 08-MAY-25    630.00 21      
+1 05      MAXIMA 40 IV INJ. LYO 1X1S               0053681 V0805016 15-MAY-25    630.00 21      
+     ****                                                  --------                             
+     coun                                                        30                             
+1 08 1001 ACEMOX 250MG                             0053078 T0001000 05-MAR-25      1.00         
+1 08      ACEMOX 250MG                             0053571 T0010019 04-MAY-25       .40         
+1 08      ACEMOX 250MG                             0053078 T0010022 05-MAR-25      1.00         
+1 08      ACEMOX 250MG                             0053303 T0010022 05-APR-25      1.00         
+1 08      ACEMOX 250MG                             0053571 T0010022 04-MAY-25       .70         
+1 08      ACEMOX 250MG                             0053078 T0011005 05-MAR-25       .20         
+1 08      ACEMOX 250MG                             0053078 T0011006 05-MAR-25       .60         
+1 08      ACEMOX 250MG                             0053303 T0011011 05-APR-25       .50         
+1 08      ACEMOX 250MG                             0053571 T0011011 04-MAY-25       .60         
+1 08      ACEMOX 250MG                             0053078 T0011012 05-MAR-25      1.00         
+1 08      ACEMOX 250MG                             0053571 T0011014 04-MAY-25       .70         
+1 08      ACEMOX 250MG                             0053303 T0011019 05-APR-25       .90         
+1 08      ACEMOX 250MG                             0052878 T0011023 11-FEB-25       .70         
+1 08      ACEMOX 250MG                             0053303 T0011023 05-APR-25      1.00         
+1 08      ACEMOX 250MG                             0053303 T0012004 05-APR-25       .80         
+1 08      ACEMOX 250MG                             0052789 T0014014 03-FEB-25      1.00         
+1 08      ACEMOX 250MG                             0052896 T0014014 13-FEB-25      1.00         
+1 08      ACEMOX 250MG                             0052849 T0015001 09-FEB-25     48.00 21      
+1 08      ACEMOX 250MG                             0052870 T0015001 11-FEB-25     48.00 21      
+1 08      ACEMOX 250MG                             0052901 T0015001 15-FEB-25     48.00 21      
+1 08      ACEMOX 250MG                             0053058 T0015001 03-MAR-25      2.00         
+1 08      ACEMOX 250MG                             0053120 T0015002 09-MAR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053139 T0015002 11-MAR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053435 T0015003 20-APR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053457 T0015003 22-APR-25    144.00 21      
+1 08      ACEMOX 250MG                             0053613 T0015004 08-MAY-25     48.00 21      
+1 08      ACEMOX 250MG                             0053650 T0015004 13-MAY-25     48.00 21      
+1 08      ACEMOX 250MG                             0053374 T0015005 13-APR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053395 T0015005 15-APR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053411 T0015005 17-APR-25     48.00 21      
+1 08      ACEMOX 250MG                             0053078 T0018025 05-MAR-25      1.00         
+1 08      ACEMOX 250MG                             0053078 T0019009 05-MAR-25       .20         
+1 08      ACEMOX 250MG                             0053303 T11006   05-APR-25       .60         
+     ****                                                  --------                             
+     coun                                                        33                             
+1 08 1334 LIMBIX                                   0053303 T3341015 05-APR-25      1.20         
+1 08      LIMBIX                                   0053571 T3341032 04-MAY-25       .60         
+1 08      LIMBIX                                   0052878 T3342010 11-FEB-25      1.00         
+1 08      LIMBIX                                   0053078 T3342029 05-MAR-25      1.00         
+1 08      LIMBIX                                   0053303 T3342029 05-APR-25      1.00         
+1 08      LIMBIX                                   0052878 T3342030 11-FEB-25       .40         
+1 08      LIMBIX                                   0053303 T3342031 05-APR-25       .40         
+1 08      LIMBIX                                   0053078 T3342035 05-MAR-25      4.00         
+1 08      LIMBIX                                   0052878 T3342036 11-FEB-25       .40         
+1 08      LIMBIX                                   0053078 T3342038 05-MAR-25       .60         
+1 08      LIMBIX                                   0053303 T3342038 05-APR-25      1.00         
+1 08      LIMBIX                                   0053078 T3342047 05-MAR-25       .60         
+1 08      LIMBIX                                   0053571 T3342047 04-MAY-25      2.20         
+1 08      LIMBIX                                   0052785 T3344020 02-FEB-25      5.00         
+1 08      LIMBIX                                   0052786 T3344020 02-FEB-25      1.00         
+1 08      LIMBIX                                   0052789 T3344020 03-FEB-25      1.00         
+1 08      LIMBIX                                   0052842 T3344020 08-FEB-25      1.00         
+1 08      LIMBIX                                   0052865 T3344020 10-FEB-25      1.00         
+1 08      LIMBIX                                   0052883 T3344020 11-FEB-25      1.00         
+1 08      LIMBIX                                   0052896 T3344020 13-FEB-25      1.00         
+1 08      LIMBIX                                   0052929 T3344020 17-FEB-25      4.00         
+1 08      LIMBIX                                   0052973 T3344020 22-FEB-25      5.00         
+1 08      LIMBIX                                   0052890 T3344021 12-FEB-25      1.00         
+1 08      LIMBIX                                   0052908 T3344021 15-FEB-25      7.00         
+1 08      LIMBIX                                   0052929 T3344021 17-FEB-25      1.00         
+1 08      LIMBIX                                   0052955 T3344021 19-FEB-25      1.00         
+1 08      LIMBIX                                   0052973 T3344021 22-FEB-25      1.00         
+1 08      LIMBIX                                   0053058 T3344022 03-MAR-25      1.00         
+1 08      LIMBIX                                   0053072 T3344022 04-MAR-25      2.00         
+1 08      LIMBIX                                   0053103 T3344022 06-MAR-25      2.00         
+1 08      LIMBIX                                   0053109 T3344022 08-MAR-25      1.00         
+1 08      LIMBIX                                   0053172 T3344022 13-MAR-25      2.00         
+1 08      LIMBIX                                   0053190 T3344022 16-MAR-25      1.00         
+1 08      LIMBIX                                   0053196 T3344022 17-MAR-25      1.00         
+1 08      LIMBIX                                   0053213 T3344022 18-MAR-25     12.00         
+1 08      LIMBIX                                   0053219 T3344022 19-MAR-25      1.00         
+1 08      LIMBIX                                   0053266 T3344022 24-MAR-25      1.00         
+1 08      LIMBIX                                   0053279 T3344022 25-MAR-25      1.00         
+1 08      LIMBIX                                   0052870 T3344023 11-FEB-25    520.00 21      
+1 08      LIMBIX                                   0052912 T3344023 16-FEB-25    104.00 21      
+1 08      LIMBIX                                   0053391 T3344023 14-APR-25     10.00         
+1 08      LIMBIX                                   0052933 T3344024 18-FEB-25    520.00 21      
+1 08      LIMBIX                                   0053089 T3344025 06-MAR-25    520.00 21      
+1 08      LIMBIX                                   0053120 T3344025 09-MAR-25    208.00 21      
+1 08      LIMBIX                                   0053139 T3344025 11-MAR-25    104.00 21      
+1 08      LIMBIX                                   0053166 T3344025 13-MAR-25    520.00 21      
+1 08      LIMBIX                                   0053366 T3344025 12-APR-25      2.00         
+1 08      LIMBIX                                   0053488 T3344025 24-APR-25      1.00         
+1 08      LIMBIX                                   0053494 T3344025 26-APR-25      5.00         
+1 08      LIMBIX                                   0053514 T3344025 28-APR-25      1.00         
+1 08      LIMBIX                                   0053515 T3344025 28-APR-25      2.00         
+1 08      LIMBIX                                   0053533 T3344025 29-APR-25      9.00         
+1 08      LIMBIX                                   0053599 T3344025 06-MAY-25      1.00         
+1 08      LIMBIX                                   0053187 T3344026 16-MAR-25    520.00 21      
+1 08      LIMBIX                                   0053200 T3344026 18-MAR-25    104.00 21      
+1 08      LIMBIX                                   0053226 T3344026 20-MAR-25    520.00 21      
+1 08      LIMBIX                                   0053584 T3344026 05-MAY-25      1.00         
+1 08      LIMBIX                                   0053625 T3344026 08-MAY-25      1.00         
+1 08      LIMBIX                                   0053630 T3344026 10-MAY-25     11.00         
+1 08      LIMBIX                                   0053670 T3344026 14-MAY-25      3.00         
+1 08      LIMBIX                                   0053695 T3344026 17-MAY-25      3.00         
+1 08      LIMBIX                                   0053269 T3344027 25-MAR-25   1040.00 21      
+1 08      LIMBIX                                   0053457 T3344027 22-APR-25    624.00 21      
+1 08      LIMBIX                                   0053549 T3344028 30-APR-25    104.00 21      
+1 08      LIMBIX                                   0053613 T3344028 08-MAY-25    520.00 21      
+1 08      LIMBIX                                   0053681 T3344029 15-MAY-25    104.00 21      
+1 08      LIMBIX                                   0053571 T3442025 04-MAY-25       .20         
+     ****                                                  --------                             
+     coun                                                        67                             
+1 08 1436 DULOX 20MG (30 PCS)                      0053303 T1361005 05-APR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053303 T4361007 05-APR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053078 T4361009 05-MAR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053078 T4361022 05-MAR-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4361023 11-FEB-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053078 T4362003 05-MAR-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4362014 11-FEB-25       .66         
+1 08      DULOX 20MG (30 PCS)                      0053303 T4362020 05-APR-25      1.66         
+1 08      DULOX 20MG (30 PCS)                      0053571 T4362020 04-MAY-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4362022 11-FEB-25       .66         
+1 08      DULOX 20MG (30 PCS)                      0053303 T4362022 05-APR-25       .67         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4362023 11-FEB-25      1.33         
+1 08      DULOX 20MG (30 PCS)                      0053571 T4362025 04-MAY-25       .66         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4362027 11-FEB-25       .66         
+1 08      DULOX 20MG (30 PCS)                      0053571 T4362028 04-MAY-25      1.33         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4362029 11-FEB-25      2.66         
+1 08      DULOX 20MG (30 PCS)                      0053571 T4362030 04-MAY-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0053078 T4363001 05-MAR-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0052878 T4363019 11-FEB-25       .33         
+1 08      DULOX 20MG (30 PCS)                      0052803 T4365001 04-FEB-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0052896 T4365001 13-FEB-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0052897 T4365001 13-FEB-25      3.00         
+1 08      DULOX 20MG (30 PCS)                      0053078 T4365001 05-MAR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0052820 T4365002 06-FEB-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0052870 T4365002 11-FEB-25     84.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053072 T4365002 04-MAR-25      2.00         
+1 08      DULOX 20MG (30 PCS)                      0053133 T4365002 10-MAR-25      3.00         
+1 08      DULOX 20MG (30 PCS)                      0053150 T4365002 11-MAR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053178 T4365002 15-MAR-25      6.00         
+1 08      DULOX 20MG (30 PCS)                      0053219 T4365002 19-MAR-25      2.00         
+1 08      DULOX 20MG (30 PCS)                      0052870 T4365003 11-FEB-25    116.00 21      
+1 08      DULOX 20MG (30 PCS)                      0052983 T4365003 23-FEB-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053321 T4365003 07-APR-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053505 T4365004 27-APR-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053518 T4365004 29-APR-25    200.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053559 T4365004 02-MAY-25      2.00         
+1 08      DULOX 20MG (30 PCS)                      0053570 T4365005 04-MAY-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053588 T4365005 06-MAY-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053599 T4365005 06-MAY-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053613 T4365005 08-MAY-25    200.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053646 T4365005 12-MAY-25      2.00         
+1 08      DULOX 20MG (30 PCS)                      0053663 T4365005 13-MAY-25      2.00         
+1 08      DULOX 20MG (30 PCS)                      0053688 T4365005 15-MAY-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053695 T4365005 17-MAY-25      3.00         
+1 08      DULOX 20MG (30 PCS)                      0053549 T4365006 30-APR-25    400.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053585 T4365006 05-MAY-25      1.00         
+1 08      DULOX 20MG (30 PCS)                      0053650 T4365006 13-MAY-25    200.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053681 T4365006 15-MAY-25    200.00 21      
+1 08      DULOX 20MG (30 PCS)                      0053078 TR432030 05-MAR-25      1.00         
+     ****                                                  --------                             
+     coun                                                        49                             
+1 08 1472 ECOSPRIN 81MG                            0052878 T0632302 11-FEB-25      1.40         
+1 08      ECOSPRIN 81MG                            0053078 T4222002 05-MAR-25       .60         
+1 08      ECOSPRIN 81MG                            0052878 T4721001 11-FEB-25      2.20         
+1 08      ECOSPRIN 81MG                            0053571 T4721001 04-MAY-25      2.00         
+1 08      ECOSPRIN 81MG                            0052878 T4721002 11-FEB-25      1.00         
+1 08      ECOSPRIN 81MG                            0053078 T4721002 05-MAR-25      1.00         
+1 08      ECOSPRIN 81MG                            0053303 T4721002 05-APR-25      3.00         
+1 08      ECOSPRIN 81MG                            0053303 T4722002 05-APR-25      1.40         
+1 08      ECOSPRIN 81MG                            0053571 T4722002 04-MAY-25       .80         
+1 08      ECOSPRIN 81MG                            0052878 T4722003 11-FEB-25      1.60         
+1 08      ECOSPRIN 81MG                            0053303 T4722003 05-APR-25       .60         
+1 08      ECOSPRIN 81MG                            0053571 T4722003 04-MAY-25       .60         
+1 08      ECOSPRIN 81MG                            0053571 T4723001 04-MAY-25       .80         
+1 08      ECOSPRIN 81MG                            0053346 T4724006 10-APR-25    135.00 21      
+1 08      ECOSPRIN 81MG                            0053371 T4724006 13-APR-25    540.00 21      
+1 08      ECOSPRIN 81MG                            0053457 T4724006 22-APR-25    270.00 21      
+1 08      ECOSPRIN 81MG                            0053494 T4724006 26-APR-25      1.00         
+1 08      ECOSPRIN 81MG                            0053515 T4724006 28-APR-25      2.00         
+1 08      ECOSPRIN 81MG                            0053695 T4724006 17-MAY-25      1.00         
+1 08      ECOSPRIN 81MG                            0052789 T4724007 03-FEB-25      1.00         
+1 08      ECOSPRIN 81MG                            0052842 T4724007 08-FEB-25      2.00         
+1 08      ECOSPRIN 81MG                            0052896 T4724007 13-FEB-25      1.00         
+1 08      ECOSPRIN 81MG                            0052922 T4724007 16-FEB-25      2.00         
+1 08      ECOSPRIN 81MG                            0052947 T4724007 18-FEB-25      1.00         
+1 08      ECOSPRIN 81MG                            0053002 T4725001 25-FEB-25    405.00 21      
+1 08      ECOSPRIN 81MG                            0053043 T4725001 02-MAR-25    135.00 21      
+1 08      ECOSPRIN 81MG                            0053061 T4725001 04-MAR-25    270.00 21      
+1 08      ECOSPRIN 81MG                            0053305 T4725001 05-APR-25      1.00         
+1 08      ECOSPRIN 81MG                            0053321 T4725001 07-APR-25      2.00         
+     ****                                                  --------                             
+     coun                                                        29                             
+1 08 1492 EDEMIDE 20 TABLET(40'S)                  0052878 T4822002 11-FEB-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4822008 11-FEB-25       .75         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4921002 11-FEB-25       .25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053078 T4921002 05-MAR-25       .25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4921003 11-FEB-25       .75         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4921004 11-FEB-25      1.50         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4921004 04-MAY-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4922001 11-FEB-25       .50         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053303 T4922002 05-APR-25       .50         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4922002 04-MAY-25      3.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053078 T4922006 05-MAR-25      1.50         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4922006 04-MAY-25       .75         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053303 T4922007 05-APR-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4922008 11-FEB-25      1.25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053303 T4922009 05-APR-25       .25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4922010 04-MAY-25      1.10         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053078 T4923001 05-MAR-25       .75         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4923001 04-MAY-25       .90         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053078 T4923002 05-MAR-25       .25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053571 T4923002 04-MAY-25      1.25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052878 T4923003 11-FEB-25       .25         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053457 T4924007 22-APR-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053588 T4924007 06-MAY-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0052789 T4924010 03-FEB-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052803 T4924010 04-FEB-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052811 T4924010 05-FEB-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0052779 T4924011 02-FEB-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053133 T4924011 10-MAR-25     10.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053289 T4924011 26-MAR-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053307 T4925001 06-APR-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053325 T4925001 08-APR-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053334 T4925001 08-APR-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053366 T4925001 12-APR-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053029 T4925002 28-FEB-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053043 T4925002 02-MAR-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053061 T4925002 04-MAR-25    140.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053219 T4925002 19-MAR-25      1.00         
+1 08      EDEMIDE 20 TABLET(40'S)                  0053242 T4925002 23-MAR-25     20.00 21      
+1 08      EDEMIDE 20 TABLET(40'S)                  0053289 T4925002 26-MAR-25      1.00         
+     ****                                                  --------                             
+     coun                                                        39                             
+1 08 1512 LOSART 25MG(50'S)                        0053571 T122004  04-MAY-25      1.20         
+1 08      LOSART 25MG(50'S)                        0053303 T5122003 05-APR-25      1.00         
+1 08      LOSART 25MG(50'S)                        0053571 T5122004 04-MAY-25       .20         
+1 08      LOSART 25MG(50'S)                        0052789 T5124061 03-FEB-25      1.00         
+1 08      LOSART 25MG(50'S)                        0052870 T5124062 11-FEB-25     15.00 21      
+1 08      LOSART 25MG(50'S)                        0052912 T5124062 16-FEB-25     10.00 21      
+1 08      LOSART 25MG(50'S)                        0053061 T5125025 04-MAR-25     35.00 21      
+1 08      LOSART 25MG(50'S)                        0053120 T5125025 09-MAR-25      5.00 21      
+1 08      LOSART 25MG(50'S)                        0053435 T5125027 20-APR-25     80.00 21      
+1 08      LOSART 25MG(50'S)                        0053570 T5125027 04-MAY-25    270.00 21      
+1 08      LOSART 25MG(50'S)                        0053165 T5125028 13-MAR-25    100.00 21      
+1 08      LOSART 25MG(50'S)                        0053187 T5125028 16-MAR-25    102.00 21      
+1 08      LOSART 25MG(50'S)                        0053266 T5125028 24-MAR-25      2.00         
+1 08      LOSART 25MG(50'S)                        0053321 T5125028 07-APR-25      1.00         
+1 08      LOSART 25MG(50'S)                        0053187 T5125029 16-MAR-25    168.00 21      
+1 08      LOSART 25MG(50'S)                        0053400 T5125029 15-APR-25      1.00         
+     ****                                                  --------                             
+     coun                                                        16                             
+1 08 1602 TPC (1X30'S)                             0052803 T6024037 04-FEB-25      4.00         
+1 08      TPC (1X30'S)                             0052890 T6024038 12-FEB-25      2.00         
+1 08      TPC (1X30'S)                             0052964 T6024038 20-FEB-25      2.00         
+1 08      TPC (1X30'S)                             0052789 T6024039 03-FEB-25      3.00         
+1 08      TPC (1X30'S)                             0052836 T6024039 06-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052896 T6024039 13-FEB-25      3.00         
+1 08      TPC (1X30'S)                             0052811 T6024040 05-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052836 T6024040 06-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052842 T6024040 08-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052857 T6024040 09-FEB-25     10.00         
+1 08      TPC (1X30'S)                             0052884 T6024040 11-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052890 T6024040 12-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052908 T6024040 15-FEB-25      2.00         
+1 08      TPC (1X30'S)                             0052929 T6024040 17-FEB-25      3.00         
+1 08      TPC (1X30'S)                             0052955 T6024040 19-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0052992 T6024040 23-FEB-25      3.00         
+1 08      TPC (1X30'S)                             0052947 T6024042 18-FEB-25      5.00         
+1 08      TPC (1X30'S)                             0052948 T6024042 18-FEB-25      3.00         
+1 08      TPC (1X30'S)                             0052973 T6024042 22-FEB-25      2.00         
+1 08      TPC (1X30'S)                             0053009 T6024042 25-FEB-25      7.00         
+1 08      TPC (1X30'S)                             0053036 T6024042 28-FEB-25      1.00         
+1 08      TPC (1X30'S)                             0053009 T6024043 25-FEB-25      2.00         
+1 08      TPC (1X30'S)                             0053058 T6024043 03-MAR-25     30.00         
+1 08      TPC (1X30'S)                             0053109 T6024043 08-MAR-25      1.00         
+1 08      TPC (1X30'S)                             0053196 T6024043 17-MAR-25      1.00         
+1 08      TPC (1X30'S)                             0053133 T6024045 10-MAR-25      5.00         
+1 08      TPC (1X30'S)                             0053213 T6024045 18-MAR-25      3.00         
+1 08      TPC (1X30'S)                             0053289 T6024045 26-MAR-25      2.00         
+1 08      TPC (1X30'S)                             0052847 T6024047 09-FEB-25    150.00 21      
+1 08      TPC (1X30'S)                             0052870 T6024047 11-FEB-25    750.00 21      
+1 08      TPC (1X30'S)                             0053159 T6024047 12-MAR-25      4.00         
+1 08      TPC (1X30'S)                             0053172 T6024047 13-MAR-25      5.00         
+1 08      TPC (1X30'S)                             0053178 T6024047 15-MAR-25      3.00         
+1 08      TPC (1X30'S)                             0053190 T6024047 16-MAR-25      1.00         
+1 08      TPC (1X30'S)                             0053196 T6024047 17-MAR-25      3.00         
+1 08      TPC (1X30'S)                             0053213 T6024047 18-MAR-25      4.00         
+1 08      TPC (1X30'S)                             0052933 T6024048 18-FEB-25    300.00 21      
+1 08      TPC (1X30'S)                             0053219 T6024048 19-MAR-25      3.00         
+1 08      TPC (1X30'S)                             0053230 T6024048 20-MAR-25      4.00         
+1 08      TPC (1X30'S)                             0053251 T6024048 23-MAR-25      2.00         
+1 08      TPC (1X30'S)                             0053289 T6024048 26-MAR-25      3.00         
+1 08      TPC (1X30'S)                             0053411 T6024053 17-APR-25    750.00 21      
+1 08      TPC (1X30'S)                             0053435 T6024053 20-APR-25    750.00 21      
+1 08      TPC (1X30'S)                             0053445 T6024053 20-APR-25      5.00         
+1 08      TPC (1X30'S)                             0053465 T6024053 22-APR-25      9.00         
+1 08      TPC (1X30'S)                             0053472 T6024053 23-APR-25      1.00         
+1 08      TPC (1X30'S)                             0053488 T6024053 24-APR-25      2.00         
+1 08      TPC (1X30'S)                             0053494 T6024053 26-APR-25      3.00         
+1 08      TPC (1X30'S)                             0053533 T6024053 29-APR-25     18.00         
+1 08      TPC (1X30'S)                             0052983 T6025001 23-FEB-25    300.00 21      
+1 08      TPC (1X30'S)                             0053043 T6025001 02-MAR-25    150.00 21      
+1 08      TPC (1X30'S)                             0053120 T6025002 09-MAR-25    300.00 21      
+1 08      TPC (1X30'S)                             0053139 T6025003 11-MAR-25   1500.00 21      
+1 08      TPC (1X30'S)                             0053321 T6025003 07-APR-25      3.00         
+1 08      TPC (1X30'S)                             0053400 T6025003 15-APR-25      5.00         
+1 08      TPC (1X30'S)                             0053154 T6025004 12-MAR-25    750.00 21      
+1 08      TPC (1X30'S)                             0053166 T6025004 13-MAR-25    150.00 21      
+1 08      TPC (1X30'S)                             0053423 T6025004 17-APR-25      2.00         
+1 08      TPC (1X30'S)                             0053430 T6025004 19-APR-25      1.00         
+1 08      TPC (1X30'S)                             0053187 T6025005 16-MAR-25    150.00 21      
+1 08      TPC (1X30'S)                             0053562 T6025005 03-MAY-25     24.00         
+1 08      TPC (1X30'S)                             0053599 T6025005 06-MAY-25      2.00         
+1 08      TPC (1X30'S)                             0053457 T6025006 22-APR-25    600.00 21      
+1 08      TPC (1X30'S)                             0053556 T6025006 01-MAY-25      2.00         
+1 08      TPC (1X30'S)                             0053562 T6025006 03-MAY-25      5.00         
+1 08      TPC (1X30'S)                             0053549 T6025007 30-APR-25    750.00 21      
+1 08      TPC (1X30'S)                             0053588 T6025007 06-MAY-25    750.00 21      
+1 08      TPC (1X30'S)                             0053613 T6025007 08-MAY-25    300.00 21      
+1 08      TPC (1X30'S)                             0053630 T6025007 10-MAY-25      2.00         
+1 08      TPC (1X30'S)                             0053646 T6025007 12-MAY-25      3.00         
+1 08      TPC (1X30'S)                             0053647 T6025007 12-MAY-25      1.00         
+1 08      TPC (1X30'S)                             0053663 T6025007 13-MAY-25      8.00         
+1 08      TPC (1X30'S)                             0053695 T6025007 17-MAY-25      7.00         
+1 08      TPC (1X30'S)                             0053696 T6025007 17-MAY-25      2.00         
+1 08      TPC (1X30'S)                             0053269 T6025008 25-MAR-25    750.00 21      
+1 08      TPC (1X30'S)                             0053609 T6025008 07-MAY-25      1.00         
+1 08      TPC (1X30'S)                             0053307 T6025009 06-APR-25    300.00 21      
+1 08      TPC (1X30'S)                             0053325 T6025010 08-APR-25    300.00 21      
+1 08      TPC (1X30'S)                             0053346 T6025011 10-APR-25    300.00 21      
+1 08      TPC (1X30'S)                             0053395 T6025011 15-APR-25    150.00 21      
+1 08      TPC (1X30'S)                             0053518 T6025013 29-APR-25    450.00 21      
+1 08      TPC (1X30'S)                             0053681 T6025014 15-MAY-25   1200.00 21      
+     ****                                                  --------                             
+     coun                                                        82                             
+1 08 1622 LIMBIX DS TABLET                         0052929 T6224025 17-FEB-25      1.00         
+1 08      LIMBIX DS TABLET                         0053089 T6224029 06-MAR-25    120.00 21      
+1 08      LIMBIX DS TABLET                         0053120 T6224029 09-MAR-25    120.00 21      
+1 08      LIMBIX DS TABLET                         0053187 T6224029 16-MAR-25    120.00 21      
+1 08      LIMBIX DS TABLET                         0053269 T6224029 25-MAR-25    120.00 21      
+1 08      LIMBIX DS TABLET                         0053391 T6224029 14-APR-25      1.00         
+1 08      LIMBIX DS TABLET                         0053430 T6224029 19-APR-25      2.00         
+1 08      LIMBIX DS TABLET                         0053533 T6224029 29-APR-25      1.00         
+1 08      LIMBIX DS TABLET                         0052870 T6224031 11-FEB-25    120.00 21      
+1 08      LIMBIX DS TABLET                         0053103 T6224031 06-MAR-25      1.00         
+     ****                                                  --------                             
+     coun                                                        10                             
+1 08 1630 MIRABA 10 TABLET                         0052785 T6304009 02-FEB-25      3.00         
+1 08      MIRABA 10 TABLET                         0052973 T6304009 22-FEB-25      3.00         
+1 08      MIRABA 10 TABLET                         0053061 T6304009 04-MAR-25    120.00 21      
+1 08      MIRABA 10 TABLET                         0053688 T6304009 15-MAY-25      3.00         
+1 08      MIRABA 10 TABLET                         0053325 T6305001 08-APR-25    120.00 21      
+1 08      MIRABA 10 TABLET                         0053695 T6305001 17-MAY-25      2.00         
+     ****                                                  --------                             
+     coun                                                         6                             
+1 08 1643 CINAZIN PLUS (10X10'S)                   0052793 T6434009 04-FEB-25    144.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0052836 T6434009 06-FEB-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0052865 T6434009 10-FEB-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0052922 T6434009 16-FEB-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0053159 T6434009 12-MAR-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0053178 T6434009 15-MAR-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0053213 T6434009 18-MAR-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0053219 T6434009 19-MAR-25      2.00         
+1 08      CINAZIN PLUS (10X10'S)                   0052870 T6434010 11-FEB-25    144.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0053089 T6434010 06-MAR-25    144.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0053334 T6434010 08-APR-25      1.00         
+1 08      CINAZIN PLUS (10X10'S)                   0053549 T6435001 30-APR-25    144.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0053650 T6435001 13-MAY-25    144.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0053307 T6435002 06-APR-25    288.00 21      
+1 08      CINAZIN PLUS (10X10'S)                   0053371 T6435002 13-APR-25    288.00 21      
+     ****                                                  --------                             
+     coun                                                        15                             
+
+453 rows selected.
+
+Enter value for vtn_batch: '064070', '104045', '104047', '114050', '124051'
+
+                                          DEPOT: 02, RV                                         
+                                                                                                
+D CA PRD_ PROD_NM                                  RV_NO   B_NO     RV_DT        RV_QTY IS      
+- -- ---- ---------------------------------------- ------- -------- --------- --------- --      
+2 06 4070 DILORES VET 100ML                        0053304 L0700000 05-APR-25      1.00         
+2 06      DILORES VET 100ML                        0053572 L0700014 04-MAY-25      2.00         
+2 06      DILORES VET 100ML                        0053304 L0701013 05-APR-25      3.00         
+2 06      DILORES VET 100ML                        0052879 L0702012 11-FEB-25      1.00         
+2 06      DILORES VET 100ML                        0053572 L0702014 04-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0052879 L0702015 11-FEB-25      3.00         
+2 06      DILORES VET 100ML                        0053304 L0702017 05-APR-25      2.00         
+2 06      DILORES VET 100ML                        0052879 L0702018 11-FEB-25      2.00         
+2 06      DILORES VET 100ML                        0052879 L0703002 11-FEB-25      1.00         
+2 06      DILORES VET 100ML                        0053572 L0703002 04-MAY-25     18.00         
+2 06      DILORES VET 100ML                        0052879 L0703003 11-FEB-25      3.00         
+2 06      DILORES VET 100ML                        0052879 L0703005 11-FEB-25      1.00         
+2 06      DILORES VET 100ML                        0052879 L0703011 11-FEB-25      8.00         
+2 06      DILORES VET 100ML                        0053572 L0703019 04-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0052805 L0704019 04-FEB-25      2.00         
+2 06      DILORES VET 100ML                        0052875 L0705001 11-FEB-25    250.00 21      
+2 06      DILORES VET 100ML                        0052914 L0705001 16-FEB-25    250.00 21      
+2 06      DILORES VET 100ML                        0053155 L0705001 12-MAR-25    150.00 21      
+2 06      DILORES VET 100ML                        0053223 L0705001 20-MAR-25    500.00 21      
+2 06      DILORES VET 100ML                        0053610 L0705001 07-MAY-25      8.00         
+2 06      DILORES VET 100ML                        0053623 L0705001 08-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0053628 L0705001 08-MAY-25     10.00         
+2 06      DILORES VET 100ML                        0053642 L0705001 11-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0053668 L0705001 14-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0053672 L0705001 14-MAY-25     10.00         
+2 06      DILORES VET 100ML                        0053686 L0705001 15-MAY-25      1.00         
+2 06      DILORES VET 100ML                        0053691 L0705001 15-MAY-25     10.00         
+2 06      DILORES VET 100ML                        0053596 L0705003 06-MAY-25     20.00 09      
+2 06      DILORES VET 100ML                        0053616 L0705003 08-MAY-25    500.00 21      
+     ****                                                  --------                             
+     coun                                                        29                             
+2 10 4045 MEL VET BOLUS (60 PCS)                   0052910 T0454026 15-FEB-25      2.00         
+2 10      MEL VET BOLUS (60 PCS)                   0052966 T0454026 20-FEB-25      1.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053221 T0454027 19-MAR-25      3.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053280 T0454027 25-MAR-25      2.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053314 T0454028 06-APR-25      1.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053318 T0454028 06-APR-25     10.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053406 T0454028 16-APR-25      1.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053409 T0454028 16-APR-25     10.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053456 T0454028 21-APR-25      5.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053351 T0454036 10-APR-25   1200.00 21      
+2 10      MEL VET BOLUS (60 PCS)                   0053451 T0454036 21-APR-25      8.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053456 T0454036 21-APR-25     45.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053563 T0454036 03-MAY-25      3.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053610 T0454036 07-MAY-25     10.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053632 T0454036 10-MAY-25      1.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053642 T0454036 11-MAY-25      2.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053643 T0454036 11-MAY-25      2.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053693 T0454036 17-MAY-25      3.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053699 T0454036 17-MAY-25     20.00         
+2 10      MEL VET BOLUS (60 PCS)                   0053566 T0455002 04-MAY-25    480.00 21      
+2 10      MEL VET BOLUS (60 PCS)                   0053593 T0455004 06-MAY-25    240.00 21      
+2 10      MEL VET BOLUS (60 PCS)                   0053616 T0455005 08-MAY-25    240.00 21      
+     ****                                                  --------                             
+     coun                                                        22                             
+2 10 4047 STERON VET BOLUS (60 PCS)                0052805 T0474010 04-FEB-25      1.00         
+2 10      STERON VET BOLUS (60 PCS)                0052783 T0474013 02-FEB-25     60.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0052851 T0474013 09-FEB-25     30.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053064 T0474014 04-MAR-25     60.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053164 T0474014 13-MAR-25     30.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053205 T0474014 18-MAR-25     30.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053377 T0474015 13-APR-25     60.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053439 T0474016 20-APR-25     60.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053458 T0474016 22-APR-25     60.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053546 T0474016 30-APR-25     11.00         
+2 10      STERON VET BOLUS (60 PCS)                0053554 T0474016 30-APR-25      1.00         
+2 10      STERON VET BOLUS (60 PCS)                0053593 T0475002 06-MAY-25    150.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053677 T0475002 15-MAY-25    120.00 21      
+2 10      STERON VET BOLUS (60 PCS)                0053483 T0475003 24-APR-25    300.00 21      
+     ****                                                  --------                             
+     coun                                                        14                             
+2 11 4050 BIOVIGOR GEL 1LTR                        0053079 BV221201 05-MAR-25      3.00         
+2 11      BIOVIGOR GEL 1LTR                        0053304 DV-22120 05-APR-25      3.00         
+2 11      BIOVIGOR GEL 1LTR                        0053572 LO221201 04-MAY-25      6.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 VB220501 05-MAR-25      1.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 X0220501 05-MAR-25      2.00         
+2 11      BIOVIGOR GEL 1LTR                        0052879 X0221201 11-FEB-25     37.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 X0221201 05-MAR-25     15.00         
+2 11      BIOVIGOR GEL 1LTR                        0053304 X0221201 05-APR-25      1.00         
+2 11      BIOVIGOR GEL 1LTR                        0053572 X0221201 04-MAY-25     14.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 X0221210 05-MAR-25      4.00         
+2 11      BIOVIGOR GEL 1LTR                        0053272 X0504002 25-MAR-25     60.00 21      
+2 11      BIOVIGOR GEL 1LTR                        0053350 X0504002 10-APR-25     20.00 21      
+2 11      BIOVIGOR GEL 1LTR                        0053540 X0504002 30-APR-25     20.00 21      
+2 11      BIOVIGOR GEL 1LTR                        0053603 X0504002 07-MAY-25     10.00 28      
+2 11      BIOVIGOR GEL 1LTR                        0053605 X0504002 07-MAY-25      8.00 32      
+2 11      BIOVIGOR GEL 1LTR                        0053149 X0504003 11-MAR-25      1.00         
+2 11      BIOVIGOR GEL 1LTR                        0053151 X0504003 11-MAR-25      9.00         
+2 11      BIOVIGOR GEL 1LTR                        0053409 X0504003 16-APR-25      1.00         
+2 11      BIOVIGOR GEL 1LTR                        0053605 X0504003 07-MAY-25      2.00 32      
+2 11      BIOVIGOR GEL 1LTR                        0052879 X2210201 11-FEB-25      6.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 XO22051  05-MAR-25      2.00         
+2 11      BIOVIGOR GEL 1LTR                        0053079 YTBABABL 05-MAR-25      5.00         
+2 11      BIOVIGOR GEL 1LTR                        0053572 YTBABABV 04-MAY-25      4.00         
+     ****                                                  --------                             
+     coun                                                        23                             
+2 12 4051 ACME'S EGG FORMULA 100GM                 0052797 W0514062 04-FEB-25     80.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0052978 W0515003 23-FEB-25    160.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0053064 W0515006 04-MAR-25     80.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0053377 W0515007 13-APR-25     80.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0053396 W0515009 15-APR-25     80.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0053616 W0515012 08-MAY-25    160.00 21      
+2 12      ACME'S EGG FORMULA 100GM                 0053567 W0515013 04-MAY-25    160.00 21      
+     ****                                                  --------                             
+     coun                                                         7                             
+
+95 rows selected.
+
+
+
+

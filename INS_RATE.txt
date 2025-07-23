@@ -1,0 +1,104 @@
+
+
+SET LINES 101
+SET PAGES 1200
+
+
+SET VER OFF
+BREAK ON REPORT ON CAT_CD
+SET NUMFORMAT 9999,99999
+
+
+
+SPOOL ON
+SELECT CL_NM FROM SCENT.CL_INFO WHERE SC_CD='&&SC_CD' AND DIST_CD||THA_CD||UN_CD||CL_ID ='&&Claint_Info'
+/
+
+
+SELECT SC_CD, A.DIST_CD||THA_CD||UN_CD||CL_ID, A.CAT_CD, A.CAT_CD||A.PRD_CD P_Code, INITCAP(SUBSTR(RPAD(B.PROD_NM,'20'),1,20)) PROD_NM, A.DIS_PCT, A.FLAT_RT,A.REST_PRCENT, A.ST_DT,  A.END_DT, A.CR_DT
+	FROM  SCENT.FLAT_RATE_INS A, SCENT.INV_PROD B
+	WHERE SC_CD='&&SC_CD'
+	AND A.DIST_CD||THA_CD||UN_CD||CL_ID ='&&Claint_Info'
+	AND A.DIS_PCT > 3
+	AND A.TYP_CD=B.TYP_CD 
+	AND A.CAT_CD=B.CAT_CD 
+	AND A.PRD_CD=B.PRD_CD 
+	ORDER BY P_Code
+/
+
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+
+=====================================================
+
+Enter value for sc_cd: 11
+Enter value for claint_info: 5513039059
+
+CL_NM                                                                                                
+----------------------------------------                                                             
+A K S PHARMACY                                                                                       
+
+
+SC A.DIST_CD| CA P_CODE PROD_NM                  DIS_PCT     FLAT_RT R ST_DT     END_DT    CR_DT     
+-- ---------- -- ------ -------------------- ----------- ----------- - --------- --------- --------- 
+11 5513039059 01 011065 Ppi 20mg (140 Pcs)            22         500   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    011074 Ppi 20mg (70 Pcs)             22         251   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059 04 041039 Eyefil Eye Drops 10m           5         232   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059 05 051008 V-Plex 2ml                     5          85   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051011 A-Fenac Plus                   5         126   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051013 A-Flox 500mg                  10         221   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051015 Trizon-Iv 250mg               31          65   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051016 Trizon-Iv 500mg               30          85   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051017 Trizon-Iv 1g                  54          90   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051018 Trizon-Im 250mg               31          65   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051019 Trizon-Im 500mg               30          85   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051020 Trizon-Im 1g                  54          90   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051028 Trizon Iv 2gm                 38         180   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051034 Trizidim 250mg                 5          59   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051035 Trizidim 500mg                 5          98   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051036 Trizidim 1gm                  10         174   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051037 Tracid                        10         157   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051038 Tinium                        10         141   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051041 Tpc 3ml                       10         122   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051043 Winop 30mg                    21          40   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051044 Famicef 750mg Im/Iv           10          97   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051046 Fulspec 1g Iv                 44         723   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051047 Fulspec 500mg Iv              36         441   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051049 Famicef 1.5gm Iv              10         162   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051050 Winop 60                      48          50   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051053 Superpime Im/Iv 500m          10         242   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051054 Superpime Im/Iv 1gm           10         444   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051056 Periset 4ml                    6         126   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051061 Fulspec 250mg Iv              29         264   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051062 Patron 1.5ml                  10          60   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051063 Patron 5ml                    10         242   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051064 Hemojet 100 Injectio          10         330   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051065 Hemojet 500 Injectio          10         564   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051066 Defrol 200000 Iu/Ml           10          97   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051067 Hemojet 1000 Injecti          10        1047   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051068 Maxima 40 Iv (Lyophi          44          50   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051069 Ppi 40 Iv Inj.(Lyoph          43          50   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051070 Protocid 40 Iv Inj.(          43          50   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051071 Remicov 100                   10        1552   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051072 Xylistin 150 Inj.             10         805   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051073 Delaflox 300                  10        1208   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051075 Hemorise 100  Inject          10         330   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051076 Hemorise 500  Inject          10         564   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051077 Hemorise 1000  Injec          10        1047   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051078 Xaparin 60 Pre-Fille          10         475   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051079 Xaparin 40 Pre-Fille           5         371   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    051080 Maxima 40 Iv Inj. Ly          44          50   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059 08 081313 A-Kit                         28         200   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059 11 111001 Acme'S Ors                     4         102   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059 17 171015 Cipro-A 100ml                 10         118   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    171016 Dirozyl Iv 100ml               5          72   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    171021 Moxifix Iv Infusion           10         282   01-APR-25 31-MAR-26 20-APR-25 
+11 5513039059    171026 Zolidon 600 Iv Infus          10         358   01-APR-25 31-MAR-26 20-APR-25 
+
+53 rows selected.
+

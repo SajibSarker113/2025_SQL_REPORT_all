@@ -1,0 +1,282 @@
+set ver off
+SET LINES 75
+SET PAGES 2000
+COLUMN PER FORMAT 999.99
+---COLUMN T_RMT_AMT FORMAT 999,999.99
+COMPUTE SUM OF REASON_COUNT PER T_RMT_AMT  ON REPORT;
+BREAK ON REPORT;
+
+
+
+SPOOL ON 
+
+
+
+SELECT SC_CD, RMT_NO, RMT_DT, FP_ID, RMT_AMT, FL_MVH, SR_ID, CANCL_REASON
+FROM SCENT.REMIT_MAS 
+WHERE SC_CD = '&&SC_CD' 
+AND CANCL = 'C' 
+AND RMT_DT BETWEEN '&&DATE1' AND '&&DATE2'
+GROUP BY SC_CD, RMT_NO, RMT_DT, FP_ID, RMT_AMT, FL_MVH, SR_ID, CANCL_REASON
+ORDER BY CANCL_REASON;
+
+
+
+
+SELECT DISTINCT SC_CD, 
+       CANCL_REASON, 
+       SUM(RMT_AMT) AS T_RMT_AMT,
+       COUNT(*) AS REASON_COUNT,
+       SUM(COUNT(*)) OVER () AS T_COUNT,
+       CAST(COUNT(*)* 100 AS FLOAT) / SUM(COUNT(*)) OVER () AS PER
+FROM SCENT.REMIT_MAS
+WHERE SC_CD = '&&SC_CD' 
+AND CANCL = 'C'
+AND RMT_DT BETWEEN '&&DATE1' AND '&&DATE2'
+GROUP BY SC_CD, CANCL_REASON
+ORDER BY CANCL_REASON;
+
+
+
+-- Drop existing tables safely
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE JKL';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN 
+            RAISE;
+        END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE CANCEL_REASONS';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+-- Create CANCEL_REASONS table
+CREATE TABLE CANCEL_REASONS (
+    CANCL_REASON NUMBER PRIMARY KEY,
+    CANCEL_NM VARCHAR2(24)
+);
+
+-- Insert cancellation reasons
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (1, 'Write wrong bill number');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (2, 'Wrong entry');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (3, 'False remittance');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (4, 'Amount mismatch');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (5, 'Advance collection');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (6, 'Product return');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (7, 'Blank remittance');
+INSERT INTO CANCEL_REASONS (CANCL_REASON, CANCEL_NM) VALUES (8, 'Base change');
+
+COMMIT;
+
+-- Create JKL table with proper aggregation
+CREATE TABLE JKL AS 
+SELECT SC_CD, 
+       CANCL_REASON, 
+       SUM(RMT_AMT) AS T_RMT_AMT,
+       COUNT(*) AS REASON_COUNT,
+       SUM(COUNT(*)) OVER () AS T_COUNT,  -- Fixed T_COUNT using window function
+       ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS PER -- Percentage Calculation
+FROM SCENT.REMIT_MAS
+WHERE SC_CD = '&&SC_CD' 
+AND CANCL = 'C'
+AND RMT_DT BETWEEN '&&DATE1' AND '&&DATE2'
+GROUP BY SC_CD, CANCL_REASON
+ORDER BY CANCL_REASON;
+
+-- Retrieve results with proper JOIN
+SELECT A.SC_CD, 
+       A.CANCL_REASON, 
+       B.CANCEL_NM, 
+       A.T_RMT_AMT,
+--       A.REASON_COUNT,
+       A.PER
+FROM JKL A
+INNER JOIN CANCEL_REASONS B ON A.CANCL_REASON = B.CANCL_REASON
+ORDER BY A.CANCL_REASON;
+
+DROP TABLE JKL;
+DROP TABLE CANCEL_REASONS;
+
+
+
+
+SPOOL OFF
+ED ON.LST
+
+
+
+
+===================================
+
+
+Enter value for sc_cd: 11
+Enter value for date1: 01JAN25
+Enter value for date2: 30JUN25
+
+SC RMT_NO RMT_DT    FP_ID    RMT_AMT F SR_ID CA                            
+-- ------ --------- ----- ---------- - ----- --                            
+11 360159 03-JAN-25 02FT8   14135.37 1 72107 1                             
+11 360166 03-JAN-25 02FT8   14135.37 1 72107 1                             
+11 360171 03-JAN-25 02FT8   14135.37 1 72107 1                             
+11 360160 03-JAN-25 26384    4823.26 1 72107 1                             
+11 360167 03-JAN-25 26384    4823.26 1 72107 1                             
+11 360172 03-JAN-25 26384    4823.26 1 72107 1                             
+11 360161 03-JAN-25 26393    9901.37 1 72107 1                             
+11 360168 03-JAN-25 26393    9901.37 1 72107 1                             
+11 360173 03-JAN-25 26393    9901.37 1 72107 1                             
+11 361551 19-JAN-25 28548    6355.45 2 70703 1                             
+11 362693 29-JAN-25 21467      14700 1 71187 1                             
+11 362694 29-JAN-25 21467  225484.51 1 71187 1                             
+11 363301 31-JAN-25 05S49      18.88 1 71398 1                             
+11 363216 31-JAN-25 05S49      15000 1 70704 1                             
+11 363169 31-JAN-25 07137    5530.31 1 71099 1                             
+11 363209 31-JAN-25 21258   32876.23 1 70704 1                             
+11 363217 31-JAN-25 21258   34804.43 1 70704 1                             
+11 363554 04-FEB-25 02N55       1.53 2 70704 1                             
+11 366104 28-FEB-25 21015       3283 1 71582 1                             
+11 366105 28-FEB-25 21015  108220.58 1 71582 1                             
+11 366108 28-FEB-25 21799       2843 1 71582 1                             
+11 366107 28-FEB-25 21799       4000 1 71582 1                             
+11 366109 28-FEB-25 26384   38332.49 1 71582 1                             
+11 366110 28-FEB-25 26384    74253.9 1 71582 1                             
+11 366452 01-MAR-25 02N55      62000 2 70704 1                             
+11 368760 24-MAR-25 21258   15426.44 1 70704 1                             
+11 369355 27-MAR-25 05418   12198.95 1 71851 1                             
+11 369473 27-MAR-25 06928     233.27 1 71508 1                             
+11 369384 27-MAR-25 21487      94000 2 72113 1                             
+11 369474 27-MAR-25 22083   31766.73 1 71508 1                             
+11 369334 27-MAR-25 26688      63900 1 71851 1                             
+11 369359 27-MAR-25 28157      81.18 2 71023 1                             
+11 375463 28-MAY-25 21538      14000 2 72133 1                             
+11 375493 29-MAY-25 02EB1    24234.7 2 71718 1                             
+11 375583 29-MAY-25 22153   87531.07 2 70844 1                             
+11 375537 29-MAY-25 27811   11017.72 2 71298 1                             
+11 376109 31-MAY-25 21497    5949.74 1 71298 1                             
+11 376114 31-MAY-25 21497       6547 1 71298 1                             
+11 375983 31-MAY-25 22153     386.17 2 70841 1                             
+11 376082 31-MAY-25 22153     4423.3 2 72114 1                             
+11 375938 31-MAY-25 26648      85500 1 71518 1                             
+11 376016 31-MAY-25 50285         81 2 71271 1                             
+11 376140 01-JUN-25 27811    12085.6 2 71099 1                             
+11 360180 04-JAN-25 02FT8   14135.37 1 72107 2                             
+11 360181 04-JAN-25 26384    4823.26 1 72107 2                             
+11 360182 04-JAN-25 26393    9901.37 1 72107 2                             
+11 365024 19-FEB-25 05207   12047.88 1 71883 2                             
+11 365025 19-FEB-25 05207   24033.77 1 71883 2                             
+11 365735 26-FEB-25 21015      77841 1 71582 2                             
+11 366068 27-FEB-25 05X38     100700 1 71988 2                             
+11 366454 01-MAR-25 06928   22472.53 1 71508 2                             
+11 366455 01-MAR-25 21646    13171.1 1 71508 2                             
+11 366456 01-MAR-25 22083    3527.47 1 71508 2                             
+11 368221 20-MAR-25 28065       2160 2 71398 2                             
+11 369512 28-MAR-25 27517       5000 1 72114 2                             
+11 369523 29-MAR-25 02EB1     711.09 2 71099 2                             
+11 369544 29-MAR-25 20542        .72 1 71099 2                             
+11 369520 29-MAR-25 20542   14588.38 1 71099 2                             
+11 369521 29-MAR-25 21497    2919.91 1 71099 2                             
+11 369522 29-MAR-25 21720       2.62 1 71099 2                             
+11 369524 29-MAR-25 27811      16778 2 71099 2                             
+11 370987 19-APR-25 21258        100 1 70704 2                             
+11 370988 19-APR-25 21258    3349.16 1 70704 2                             
+11 376118 01-JUN-25 22026      28.53 1 72107 2                             
+11 367797 16-MAR-25 02EB1      14500 2 71582 4                             
+11 367798 16-MAR-25 02EB1    17908.5 2 71582 4                             
+11 368761 24-MAR-25 21258    7704.11 1 70704 4                             
+11 372149 28-APR-25 05S49      900.3 1 71271 4                             
+11 372148 28-APR-25 05S49      50000 1 71271 4                             
+11 372281 29-APR-25 05S49       4274 1 71271 4                             
+11 372280 29-APR-25 05S49      20000 1 71271 4                             
+11 372469 30-APR-25 02N55   23693.61 2 70704 4                             
+11 372468 30-APR-25 02N55      25200 2 70704 4                             
+11 373832 14-MAY-25 22153    19134.3 2 72070 4                             
+11 377992 26-JUN-25 21258   46470.89 1 70704 4                             
+11 377994 26-JUN-25 22516   24529.11 1 70704 4                             
+11 373113 07-MAY-25 02Q68    1835.12 1 71099 7                             
+11 373119 07-MAY-25 02Q68    1835.12 1 71099 7                             
+11 373114 07-MAY-25 20844      11551 1 71099 7                             
+11 373120 07-MAY-25 20844      11551 1 71099 7                             
+11 373115 07-MAY-25 21267   14558.67 1 71099 7                             
+11 373121 07-MAY-25 21267   14558.67 1 71099 7                             
+11 373116 07-MAY-25 21497     6626.6 1 71099 7                             
+11 373122 07-MAY-25 21497     6626.6 1 71099 7                             
+11 373117 07-MAY-25 21720   14722.29 1 71099 7                             
+11 373123 07-MAY-25 21720   14722.29 1 71099 7                             
+11 373118 07-MAY-25 27811    5606.32 2 71099 7                             
+11 378682 30-JUN-25 21015      34913 1 71582 7                             
+
+88 rows selected.
+
+
+SC CA  T_RMT_AMT REASON_COUNT    T_COUNT     PER                           
+-- -- ---------- ------------ ---------- -------                           
+11 1  1183647.18           43         88   48.86                           
+11 2   328292.16           21         88   23.86                           
+11 4   254314.82           12         88   13.64                           
+11 7   139106.68           12         88   13.64                           
+      ---------- ------------            -------                           
+su    1905360.84           88             100.00                           
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+
+Table created.
+
+
+SC CA CANCEL_NM                 T_RMT_AMT     PER                          
+-- -- ------------------------ ---------- -------                          
+11 1  Write wrong bill number  1183647.18   48.86                          
+11 2  Wrong entry               328292.16   23.86                          
+11 4  Amount mismatch           254314.82   13.64                          
+11 7  Blank remittance          139106.68   13.64                          
+                               ---------- -------                          
+su                             1905360.84  100.00                          
+
+
+Table dropped.
+
+
+Table dropped.
+

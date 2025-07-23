@@ -1,0 +1,346 @@
+SET NUMFORMAT 99999.99
+
+SPOOL ON
+
+SET LINES 100
+SET PAGES 500
+
+SET VER OFF
+
+----------------------------BONUS_RV
+DROP TABLE BONUS_RV
+/
+
+CREATE TABLE BONUS_RV AS
+SELECT DISTINCT 
+A.CAT_CD,
+A.PRD_CD,
+D.PRO_QTY BILL_QTY,
+A.RTN_QTY,
+SUM((C.BONUS_QNT/D.PRO_QTY)*A.RTN_QTY)BONUS_QNT,0 RV_QTY
+ FROM SCENT.RTN_DET A,
+SCENT.RTN_MAS B,
+SCENT.BONUS_SALE C,
+SCENT.BILL_DET D
+WHERE 
+A.RTN_NO=B.RTN_NO AND 
+B.BILL_NO=C.BILL_NO AND 
+B.BILL_NO=D.BILL_NO AND 
+C.BILL_NO=D.BILL_NO AND 
+C.CAT_CD=D.CAT_CD AND 
+A.CAT_CD=D.CAT_CD AND 
+A.PRD_CD=D.PRD_CD AND 
+C.PRD_CD=D.PRD_CD AND
+A.TYP_CD=D.TYP_CD AND 
+B.RTN_NO=A.RTN_NO AND
+A.TYP_CD='09' 
+AND A.SC_CD='&&SC_CD'
+AND C.SC_CD='&&SC_CD'
+AND D.SC_CD='&&SC_CD'
+AND B.SC_CD='&&SC_CD'
+AND B.RTN_DT BETWEEN '&&DATE1' AND '&&DATE2' 
+AND B.CANCL IS NULL
+GROUP BY A.CAT_CD,A.PRD_CD,D.PRO_QTY,A.RTN_QTY
+/
+CREATE TABLE K_BONUS_RV AS
+SELECT DISTINCT A.CAT_CD,A.PRD_CD,SUM(D.PRO_QTY)BILL_QTY,SUM(A.RTN_QTY)RTN_QTY,
+SUM((C.BONUS_QNT/D.PRO_QTY)*A.RTN_QTY)BONUS_QNT,0 RV_QTY
+FROM SCENT.RTN_DET A,SCENT.RTN_MAS B,SCENT.BONUS_SALE C,SCENT.BILL_DET D
+WHERE A.RTN_NO=B.RTN_NO AND B.BILL_NO=C.BILL_NO AND
+B.BILL_NO=D.BILL_NO AND C.BILL_NO=D.BILL_NO AND C.CAT_CD=D.CAT_CD AND
+A.CAT_CD=D.CAT_CD AND A.PRD_CD=D.PRD_CD AND C.PRD_CD=D.PRD_CD AND
+A.TYP_CD=D.TYP_CD AND B.RTN_NO=A.RTN_NO AND A.TYP_CD='09'
+AND A.SC_CD='&&SC_CD'
+AND C.SC_CD='&&SC_CD'
+AND D.SC_CD='&&SC_CD'
+AND B.SC_CD='&&SC_CD'
+AND B.RTN_DT BETWEEN '&&DATE1' AND '&&DATE2'
+AND B.CANCL IS NULL
+GROUP BY A.CAT_CD,A.PRD_CD
+UNION
+SELECT DISTINCT A.CAT_CD,A.PRD_CD,0 BILL_QTY,0 RTN_QTY,0 BONUS_QNT,SUM(A.RV_QTY)RV_QTY FROM 
+INV.FG_RV2 A,INV.FG_RV1 B WHERE B.LOC_CD='&&SC_CD'
+AND A.LOC_CD='&&SC_CD' AND A.RV_NO=B.RV_NO
+AND RV_TYPE IN('24','04') AND A.TYP_CD='09'
+AND RV_TYPE NOT IN('13','19','18','78')
+AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2'
+GROUP BY A.CAT_CD,A.PRD_CD
+/
+
+CREATE TABLE K_BONUS_RV AS
+SELECT DISTINCT A.CAT_CD,A.PRD_CD,SUM(A.BILL_QTY)BILL_QTY,SUM(A.RTN_QTY)RTN_QTY,SUM(BONUS_QNT)BONUS_QNT,0 RV_QTY FROM BONUS_RV A,
+INV.FG_RV2 B,
+INV.FG_RV1 C
+WHERE B.LOC_CD='&&SC_CD'
+AND C.LOC_CD='&&SC_CD'
+AND A.CAT_CD=B.CAT_CD
+AND A.PRD_CD=B.PRD_CD
+AND C.RV_NO=B.RV_NO
+AND RV_TYPE='04'
+AND B.TYP_CD='09'
+AND RV_TYPE NOT IN('13','19','18','78')
+AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2'
+--------------AND B.RV_NO IN(SELECT RV_NO FROM INV.FG_RV1 WHERE LOC_CD='&&SC_CD' AND RV_TYPE='04' AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2')
+GROUP BY A.CAT_CD,A.PRD_CD
+UNION
+SELECT DISTINCT A.CAT_CD,A.PRD_CD,0 BILL_QTY,0 RTN_QTY,0 BONUS_QNT,SUM(B.RV_QTY)RV_QTY FROM BONUS_RV A,
+INV.FG_RV2 B,
+INV.FG_RV1 C
+WHERE B.LOC_CD='&&SC_CD'
+AND C.LOC_CD='&&SC_CD'
+AND A.CAT_CD=B.CAT_CD
+AND A.PRD_CD=B.PRD_CD
+AND C.RV_NO=B.RV_NO
+AND RV_TYPE='04'
+AND B.TYP_CD='09'
+AND RV_TYPE NOT IN('13','19','18','78')
+AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2'
+--------------------AND B.RV_NO IN(SELECT RV_NO FROM INV.FG_RV1 WHERE LOC_CD='&&SC_CD' AND RV_TYPE='04' AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2')
+GROUP BY A.CAT_CD,A.PRD_CD
+
+SET VER OFF
+
+SET LINES 100
+
+SELECT DISTINCT DIV_CD,A.CAT_CD,A.PRD_CD,SUBSTR((PROD_NM),1,35)PROD_NAME,SUM(BILL_QTY)BILL_QTY,SUM(RTN_QTY),SUM(BONUS_QNT)BONUS_QNT,SUM(RV_QTY)RV_QTY,SUM(BONUS_QNT-RV_QTY)DIF
+FROM K_BONUS_RV A,SCENT.INV_PROD B
+WHERE A.CAT_CD=B.CAT_CD
+AND A.PRD_CD=B.PRD_CD
+AND B.TYP_CD='09'
+GROUP BY DIV_CD,A.CAT_CD,A.PRD_CD,PROD_NM
+ORDER BY DIV_CD,A.CAT_CD,A.PRD_CD
+/
+DROP TABLE BONUS_RV PURGE;
+DROP TABLE K_BONUS_RV PURGE;
+
+
+SPOOL OFF
+ED ON.LST
+
+
+===================================================================================================
+
+
+DROP TABLE BONUS_RV
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+Enter value for sc_cd: 11
+Enter value for date1: 01jan24
+Enter value for date2: 31dec24
+
+Table created.
+
+
+Table created.
+
+
+D CA PRD_ PROD_NAME                            BILL_QTY SUM(RTN_QTY) BONUS_QNT    RV_QTY       DIF  
+- -- ---- ----------------------------------- --------- ------------ --------- --------- ---------  
+1 01 1081 CETISOFT 10MG                             .00          .00       .00      3.00     -3.00  
+1 02 1001 CLOTRIM 10GM                            92.00        92.00      9.00      9.00       .00  
+1 03 1014 FIX-A 37.5ML                           410.00       365.00     64.00     64.00       .00  
+1 03 1015 FIX-A 50ML                            1375.00      1095.00    202.00    202.00       .00  
+1 03 1026 CIPRO-A 60ML                            56.00        56.00      7.00      7.00       .00  
+1 03 1028 AZIN 30ML                              100.00        75.00     15.00     15.00       .00  
+1 03 1030 AZIN P/S 50ML                          126.00       101.00     20.00     20.00       .00  
+1 03 1034 FIX-A 75ML P/S                         285.00       260.00     42.00     42.00       .00  
+1 03 1035 FIX-A DS 50ML P/S                      220.00       210.00     36.00     36.00       .00  
+1 03 1037 FIX-A 21ML PED. DROPS                  220.00       210.00     38.00     38.00       .00  
+1 03 1043 FIX-A PFS 40ML                          50.00        50.00      8.00      8.00       .00  
+1 03 1045 FIX-A MAX PAEDIATRIC DROPS 20ML         55.00        45.00      8.00      8.00       .00  
+1 05 1013 A-FLOX 500MG                            40.00        40.00      4.00      4.00       .00  
+1 06 1005 HISTALEX 100ML                            .00          .00       .00      1.00     -1.00  
+1 06 1021 ACME'S MILK OF MEGNESIA 114ML           80.00        80.00      8.00      8.00       .00  
+1 06 1036 KETIFEN 100ML                          242.00       242.00     24.00     24.00       .00  
+1 06 1037 FAST 60ML                                 .00          .00       .00     10.00    -10.00  
+1 06 1058 OXECONE MS 200ML                        60.00        60.00      5.00      5.00       .00  
+1 06 1060 SALMOLIN RESPIRATOR SOLUTION            40.00        30.00      3.00      3.00       .00  
+1 06 1075 BUTACIT 100ML                            7.00         7.00      1.00      1.00       .00  
+1 06 1089 GAVISUS SUSPENSION 200 ML              140.00       132.00     18.00     18.00       .00  
+1 08 1020 MEBOLIN 50MG                            70.00        65.00     13.00     13.00       .00  
+1 08 1041 CINAZIN 15MG                            25.00        15.00      3.00      3.00       .00  
+1 08 1042 V-PLEX PLUS                             20.00        20.00      2.00      2.00       .00  
+1 08 1045 CIPRO-A 250MG                           60.00        60.00      6.00      6.00       .00  
+1 08 1051 STERON 0.5MG                            20.00        20.00      2.00      2.00       .00  
+1 08 1070 A-FENAC-K 50MG                          20.00        20.00      2.00      2.00       .00  
+1 08 1185 ZERO 8MG                               108.00        88.00      8.44      8.00       .44  
+1 08 1187 ZERO TAB.(CONTAINER)                    80.00        80.00      8.00      8.00       .00  
+1 08 1189 A-CAL D 30PSC TAB.                        .00          .00       .00      4.00     -4.00  
+1 08 1407 MONAS 10MG (US-DMF GRADE)                 .00          .00       .00      1.00     -1.00  
+1 08 1408 DON-A TABLET (140 PCS)                    .00          .00       .00      5.00     -5.00  
+1 08 1447 TELISA-A 40/5                             .00          .00       .00      3.00     -3.00  
+1 08 1448 TELISA-A 80/5                             .00          .00       .00      6.00     -6.00  
+1 08 1449 TELISA 80                                 .00          .00       .00      1.00     -1.00  
+1 08 1450 TELISA 40                                 .00          .00       .00      4.00     -4.00  
+1 08 1491 CIPRO-A 500 TAB (2X10'S)                40.00        40.00      4.00      8.00     -4.00  
+1 08 1533 FAMODIN 20MG(150'S)                     79.00        79.00     15.00     15.00       .00  
+1 08 1628 MIRABA 2.5 TABLET                         .00          .00       .00      1.00     -1.00  
+1 15 1015 SALPIUM MDI (HFA)                         .00          .00       .00      1.00     -1.00  
+1 17 1015 CIPRO-A 100ML                           87.00        77.00     38.00     38.00       .00  
+1 26 1003 HEPATOLIN 200ML                         42.00        42.00      7.00      7.00       .00  
+1 26 1008 ACMINA 200ML                            30.00        30.00      5.00      5.00       .00  
+1 26 1020 SANTONIC 200ML                          12.00        12.00      2.00      2.00       .00  
+1 26 1021 AMLACID 200ML                           60.00        60.00     10.00     10.00       .00  
+1 26 1026 SANTONIC 450ML                          18.00        12.00      2.00      2.00       .00  
+1 26 1031 MOUTH CARE 100ML                        96.00        84.00     14.00     14.00       .00  
+1 26 1033 AMLACID 450ML                           60.00        60.00     10.00     10.00       .00  
+1 26 1036 HEPATOLIN 450ML                         36.00        36.00      6.00      6.00       .00  
+1 26 1037 LECOSAV 200ML                           12.00        12.00      2.00      2.00       .00  
+1 26 1039 COOL MAX 20GM                           18.00        18.00      3.00      3.00       .00  
+1 26 1052 HONEYBAS SYRUP 100ML                   628.00       538.00     53.00     59.00     -6.00  
+1 26 1063 MOUTH CARE 200ML                        18.00        18.00      3.00      3.00       .00  
+1 26 1064 ACME'S BASOK 100ML(SUGAR FREE)        1765.00      1440.00    212.00    212.00       .00  
+1 26 1065 ACME'S BASOK 200ML(SUGAR FREE)          65.00        65.00     10.00     10.00       .00  
+1 26 1067 MORINGA 500MG                           15.00        15.00      3.00      3.00       .00  
+1 26 1074 UTIPRO CAPSULE                            .00          .00       .00      2.00     -2.00  
+2 04 4001 CIPRO-D VET EYE DROP 5ML                39.00        39.00      4.00      4.00       .00  
+2 05 4016 A-SOL VET 100ML                        100.00       100.00     20.00     20.00       .00  
+2 05 4018 ASTA-VET 100ML                          70.00        60.00      6.00      6.00       .00  
+2 05 4019 A-SOL VET 30ML                          10.00        10.00      2.00      2.00       .00  
+2 05 4022 CIPRO-A VET 100ML                      126.00        88.00     10.00     10.00       .00  
+2 05 4023 A-MECTIN 5ML                            10.00        10.00      1.00      1.00       .00  
+2 05 4025 CIPRO-A VET 30ML                        20.00        20.00      2.00      2.00       .00  
+2 05 4031 TROPIN VET 10ML                         50.00        50.00      5.00      5.00       .00  
+2 05 4037 TRIZON-VET 1GM                         487.00       487.00     76.00     76.00       .00  
+2 05 4038 TRIZON-VET 2GM                         383.00       326.00     50.00     50.00       .00  
+2 05 4045 STERON VET 10ML                         90.00        80.00      8.00      8.00       .00  
+2 05 4046 MEL-VET 10ML                            20.00        20.00      3.00      3.00       .00  
+2 05 4048 TRACID VET 10ML                         30.00        30.00      3.00      3.00       .00  
+2 05 4049 TRACID VET 30ML                         40.00        40.00      4.00      4.00       .00  
+2 05 4051 PHENADRYL VET 30ML                     218.00       198.00     28.44     28.00       .44  
+2 05 4052 A-MECTIN PLUS 5ML                       20.00        20.00      2.00      2.00       .00  
+2 05 4053 A-MECTIN PLUS 30ML                     120.00       120.00     16.00     16.00       .00  
+2 05 4057 MEL VET 30ML                           172.00       116.00     17.40     17.00       .40  
+2 05 4061 STERON VET 30ML                         30.00        30.00      3.00      3.00       .00  
+2 05 4062 TIFUR VET 1GM                           90.00        90.00     10.00     10.00       .00  
+2 05 4064 TRIZON VET 0.5GM                       505.00       355.00     55.00     55.00       .00  
+2 05 4067 TIFUR VET .5GM                         160.00       160.00     19.00     19.00       .00  
+2 05 4068 MEL-VET 2% INJECTION 10ML               24.00        24.00      5.00      5.00       .00  
+2 05 4069 MOXILIN VET INJ. 1GM                   360.00       210.00    115.00    115.00       .00  
+2 05 4070 MOXILIN VET INJ. 2GM                   172.00       172.00    227.00    227.00       .00  
+2 05 4071 TAMIC VET INJ. 10ML                    200.00       200.00     66.00     66.00       .00  
+2 05 4072 TAMIC VET INJ. 30ML                    130.00       110.00     35.00     35.00       .00  
+2 05 4073 TIFUR VET 0.25G INJ.                   210.00       210.00     24.00     24.00       .00  
+2 05 4078 AMFLOR VET INJECTION 30ML               10.00        10.00      1.00      1.00       .00  
+2 05 4080 AMFLOR VET PLUS INJ. 30ML               20.00        20.00      2.00      2.00       .00  
+2 05 4081 AMFLOR VET PLUS INJ. 10ML                8.00         8.00      1.00      1.00       .00  
+2 05 4083 PRYCIN VET INJECTION 30ML               80.00        80.00     12.00     12.00       .00  
+2 05 4084 PRYCIN VET INJECTION 10ML               40.00        30.00      3.00      3.00       .00  
+2 05 4085 LEGA VET 0.5G INJECTION 10ML           120.00       120.00     22.00     22.00       .00  
+2 05 4086 LEGA VET 1.5G INJECTION 30ML            80.00        80.00     13.00     13.00       .00  
+2 05 4087 A-CAL VET INJECTION 250 ML              10.00        10.00      1.00      1.00       .00  
+2 05 4088 A-CAL VET INJECTION 500 ML              17.00        17.00      2.00      2.00       .00  
+2 05 4093 TULAVET INJECTION 5ML                   20.00        20.00      8.00      8.00       .00  
+2 05 4094 TULAVET INECTION 10ML                   20.00        20.00      4.00      4.00       .00  
+2 05 4099 MOXILIN VET INJ. 3GM                    38.00        38.00     70.00     70.00       .00  
+2 06 4006 CIPRO-A VET 100ML                       10.00        10.00      1.00      1.00       .00  
+2 06 4010 ATIVET 1 LITER                            .00          .00       .00      2.00     -2.00  
+2 06 4017 HEPATOVET 1LITRE                       604.00       554.00     71.00     71.00       .00  
+2 06 4018 ZIS-VET 500ML                          104.00        96.00     12.00     13.00     -1.00  
+2 06 4019 ZIS-VET 1 LITRE                        136.00       136.00     17.00     17.00       .00  
+2 06 4020 FEROVET 500ML                           30.00        30.00      3.00      3.00       .00  
+2 06 4021 FMD CURE 500ML                          46.00        46.00      7.00      7.00       .00  
+2 06 4022 HEPATOVET 500ML                        250.00       250.00     30.00     30.00       .00  
+2 06 4024 CIPRO-A VET 500ML                        7.00         7.00      1.00      1.00       .00  
+2 06 4025 BRONCHOVET 1 LITRE                      90.00        80.00     10.00     10.00       .00  
+2 06 4026 BRONCHOVET 500ML                       150.00       150.00     18.00     18.00       .00  
+2 06 4027 ZIS-VET 100ML                          552.00       456.00     74.00     74.00       .00  
+2 06 4029 BLOAT STOP 100ML EMULSION               80.00        60.00      7.00     11.00     -4.00  
+2 06 4034 FEROVET ORAL SOLUTION 1 LTR             20.00        20.00      2.00      2.00       .00  
+2 06 4036 ANTICOC ORAL SOLUTION 100ML              5.00         5.00      1.00      1.00       .00  
+2 06 4039 BRONCHOVET 100ML                        60.00        60.00      9.00      9.00       .00  
+2 06 4040 HEPATOVET 100ML                        150.00       150.00     21.00     21.00       .00  
+2 06 4042 MAGVET PLUS 500ML                      140.00       140.00     16.00     16.00       .00  
+2 06 4043 ACIDIFIER VET 100ML                     16.00        16.00      2.00      2.00       .00  
+2 06 4046 AURITOX-PLUS 100ML                      42.00        42.00      4.00      4.00       .00  
+2 06 4047 AURITOX-PLUS 500ML                      30.00        20.00      2.00      2.00       .00  
+2 06 4049 CP-VET 5LTR                               .00          .00       .00     10.00    -10.00  
+2 06 4050 A-MECTIN VET POUR ON 15ML               30.00        30.00      3.00      3.00       .00  
+2 06 4052 BETALYTE VET 500ML                      20.00        10.00      1.00      1.00       .00  
+2 06 4054 NEFTONIC VET 100ML                      20.00        20.00      2.00      2.00       .00  
+2 06 4055 NEFTONIC VET 500ML                      27.00        27.00      3.00      3.00       .00  
+2 06 4056 VITALAMINO FORTE 100ML                  32.00        32.00      4.00      4.00       .00  
+2 06 4057 VITALAMINO FORTE 500ML                  64.00        64.00      8.00      8.00       .00  
+2 06 4058 VITALAMINO FORTE 1 LTR                 104.00       104.00     15.00     15.00       .00  
+2 06 4062 ZIS VET SYRUP 5 LITER                     .00          .00       .00      2.00     -2.00  
+2 06 4063 HEPAFIT VET ORAL SOLU. 100 ML           60.00        48.00      4.00      4.00       .00  
+2 06 4064 HEPAFIT VET ORAL SOLU. 500 ML          132.00        96.00      8.00      9.00     -1.00  
+2 06 4065 HEPAFIT VET ORAL SOLU. 1 LTR            36.00        36.00      3.00      3.00       .00  
+2 06 4070 DILORES VET 100ML                      220.00       190.00     26.00     26.00       .00  
+2 06 4071 DILORES VET 500ML                       20.00        10.00      1.00      1.00       .00  
+2 06 4075 OXECONE-S VET SUSP. 500ML               10.00        10.00      1.00      1.00       .00  
+2 06 4077 AMFLOR VET ORAL SOLUTION 15ML           20.00        20.00      2.00      2.00       .00  
+2 06 4078 AMFLOR VET ORAL SOLUTION 100ML          20.00        20.00      2.00      2.00       .00  
+2 06 4085 NIMOCIN VET PLUS ORAL SOLU. 15ML        30.00        30.00      5.00      5.00       .00  
+2 06 4086 NIMOCIN VET PLUS ORAL SOLU 100ML        10.00        10.00      1.00      1.00       .00  
+2 06 4087 NIMOCIN VET PLUS ORAL SOLU 500 ML       10.00        10.00      1.00      1.00       .00  
+2 06 4092 ATICAL VET LIQUID 1L                    46.00        46.00      5.00      5.00       .00  
+2 06 4093 ATICAL VET LIQUID 5L                    27.00        27.00      3.00      3.00       .00  
+2 06 4095 BENAZOL VET SUSPENSION 10ML             20.00        20.00      2.00      2.00       .00  
+2 06 4102 HEPAFIT VET (PET) LIQUID 20 ML          20.00        10.00      1.00      1.00       .00  
+2 06 4113 ACME'S BKC SOLUTION 100 ML              10.00        10.00      2.00      2.00       .00  
+2 06 4115 ECSE VET LIQUID 100 ML                  20.00        20.00      2.00      2.00       .00  
+2 07 4001 DRESS GEL-FR 50GM                       60.00        60.00      9.00      9.00       .00  
+2 07 4002 DRESS GEL-FR 20 GM                     120.00       120.00     13.00     13.00       .00  
+2 10 4009 ANORA                                   60.00        60.00      6.00      6.00       .00  
+2 10 4016 A-MILK                                  10.00        10.00      1.00      1.00       .00  
+2 10 4018 MOXILIN VET                            210.00       210.00     22.00     22.00       .00  
+2 10 4020 MEL-VET 100MG                           20.00        20.00      2.00      2.00       .00  
+2 10 4022 ANORA DS                               410.00       390.00     42.00     42.00       .00  
+2 10 4023 CIPRO-A VET 1GM                        290.00       240.00     35.50     35.00       .50  
+2 10 4025 FAST VET BOLUS 2GM(60PCS)                 .00          .00       .00     41.00    -41.00  
+2 10 4031 OXY-A BOLUS                             90.00        65.00     13.00     13.00       .00  
+2 10 4032 MEL-VET PLUS                            22.00        22.00      2.00      2.00       .00  
+2 10 4033 EDECURE VET 2.0 G                       38.00        38.00      5.00      5.00       .00  
+2 10 4037 MOXILIN-CV VET BOLUS                    10.00        10.00      1.00      1.00       .00  
+2 10 4039 ARBOCIN VET BOLUS                       20.00        20.00      2.00      2.00       .00  
+2 10 4040 ARBOCIN VET DS BOLUS                   100.00       100.00     17.00     17.00       .00  
+2 10 4041 DOLORYL VET 100 BOLUS                  282.00       232.00     29.00     29.00       .00  
+2 10 4045 MEL VET BOLUS (60 PCS)                  50.00        50.00      5.00      5.00       .00  
+2 10 4046 PHENADRYL VET BOLUS (60 PCS)           220.00       186.00     16.00     16.00       .00  
+2 10 4050 ZIS VET BOLUS (60 PCS)                  20.00        20.00      2.00      2.00       .00  
+2 10 4052 DOLORYL VET 500 BOLUS                   38.00        38.00      4.00      4.00       .00  
+2 11 4003 GLUCOLYTE 25G                           60.00        60.00      6.00      6.00       .00  
+2 11 4040 BOVI CARE 125GM                        170.00       170.00     24.00     24.00       .00  
+2 11 4043 BIOGUT VET 10GM                         64.00        64.00      9.00      9.00       .00  
+2 11 4044 PREMAFAT VET PREMIX 1 KG               480.00       370.00     87.00     87.00       .00  
+2 11 4046 BOVI CARE VET 30 GM                    240.00       200.00     29.00     29.00       .00  
+2 11 4047 PROMAST VET 120GM                       60.00        60.00      7.00    124.00   -117.00  
+2 11 4048 ECOPOND 1KG                             10.00        10.00      1.00      1.00       .00  
+2 11 4050 BIOVIGOR GEL 1LTR                       39.00        39.00      5.00      5.00       .00  
+2 11 4052 ZYMOVET-20GM PREMIX-(20X20)            165.00       150.00     36.00     61.00    -25.00  
+2 12 4018 VITAMIX-C 100GM                         64.00        64.00     36.00     36.00       .00  
+2 12 4041 OXY-A 1KG                               35.00        35.00      7.00      7.00       .00  
+2 12 4051 ACME'S EGG FORMULA 100GM               210.00       110.00     11.00     11.00       .00  
+2 12 4054 GLUCOVET WSP 500GM                      60.00        20.00      2.00      2.00       .00  
+2 12 4057 COCCI OFF WSP 100GM                     90.00        90.00      6.00      6.00       .00  
+2 12 4058 MOXILIN VET DS WSP 100GM                54.00        44.00      4.00      4.00       .00  
+2 12 4072 DIROVET 100GM                          100.00       100.00     20.00     20.00       .00  
+2 12 4078 PROZYME VET 100GM                       42.00        42.00      5.00      5.00       .00  
+2 12 4079 PROZYME VET 500GM                       16.00        16.00      2.00      2.00       .00  
+2 12 4085 VITA-3 WSP 10GM                         30.00        30.00      3.00      3.00       .00  
+2 12 4086 XILIAN VET WSP 100 GM                  100.00       100.00     13.00     13.00       .00  
+2 12 4087 ERAPRIM VET WSP 10GM                    59.00        44.00      3.25      3.00       .25  
+2 12 4088 TYLVASIN VET 100 GM                    170.00       170.00     19.00     19.00       .00  
+2 12 4091 DIROVET WSP 10G                         47.00        37.00      6.00      6.00       .00  
+2 12 4092 ERAPLUS VET WSP 10G                     42.00        42.00      3.00      3.00       .00  
+2 12 4093 ERAPLUS VET WSP 100G                    28.00        28.00      2.00      2.00       .00  
+2 12 4098 VITAMIX-C AQUA WSP 100G                 40.00        40.00     16.00     16.00       .00  
+2 12 4099 VITAMIX-C AQUA WSP 500G                 40.00        40.00     28.00     28.00       .00  
+2 12 4102 NIMOCIN VET WSP 100G                    40.00        20.00      3.00      3.00       .00  
+2 12 4103 XILIAN VET WSP 10G                      40.00        40.00      5.00      5.00       .00  
+2 12 4104 MURA PLUS VET WSP 10 G                  80.00        70.00      7.00      7.00       .00  
+2 12 4105 MURA PLUS VET WSP 100 G                 40.00        30.00      3.00      3.00       .00  
+2 12 4113 TIM-AC WSP 20GM                         10.00        10.00      1.00      1.00       .00  
+
+196 rows selected.
+
+
+Table dropped.
+
+
+Table dropped.
+

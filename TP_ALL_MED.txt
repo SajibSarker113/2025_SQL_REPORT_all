@@ -1,0 +1,1644 @@
+
+
+SET LINE 62
+SET PAGES 20000
+
+
+COMPUTE COUNT OF PROD_NM ON REPORT
+
+COMPUTE COUNT OF PROD_NM ON CAT_CD
+BREAK ON REPORT ON CAT_CD
+
+
+
+TTITLE center 'All product price of a depot' SKIP2
+
+
+
+SPOOL ON
+
+SELECT B.DIV_CD,A.CAT_CD,A.PRD_CD,B.PROD_NM,A.TRADE_PR FROM SCENT.PROD_RATE A, SCENT.INV_PROD B WHERE A.TYP_CD=B.TYP_CD AND A.CAT_CD=B.CAT_CD AND
+A.PRD_CD=B.PRD_CD AND A.TYP_CD='09' AND A.CAT_CD||A.PRD_CD IN (SELECT CAT_CD||PRD_CD FROM SCENT.FLAT_RATE WHERE END_DT IN (SELECT MAX(END_DT) 
+FROM SCENT.FLAT_RATE WHERE PRD_CD LIKE '1%'))
+ORDER BY B.DIV_CD ASC,A.CAT_CD ASC,A.TRADE_PR DESC;
+
+SELECT B.DIV_CD,A.CAT_CD,A.PRD_CD,B.PROD_NM,A.TRADE_PR FROM SCENT.PROD_RATE A, SCENT.INV_PROD B WHERE A.TYP_CD=B.TYP_CD AND A.CAT_CD=B.CAT_CD AND
+A.PRD_CD=B.PRD_CD AND A.TYP_CD='09' AND A.CAT_CD||A.PRD_CD IN (SELECT CAT_CD||PRD_CD FROM SCENT.FLAT_RATE WHERE END_DT IN (SELECT MAX(END_DT) 
+FROM SCENT.FLAT_RATE WHERE PRD_CD LIKE '4%'))
+ORDER BY B.DIV_CD ASC,A.CAT_CD ASC,A.TRADE_PR DESC;
+
+ 
+SPOOL OFF
+
+ED ON.LST
+
+
+
+=================================================
+
+
+                 All product price of a depot                 
+                                                              
+D CA PRD_ PROD_NM                                    TRADE_PR 
+- -- ---- ---------------------------------------- ---------- 
+1 01 1063 MAXIMA 20MG (140PCS)                            735 
+1    1062 LOGIBAC 400MG                                719.68 
+1    1054 NEUGALIN 150MG                                676.8 
+1    1090 MEDOZIL 21/10                                 674.7 
+1    1067 FIX-A DS (14PCS)                             629.72 
+1    1050 ALCLOR 500MG                                  601.4 
+1    1089 MEDOZIL 14/10                                 562.2 
+1    1065 PPI 20MG (140 PCS)                            526.4 
+1    1095 DDR 30MG CAP(30%)(6X10'S)                     517.2 
+1    1086 DDR 30MG(60'S)                                517.2 
+1    1018 A-FLOX 500MG                                 503.52 
+1    1087 FILOFER 30 CAPSULE                              495 
+1    1069 FIX-A 200MG (14PCS)                          472.22 
+1    1002 A-CLOX 500MG                                    448 
+1    1053 NEUGALIN 75MG                                 414.9 
+1    1080 DDR 60                                        404.7 
+1    1096 DDR 60MG (30% PEL.)(3X10'S)                   404.7 
+1    1013 ACELEX 500MG                                  377.2 
+1    1047 PPI 20 (PS 100)                                 376 
+1    1073 MAXIMA 20MG (70 PCS)                          367.5 
+1    1084 MONLUMAX 200 CAP                              344.8 
+1    1049 LINCOCIN 300MG                                338.1 
+1    1052 NEUGALIN 50MG                                 328.2 
+1    1046 FIX-A 200MG                                  314.88 
+1    1041 FIX-A DS 400MG                               301.92 
+1    1008 MOXILIN 250MG                                   300 
+1    1064 MAXIMA 40MG (40PCS)                             300 
+1    1005 ISORIFAM 250MG                                  298 
+1    1051 H.PYLORI                                     289.45 
+1    1017 A-FLOX 250MG                                    288 
+1    1021 MOXILIN 500MG                                   281 
+1    1038 ADINIR 300MG                                  271.6 
+1    1066 PPI 40MG (40 PCS)                               270 
+1    1034 TWICEF 500MG                                  269.8 
+1    1074 PPI 20MG (70 PCS)                             263.2 
+1    1071 DEFROL 40000 CAPSULE                          262.4 
+1    1022 A-TETRA 500MG                                   254 
+1    1003 ACMECILIN 250MG                                 250 
+1    1019 ACELEX 250MG                                    249 
+1    1076 LIFIL-E 400 SOFT GELATIN                      243.5 
+1    1072 UROPASS-D CAPSULE                            239.84 
+1    1042 PPI 20(PS-60)                                 225.6 
+1    1055 NEUGALIN 150MG(10PCS)                         225.6 
+1    1058 LIFIL - E 400                                 225.5 
+1    1011 SEFRIL 500MG                                  225.4 
+1    1056 NUTRUM EYE                                      225 
+1    1061 NEUGALIN 25MG                                   225 
+1    1079 DDR 30                                          225 
+1    1025 THENGLATE TR                                    220 
+1    1037 MAXIMA 20MG                                     210 
+1    1014 ISORIFAM 450MG                                  200 
+1    1036 ACELEX 500MG                                  188.6 
+1    1012 V-PLEX                                        187.5 
+1    1048 LINCOCIN 150MG                                180.6 
+1    1077 LIFIL-A 50000 SOFT GELATIN                      174 
+1    1004 DOXY-A 100MG                                    165 
+1    1083 LIPIDOF CAPSULE(30'S)                         158.4 
+1    1044 UROPASS                                         151 
+1    1057 LIFIL - E 200                                 150.5 
+1    1030 PPI 20MG                                      150.4 
+1    1039 MAXIMA 40MG                                     150 
+1    1009 OXYCYLIN 250MG                                  150 
+1    1081 CETISOFT 10MG                                   150 
+1    1075 LIFIL-E 200 SOFT GELATIN                        150 
+1    1070 DEFROL 20000 CAPSULE                          149.9 
+1    1029 LANSODIN 30MG                                126.84 
+1    1010 SEFRIL 250MG                                  120.4 
+1    1031 PPI 40MG                                      120.4 
+1    1040 DOLONIL 50MG                                  113.2 
+1    1016 AZICIN 250MG                                  112.8 
+1    1020 AZIN 250MG                                    112.8 
+1    1043 MOMNEED                                       112.5 
+1    1033 LIPIDOF 200MG                                 105.6 
+1    1035 ACELEX 250MG                                   99.8 
+1    1024 OMEDIN 40MG                                   96.32 
+1    1026 FIX-A 200MG                                   90.56 
+1    1015 FEROCIT TR                                       90 
+1    1023 OMEDIN 20MG                                    75.2 
+1    1007 LOPAMID 2MG                                      75 
+1    1028 LANSODIN 15MG                                 73.92 
+1    1045 DEFAZ CI                                       67.8 
+1    1027 FEROCIT-Z                                        66 
+1    1032 LIPIDOF 67MG                                   45.3 
+  **      ----------------------------------------            
+  co                                            83            
+1 02 1031 CLASRIN 10GM CREAM                           629.69 
+1    1024 GYNEST VAGINAL CREAM 15G                      599.7 
+1    1032 TRIFERA CREAM 15G                            187.41 
+1    1023 ERTACO CREAM 20G                             149.93 
+1    1034 LULIKILL 20GM                                134.93 
+1    1018 CLIOQUIN 30GM                                131.18 
+1    1035 COMBO 4 CREAM 15G                            112.44 
+1    1025 ACLOBET-N 30GM                               112.44 
+1    1019 NYSTAT PLUS 30GM                              89.96 
+1    1021 TERBIKILL 1% CREAM 15G                        74.96 
+1    1009 AZELEC 10GM                                    56.6 
+1    1017 BET-CG 15GM                                   56.22 
+1    1015 EXINIL 10GM                                   52.47 
+1    1014 ACLOBET N 15GM                                45.11 
+1    1027 BET-CL 20GM                                   44.98 
+1    1007 PERMIN 30GM                                   44.98 
+1    1010 TYCON 10GM                                    35.88 
+1    1011 ACLOBET 10GM                                  33.83 
+1    1028 CLOTRIM 20GM                                  33.73 
+1    1026 BET-A 20GM                                    32.98 
+1    1008 AZELEC 5GM                                    30.19 
+1    1001 CLOTRIM 10GM                                  26.32 
+1    1005 NEOBET 15GM                                   26.24 
+1    1013 BET-A 15GM                                    24.81 
+1    1012 BET-CL 10GM                                   21.89 
+1    1006 PERMIN 15GM                                   18.87 
+1    1003 NEOBET 10GM                                    16.6 
+1    1002 CLOTRIM 5GM                                   13.77 
+1    1004 NEOBET 5GM                                    11.49 
+  **      ----------------------------------------            
+  co                                            29            
+1 03 1046 PRANLU 10% DRY SYRUP 60ML                     599.7 
+1    1041 LOGIBAC 60ML P/S                             359.82 
+1    1040 CLARICIN P/S 60ML                             296.1 
+1    1023 FAMICEF 70ML                                 243.63 
+1    1035 FIX-A DS 50ML P/S                            239.88 
+1    1039 FAMICLAV 70ML                                198.65 
+1    1045 FIX-A MAX PAEDIATRIC DROPS 20ML              187.41 
+1    1034 FIX-A 75ML P/S                               187.41 
+1    1015 FIX-A 50ML                                   172.41 
+1    1030 AZIN P/S 50ML                                149.93 
+1    1032 ALCLOR 100ML                                 142.86 
+1    1024 FAMICEF DS 35ML                              139.62 
+1    1028 AZIN 30ML                                    138.68 
+1    1021 ADINIR 60ML                                  132.08 
+1    1031 CP DS 50ML PFS                               131.57 
+1    1043 FIX-A PFS 40ML                               127.44 
+1    1014 FIX-A 37.5ML                                 116.19 
+1    1033 ALCLOR PAED. DROPS 15ML                       101.2 
+1    1020 SEFRIL DS 100ML                               90.57 
+1    1025 TWICEF DS 100ML                               90.57 
+1    1037 FIX-A 21ML PED. DROPS                         75.19 
+1    1026 CIPRO-A 60ML                                  75.19 
+1    1022 CP 50ML                                       73.95 
+1    1012 AZIN 15ML                                     71.43 
+1    1005 SEFRIL 100ML                                  71.21 
+1    1016 EROCIN 100ML                                  63.53 
+1    1011 A-FLOX 100ML                                  59.97 
+1    1013 FLUCONAL 35ML                                 58.87 
+1    1001 ACELEX 100ML                                  58.11 
+1    1018 TWICEF 100ML                                  52.83 
+1    1004 MOXILIN 100ML                                 52.47 
+1    1019 MOXILIN DS 100ML                              51.32 
+1    1009 SEFRIL 15ML PED. DROPS                        46.62 
+1    1027 CP PEADIATRIC DROPS 15ML                      45.28 
+1    1017 TWICEF PAED. DROPS                            37.74 
+1    1044 FAMODIN PFS 60ML                              37.48 
+1    1002 A-CLOX 100ML                                  33.71 
+1    1007 ACELEX 15ML PED. DROPS                        32.08 
+1    1029 NIDOZOX 30ML                                  30.07 
+1    1003 ACMECILIN 100ML                               29.77 
+1    1006 MOXILIN 15ML PED. DROPS                        22.7 
+1    1008 A-CLOX 15ML PED. DROPS                        19.83 
+  **      ----------------------------------------            
+  co                                            42            
+1 04 1033 SUMA NASAL SPRAY                             464.77 
+1    1028 BRINDIN SUSP. 5ML                            412.29 
+1    1025 BRINOP OPTHALMIC SUSP. 5ML                   374.81 
+1    1017 ALERCON NASAL SPRAY                          300.75 
+1    1037 SUMA NASAL SPRAY(30SPRAYS)                   262.37 
+1    1029 EYETIN EYE DROPS 5ML                         224.89 
+1    1039 EYEFIL EYE DROPS 10ML                        206.15 
+1    1018 FLUTICON NASAL SPRAY                         187.98 
+1    1027 GLYPEG EYE DROPS 10ML                        187.41 
+1    1032 EYEMOX-D EYE DROPS 5ML                       149.93 
+1    1024 LOTEMYCIN 5ML                                149.93 
+1    1026 EYEDEW 10ML                                  142.43 
+1    1023 OPCOL 10ML EYE DROPS                         134.93 
+1    1007 EYEMOX                                       119.94 
+1    1021 ALERCON DS 5ML                               119.94 
+1    1019 STERON -T EYE DROPS 5ML                       97.74 
+1    1009 CATNIL 5ML                                    93.98 
+1    1020 BECLOMENT NASAL .05% 120 SPRAY                90.23 
+1    1010 ALERCON 0.1% 5ML                              78.71 
+1    1022 EYEFEN 5ML EYE DROPS                          75.19 
+1    1011 LEO .5% EYE DROPS 5ML                         67.47 
+1    1008 WINOP EYE DROPS 5ML                           60.15 
+1    1014 CIPRO-D EYE 5ML                               56.39 
+1    1013 A-PHENICOL D EYE DROPS 5ML                    52.63 
+1    1012 STERON 5ML                                    52.63 
+1    1016 AZOLIN 0.05% NASAL DROPS 10ML                 44.98 
+1    1015 AZOLIN 0.025% NASAL DROPS 10ML                41.23 
+1    1005 CIPRO-A EYE DROPS                             37.48 
+1    1003 A-PHENICOL EYE DROPS                          25.86 
+1    1031 HAPPYSOL NASAL DROPS 10ML                     14.99 
+1    1002 RHINOZOL 0.1% 15ML                            14.99 
+1    1001 RHINOZOL 0.05% 15ML                           13.49 
+1    1006 A-PHENICOL EYE DROPS 5ML                          8 
+  **      ----------------------------------------            
+  co                                            33            
+1 05 1071 REMICOV 100                                 1724.14 
+1    1073 DELAFLOX 300                                1124.44 
+1    1046 FULSPEC 1G IV                                989.51 
+1    1077 HEMORISE 1000  INJECTION                     974.51 
+1    1067 HEMOJET 1000 INJECTION                       974.51 
+1    1055 SUPERPIME IV 2GM                             827.07 
+1    1072 XYLISTIN 150 INJ.                            749.63 
+1    1047 FULSPEC 500MG IV                             539.73 
+1    1076 HEMORISE 500  INJECTION                      524.74 
+1    1065 HEMOJET 500 INJECTION                        524.74 
+1    1078 XAPARIN 60 PRE-FILLED SYRINGE INJ.           442.28 
+1    1054 SUPERPIME IM/IV 1GM                          413.52 
+1    1058 NALPHIN 20MG/2ML                             375.95 
+1    1030 NALPHIN 20                                    339.6 
+1    1079 XAPARIN 40 PRE-FILLED SYRINGE INJ.           329.84 
+1    1064 HEMOJET 100 INJECTION                        307.35 
+1    1075 HEMORISE 100  INJECTION                      307.35 
+1    1059 AMINOPLEX IV INFUSION 500ML                  301.89 
+1    1061 FULSPEC 250MG IV                             299.85 
+1    1060 AMINOMIX IV INFUSION 500ML                   264.15 
+1    1014 SEFRIL 500MG                                 244.35 
+1    1053 SUPERPIME IM/IV 500MG                        225.56 
+1    1028 TRIZON IV 2GM                                225.56 
+1    1074 AMISURE IV 2ML                                224.9 
+1    1063 PATRON 5ML                                   224.88 
+1    1013 A-FLOX 500MG                                 206.15 
+1    1029 NALPHIN 10                                   203.75 
+1    1033 WINOP 30MG                                    188.7 
+1    1057 STERON 1ML INJECTION                          165.4 
+1    1036 TRIZIDIM 1GM                                 162.26 
+1    1049 FAMICEF 1.5GM IV                             150.94 
+1    1021 KETO-A                                        147.2 
+1    1037 TRACID                                       146.19 
+1    1017 TRIZON-IV 1G                                 142.86 
+1    1020 TRIZON-IM 1G                                 142.86 
+1    1012 A-FLOX 250MG                                  132.1 
+1    1038 TINIUM                                        131.2 
+1    1007 MOXILIN 500MG                                 126.3 
+1    1041 TPC 3ML                                      113.22 
+1    1031 MB- 12                                        113.2 
+1    1032 WINOP 10MG                                    113.2 
+1    1056 PERISET 4ML                                   112.8 
+1    1022 TAXIM 1G                                     112.77 
+1    1011 A-FENAC PLUS                                  112.4 
+1    1039 CIPRO-A 200 IV INFUSION                      110.15 
+1    1002 A-CLOX 500MG                                 106.55 
+1    1005 A-FENAC 3ML                                   105.7 
+1    1004 ACMECILIN 500MG                               102.4 
+1    1019 TRIZON-IM 500MG                               97.74 
+1    1016 TRIZON-IV 500MG                               97.74 
+1    1044 FAMICEF 750MG IM/IV                           90.57 
+1    1066 DEFROL 200000 IU/ML INJ. 1ML                  89.96 
+1    1035 TRIZIDIM 500MG                                86.79 
+1    1006 MOXILIN 250MG                                  79.7 
+1    1042 DOLONIL 100MG                                 75.45 
+1    1009 RANIDIN 2ML                                    75.2 
+1    1008 V-PLEX 2ML                                     75.2 
+1    1024 TAXIM 500MG                                   75.19 
+1    1015 TRIZON-IV 250MG                               75.19 
+1    1018 TRIZON-IM 250MG                               75.19 
+1    1051 LEO 500IV                                     75.19 
+1    1001 A-CLOX 250MG                                  74.95 
+1    1003 ACMECILIN 250MG                               72.85 
+1    1050 WINOP 60                                       71.7 
+1    1068 MAXIMA 40 IV (LYOPHILIZED)                    67.67 
+1    1080 MAXIMA 40 IV INJ. LYO 1X1S                    67.67 
+1    1052 MAXIMA IV  40MG                               67.67 
+1    1025 SEFRIL 1G                                     67.67 
+1    1069 PPI 40 IV INJ.(LYOPHILIZED)                   67.47 
+1    1048 PROTOCID 40 IV                                67.47 
+1    1045 PPI IV 40MG                                   67.47 
+1    1070 PROTOCID 40 IV INJ.(LYOP.)                    67.47 
+1    1010 COMBIPEN 4LACS                                64.45 
+1    1023 TAXIM 250MG                                   56.39 
+1    1062 PATRON 1.5ML                                  56.22 
+1    1034 TRIZIDIM 250MG                                52.83 
+1    1026 DOT                                            52.8 
+1    1043 WINOP 30MG                                    41.51 
+1    1040 DIROZYL 500 IV INFUSION                       40.52 
+  **      ----------------------------------------            
+  co                                            79            
+1 06 1080 BRIVA 50ML ORAL SOLUTION                     487.26 
+1    1086 MEGENOX SUSPENSION 100 ML                    374.81 
+1    1093 REBREATH NEBULIZER SOLUTION, 3ML             359.82 
+1    1085 SUCRATE SUSPENSION 200ML                     299.85 
+1    1096 GAVISUS DX SUSPENSION 200 ML                  202.4 
+1    1089 GAVISUS SUSPENSION 200 ML                    187.41 
+1    1041 TULOS 200ML                                  172.93 
+1    1071 CITROSOL 200ML                               149.93 
+1    1090 CORTIMAX ORAL SUSPENSION 60ML                149.93 
+1    1084 SALPIUM RESPIRATOR SOLU. 3ML                 121.41 
+1    1076 LAXOGOL 100ML                                119.94 
+1    1103 LAXOFIT 100 ORAL SOLUTION                    112.44 
+1    1092 DEFROL OS 50ML                               112.44 
+1    1082 NUTRUM KIDS 200ML                             108.7 
+1    1039 TULOS 100ML                                  104.95 
+1    1068 SALPIUM RESPIRATOR SOLU. 2.5ML               101.16 
+1    1060 SALMOLIN RESPIRATOR SOLUTION                  90.23 
+1    1058 OXECONE MS 200ML                              75.19 
+1    1091 BILAN ORAL SOLUTION 50ML                      74.96 
+1    1078 A-COF 100ML                                   74.96 
+1    1087 DOPHYLIN ORAL SYRUP 100ML                     74.96 
+1    1059 ACME'S MILK OF MAGNESIA PLUS                  71.43 
+1    1081 NUTRUM KIDS 100ML                             67.47 
+1    1047 NUTRUM JUNIOR 100ML                           67.47 
+1    1007 NALIGRAM 100ML                                64.74 
+1    1050 Z-PLEX 200ML                                  64.15 
+1    1079 COFRID 100ML                                  63.72 
+1    1102 LAXOFIT 50 ORAL SOLUTION                      63.72 
+1    1043 FEZIPLEX 200ML                                60.38 
+1    1075 BUTACIT 100ML                                 59.97 
+1    1083 SINTOS 100ML                                  59.97 
+1    1024 OXECONE-S 200ML                               56.39 
+1    1070 DEFROL 100ML                                  56.22 
+1    1036 KETIFEN 100ML                                 56.22 
+1    1009 NEOTRAX 460ML                                 52.83 
+1    1044 A-COF 100ML                                   52.63 
+1    1021 ACME'S MILK OF MEGNESIA 114ML                 49.48 
+1    1023 V-PLEX SYRUP 200ML                            46.62 
+1    1026 COFRID 100ML                                  44.98 
+1    1025 OXECONE 200ML                                  43.1 
+1    1049 Z-PLEX 100ML                                  41.23 
+1    1017 OXECONE-M 200ML                               40.75 
+1    1042 FEZIPLEX 100ML                                37.74 
+1    1097 FOLIKIDZ ORAL SOLUTION 100 ML                 37.48 
+1    1100 FAST SUSPENSION 100 ML                        37.48 
+1    1077 BUTACIT PAEDIATRIC DROPS 15ML                 37.48 
+1    1051 RANIDIN 100ML                                 37.48 
+1    1064 ALANIL 50ML                                   36.09 
+1    1048 X-COLD 100ML                                  35.98 
+1    1032 NYSTAT SUSPENSION 30ML                        35.11 
+1    1062 PERISET ORAL SOLUTION 50ML                    33.73 
+1    1014 PHENADRYL 100ML                               33.73 
+1    1006 NALIGRAM 50ML                                 32.33 
+1    1063 SALMOLIN-L 100ML                              32.23 
+1    1004 FERROGLOBIN 200ML                             30.17 
+1    1035 A-COLD 100ML                                  30.07 
+1    1046 DON-A 60ML                                    29.99 
+1    1031 ZIS-DS 100ML                                  28.57 
+1    1029 PROFEN 100ML                                  27.74 
+1    1022 V-PLEX SYRUP 100ML                            26.72 
+1    1027 NAPRO-A 50ML                                  26.42 
+1    1067 FLATUNIL PAEDIATRIC DROPS 15ML                26.24 
+1    1002 DIROZYL 60ML                                  26.24 
+1    1055 X-COLD 15ML DROPS                             26.24 
+1    1037 FAST 60ML                                     26.24 
+1    1019 THENGLATE 100ML                               23.27 
+1    1057 SALMOLIN-L 60ML                               22.56 
+1    1033 ORIN 60ML                                     19.62 
+1    1053 RISOMAR 60ML                                  18.87 
+1    1034 DON-A  100ML                                  18.87 
+1    1038 DON-A 30ML                                    18.87 
+1    1052 DON-A 15ML PAEDIATRIC DROPS                   18.74 
+1    1008 NEOTRAX 30ML                                  17.99 
+1    1030 SALMOLIN 100ML                                17.24 
+1    1056 BEN-A 10ML                                    17.24 
+1    1012 NYSTAT DROPS 12ML                             17.08 
+1    1020 V-PLEX DROP 15ML                              16.54 
+1    1005 HISTALEX 100ML                                16.38 
+1    1016 POLITRIM 60ML                                 16.23 
+1    1045 MUTEROL 60ML                                  15.09 
+1    1061 FAST PAEDIATRIC 15ML                          14.99 
+1    1003 ELECTRO-K 100ML                               14.99 
+1    1018 SALMOLIN 60ML                                 10.88 
+1    1028 PYRIN 60ML                                     9.16 
+1    1010 NUTRAMID 60ML                                  8.01 
+1    1011 NUTRAMID DROPS 15ML                            7.25 
+  **      ----------------------------------------            
+  co                                            86            
+1 07 1028 TACROL 0.1% OINTMENT 30G                     749.63 
+1    1014 B S OINTMENT                                    500 
+1    1027 HALOTAZ 45GM LOTION                          449.78 
+1    1030 CRISA 2% 10G OINTMENT                        374.81 
+1    1029 TACROL 0.03% OINTEMNT 30G                    337.33 
+1    1026 BETOL 20GM                                   284.86 
+1    1024 TACROL .1% 5GM                               150.38 
+1    1034 DERMUPIN 15GM                                134.93 
+1    1012 TACROL 10GM                                  113.21 
+1    1031 ACLOBET-N 30GM                               112.44 
+1    1025 ACLOBET 30GM                                 112.44 
+1    1021 DERMUPIN 10GM                                105.26 
+1    1015 BENZYL LOTION 450ML                           94.83 
+1    1011 TACROL 5GM                                    60.38 
+1    1019 ACLOBET  N  15GM                              49.06 
+1    1033 BET-CL 20GM                                   44.98 
+1    1016 A-MIGEL 15GM                                   39.1 
+1    1017 ACLOBET 10GM                                  37.59 
+1    1032 BET-A 20GM                                    35.98 
+1    1018 BET-A  15GM                                   26.32 
+1    1020 BET-CL 10GM                                    21.8 
+1    1003 NEOBET-E-EYE 5GM                              17.02 
+1    1006 NYSTAT SKIN 10GM                              15.27 
+1    1007 NEOTRACIN SKIN 10GM                            13.1 
+1    1005 NEOTRACIN EYE 5GM                             11.81 
+1    1013 A-FENAC GEL                                    9.81 
+1    1001 A-PHENICOL EYE 5GM                             9.75 
+1    1004 NEOBET-E-EYE 2.5GM                             9.35 
+1    1008 A-TETRA EYE 5GM                                8.68 
+1    1002 GENTACIN EYE 3.5GM                             7.33 
+1    1010 A-TETRA EYE 3.5                                6.41 
+  **      ----------------------------------------            
+  co                                            31            
+1 08 1468 SEMATID 7MG                                 13493.3 
+1    1467 SEMATID 3MG                                    5997 
+1    1444 EGOLIX 200MG                                 1761.6 
+1    1434 PIRAVIR 200 TABLET                             1724 
+1    1523 VERIGAT 10 TABLET                            1499.2 
+1    1443 EGOLIX 150MG                                 1274.4 
+1    1596 D-GEST                                        877.2 
+1    1526 NEUGALIN XR 165 TABLET                        787.2 
+1    1354 O-CAL KIT                                    742.13 
+1    1359 MAXIMA 20MG (140 PCS)                           735 
+1    1360 RABIZOL 20MG (140)                              735 
+1    1100 TENIL 3MG                                       675 
+1    1625 GLIFO M 12.5/500 TABLET                       674.7 
+1    1529 MEGENOX 160                                   674.7 
+1    1612 EMLINO 10/5(30'S)                             674.7 
+1    1409 ARTH-A TS                                     674.7 
+1    1627 GLIFO M XR 25/1000 TABLET                     674.6 
+1    1488 VEFEND 200                                   659.68 
+1    1348 FAMICLAV 500MG (14 PCS)                      629.72 
+1    1565 GLIFO 10 TABLET (30XS)                        618.3 
+1    1566 GLIFO 25 TABLET (20'S)                        599.8 
+1    1613 EMLINO 25/5(20'S)                             599.8 
+1    1732 ZOLIDON 600 TABLET                            599.7 
+1    1461 ROSTAB 10MG(30'S)                             584.7 
+1    1507 TICAFLOW 90 TABLET                            562.2 
+1    1525 NEUGALIN XR 82.5 TABLET                       562.2 
+1    1729 FOLIX 15 TABLET                               562.2 
+1    1699 SACUVA 100 TABLET                             562.2 
+1    1336 SEVEL 800MG                                  557.76 
+1    1531 LIPTOR EZ 20 TABLET                           539.7 
+1    1176 MEGAFIL 10MG                                  526.4 
+1    1365 PROTOCID 20MG (140 PCS)                         525 
+1    1630 MIRABA 10 TABLET                              524.8 
+1    1522 VERIGAT 5 TABLET                             524.72 
+1    1733 LEPTIC 0.5 TABLET (COMMERCIAL)                  517 
+1    1157 LEPTIC 0.5MG                                    517 
+1    1670 MOXILIN CV 625 TABLET (3X7'S)                503.79 
+1    1456 CORALEX (60 PCS)                                495 
+1    1640 CORALEX D (60 PCS)                              495 
+1    1327 AZIN 500 (12 PCS)                            494.76 
+1    1474 ALODIA 25MG                                   494.7 
+1    1379 LINO 5MG TABLET (30 PCS)                      494.7 
+1    1671 MOXILIN CV 1G TABLET (2X7'S)                 472.22 
+1    1567 VILDAPIN PLUS 850 TAB. (30'S)                 472.2 
+1    1262 MEGAFIL 20MG                                  451.1 
+1    1074 NAPRO-A 250MG                                   450 
+1    1119 FAST 500MG                                      450 
+1    1644 CORTIMAX 6 MG (6X10'S)                          450 
+1    1473 ORBAPIN 5/20 (50'S)                             450 
+1    1463 ROSTAB 5MG(50'S)                                450 
+1    1495 ANGIRID MR TABLET(60'S)                         450 
+1    1364 CORTIMAX 24MG                                 449.8 
+1    1430 BRIVA 50 TABLET                               449.8 
+1    1626 GLIFO M XR 10/1000 TABLET                     449.8 
+1    1513 EMLINO 10/5 TABLET                            449.8 
+1    1422 TIBOFEM 2.5MG                                 449.7 
+1    1496 LIPTOR 20 TABLET(30'S)                        449.7 
+1    1163 TRACID 500MG                                  449.7 
+1    1353 ORBAPIN 5/40                                  449.7 
+1    1454 LINO-M XR                                     449.7 
+1    1610 TELISA PLUS 80/12.5                           449.7 
+1    1489 JANMET XR 50/500                              449.7 
+1    1618 NAPRO-A PLUS 500(4X10'S)                      449.6 
+1    1290 DAOMIN 1GM                                      440 
+1    1158 LEPTIC 2MG                                      431 
+1    1568 VILDAPIN PLUS 500 (30'S)                      427.2 
+1    1331 MOXIFIX 400 MG TABLET                        419.76 
+1    1404 GLICLID 60 MR TABLET                          416.1 
+1    1340 TPC (5X10'S)                                  412.5 
+1    1731 ZOLIDON 400 TABLET                            412.3 
+1    1152 FAMICEF 250MG                                 412.2 
+1    1597 OLIC 5                                        404.8 
+1    1448 TELISA-A 80/5                                 404.7 
+1    1337 JANMET 500 (30 PCS)                           404.7 
+1    1591 NAMETON 750MG                                395.76 
+1    1407 MONAS 10MG (US-DMF GRADE)                     393.6 
+1    1738 MONAS 10 (US-DMF NEW)                         393.6 
+1    1669 MOXILIN CV 375 TABLET (3X7'S)                393.54 
+1    1533 FAMODIN 20MG(150'S)                             393 
+1    1614 OMARI 25MG                                    389.8 
+1    1227 NUTRUM PN (EXP)                                 377 
+1    1121 LEANXIT                                         376 
+1    1010 COSIUM 10MG                                     375 
+1    1329 MAXIMA 20MG                                     375 
+1    1322 LOSART 50 (50 PCS)                              375 
+1    1580 MAXIMA MUPS 20MG(50)                            375 
+1    1346 CORALEX                                         375 
+1    1334 LIMBIX                                          375 
+1    1092 A-CAL 500MG                                     375 
+1    1396 GLIFO 10 TABLET                               374.8 
+1    1624 TRACID 650                                    374.8 
+1    1487 VEFEND 50                                     374.8 
+1    1490 VENESA 2                                      374.8 
+1    1466 TERBIKILL 250MG                               374.8 
+1    1527 PINK PILL                                     374.8 
+1    1598 OLIC 10                                       374.8 
+1    1347 FAMICLAV 250G (14 PCS)                       367.36 
+1    1021 NALIGRAM 500MG                                  367 
+1    1408 DON-A TABLET (140 PCS)                        362.6 
+1    1658 DON-A TABLET (5X28'S)                         362.6 
+1    1285 VALTIN 160MG                                  360.6 
+1    1299 CO-VALTIN 5/160                               360.6 
+1    1660 FAST PLUS TABLET (10X20'S)                      360 
+1    1357 DOPHYLIN 200MG                                  360 
+1    1646 GLICLID 80 TABLET (60'S)                        360 
+1    1358 FAST PLUS (200 PCS)                             360 
+1    1451 BETABIS 10                                    359.7 
+1    1406 CORALEX DX TABLET                             359.7 
+1    1442 LINO-M 1000MG                                 359.7 
+1    1530 LIPTOR EZ 10 TABLET                           359.7 
+1    1177 TRACID 500MG(PS-20)                           350.8 
+1    1324 MONAS 10 (30PCS)                              338.4 
+1    1320 AXIMIN 550MG                                  338.3 
+1    1569 VILDAPIN 50 TABLET (30'S)                     338.1 
+1    1465 JANVIA 50 (30'S)                              338.1 
+1    1228 MIPTOL                                        338.1 
+1    1288 ORBAS 40MG                                    338.1 
+1    1616 FAST ONE TABLET                                 338 
+1    1192 RANIDIN 150 (PS-150)                          337.5 
+1    1383 LEPTIC 1MG                                    337.5 
+1    1503 LOSART 50 PLUS (50 PCS)                       337.5 
+1    1578 FOLIX 5 (50)                                  337.5 
+1    1167 TINIUM 50MG                                   337.5 
+1    1532 SOLICARE 5 TABLET (30'S)                      337.2 
+1    1445 GLIFO-M 500                                   337.2 
+1    1266 NAPRO-A PLUS 500                              337.2 
+1    1498 LINO M 850 (30'S)                             337.2 
+1    1470 DHEA 25MG                                     337.2 
+1    1590 NAMETON 500MG                                 337.2 
+1    1440 BILAN 20MG                                    337.2 
+1    1564 DACTUS 2 MG TABLET (6X10'S)                   336.6 
+1    1619 NAPRO-A PLUS 375(4X10'S)                        330 
+1    1339 JANMET 1000 (20 PCS)                          329.8 
+1    1260 GABON 300MG                                   324.6 
+1    1680 MONAS 5 OFT (3X15'S)                          320.4 
+1    1621 DAOMIN 500XR (6X10'S)                           315 
+1    1390 SOLICARE 10 TABLET                           314.86 
+1    1521 VERIGAT 2.5 TABLET                           314.86 
+1    1276 VILDAPIN PLUS 850                             314.8 
+1    1455 MAXIMA MUPS 40                                314.7 
+1    1687 MAXIMA MUPS 40 TAB(COMMERCIAL)                314.7 
+1    1416 FEMINOR 5MG                                   307.8 
+1    1302 MILAST-A                                      304.5 
+1    1678 MONAS 5 TABLET (3X15'S)                      303.75 
+1    1291 ARTH-A 50PCS                                  302.5 
+1    1036 RANIDIN 300MG                                   302 
+1    1088 ZAFIR 20MG                                    301.8 
+1    1040 FAMODIN 40MG                                    301 
+1    1166 APITAC 100MG                                    301 
+1    1493 EDEMIDE 40 TABLET(40'S)                       300.8 
+1    1245 ROSTAB 10MG                                   300.8 
+1    1184 DOLONIL SR 100MG                              300.8 
+1    1172 A-CALM 50MG                                     300 
+1    1011 DAOMIN 500MG                                    300 
+1    1046 KETIFEN 1.0MG                                   300 
+1    1001 ACEMOX 250MG                                    300 
+1    1323 AMLOTEN 50 (50 PCS)                             300 
+1    1135 GLICLID 80MG                                    300 
+1    1623 FEZOL TABLET (2X5'S)                          299.9 
+1    1514 EMLINO 25/5 TABLET                            299.9 
+1    1397 GLIFO 25 TABLET                               299.9 
+1    1247 VIR 0.5MG                                     299.9 
+1    1698 SACUVA 50 TABLET                              299.9 
+1    1175 FAMICEF 500MG                                299.84 
+1    1617 IMEGLI 500 TABLET                             299.8 
+1    1629 MIRABA 5 TABLET                               299.8 
+1    1361 PATRON 0.5MG                                  299.8 
+1    1414 DROSCON TABLET                               299.04 
+1    1321 ARTH-A MAX                                    297.9 
+1    1499 LINO M 500 (30'S)                             292.5 
+1    1138 ARTH-A                                        290.4 
+1    1275 VILDAPIN PLUS 500                             284.8 
+1    1611 TELISA PLUS 40/12.5                           281.1 
+1    1267 VERSIL 4MG                                    271.8 
+1    1213 SETORIB 90                                    271.8 
+1    1261 LIPTOR 20MG (20PCS)                           271.6 
+1    1111 CIPRO-A 750MG                                 271.6 
+1    1534 FAMODIN 40MG(90'S)                            270.9 
+1    1243 LOSART 100                                    270.6 
+1    1210 LOSART PLUS 100/25                            270.6 
+1    1242 LOSART PLUS 100/12.5                          270.6 
+1    1316 GLICLID MR 30MG                                 270 
+1    1447 TELISA-A 40/5                                   270 
+1    1439 DULOX 30MG (30 PCS)                             270 
+1    1449 TELISA 80                                       270 
+1    1356 ZILSART 40MG                                    270 
+1    1620 DCLOT 75(COMMERCIAL)                            270 
+1    1133 NUTRUM GOLD                                     270 
+1    1622 LIMBIX DS TABLET                                270 
+1    1136 DCLOT 75MG                                      270 
+1    1645 DAOMIN 850 TABLET (6X10'S)                      270 
+1    1307 ELODEP 10MG                                     270 
+1    1256 LIPTOR 10MG (30PCS)                             270 
+1    1330 MAXIMA 40MG                                     270 
+1    1519 ALODIA 12.5 TABLET                              270 
+1    1241 ECOSPRIN PLUS 30PCS                             270 
+1    1469 BALOVIR 40MG                                 269.87 
+1    1080 CLARICIN 500MG                               269.84 
+1    1098 PIZO-A 1.5MG                                    264 
+1    1403 RABIZOL 20MG TABLET(70 PCS)                   263.2 
+1    1063 A-ZYME 325MG                                    263 
+1    1402 PROTOCID 20MG TABLET(70 PCS)                  262.5 
+1    1202 PROTOCID 40                                   262.5 
+1    1250 FLUZIN 10MG                                   262.5 
+1    1252 DAOMIN XR 500 MG                              262.5 
+1    1401 MAXIMA 20MG TABLET(70 PCS)                    262.5 
+1    1506 TICAFLOW 60 TABLET                            262.4 
+1    1012 A-FENAC S.R 100MG                               262 
+1    1642 A-FENAC S.R 100MG(COMMERCIAL)                   262 
+1    1255 BETABIS 5 MG                                  258.6 
+1    1428 LEPTIC 2MG (30 PCS)                           258.6 
+1    1426 LEPTIC 0.5MG (50 PCS)                         258.5 
+1    1419 PREDIMAX 5 TABLET                               258 
+1    1148 CP 200MG                                      253.6 
+1    1679 MONAS 4 OFT (3X15'S)                          252.9 
+1    1265 NAPRO-A PLUS 375                              247.5 
+1    1602 TPC (1X30'S)                                  247.5 
+1    1524 DCLOT 75(NEW)                                 247.5 
+1    1491 CIPRO-A 500 TAB (2X10'S)                      247.4 
+1    1065 E-TAB 200I.U                                    245 
+1    1420 PREDIMAX 10 TABLET                              242 
+1    1492 EDEMIDE 20 TABLET(40'S)                       240.8 
+1    1125 LEO 500MG                                     239.8 
+1    1677 MONAS 4 TABLET (3X15'S)                      236.25 
+1    1421 PREDIMAX 20 TABLET                              235 
+1    1044 NYSTAT O.T.                                     235 
+1    1106 EROCIN 500MG                                  232.8 
+1    1203 MISOFENAC 50                                  226.5 
+1    1069 CETIZIN 10MG                                    226 
+1    1317 OXECONE MS                                      226 
+1    1097 ORIN 10MG                                       226 
+1    1089 PIZO-A 0.5MG                                    226 
+1    1240 PERISET 8MG                                   225.6 
+1    1287 RUPASTIN 10MG                                 225.6 
+1    1292 ROSTAB 5MG                                    225.6 
+1    1211 EDIMIDE 40                                    225.6 
+1    1274 VILDAPIN 50                                   225.4 
+1    1264 ETOGESIC 600MG SR                             225.4 
+1    1349 CORTIMAX 6MG                                    225 
+1    1450 TELISA 40                                       225 
+1    1342 DUOCARD 10MG                                    225 
+1    1410 MAXIMA MUPS 20 TABLET                           225 
+1    1344 O-CAL 740MG                                     225 
+1    1423 DEFROL OFT                                      225 
+1    1099 NAPRO-A 500MG                                   225 
+1    1198 DACTUS 3MG                                      225 
+1    1592 VONIX 20MG                                      225 
+1    1505 BETABIS PLUS 5                                  225 
+1    1694 LAXOFIT 10 TABLET                               225 
+1    1020 MEBOLIN 50MG                                    225 
+1    1563 DACTUS 1 MG TABLET (6X10'S)                     225 
+1    1659 DEFROL TABLET (5X10'S)                          225 
+1    1283 ORBAS 20MG                                      225 
+1    1269 ALANIL 180 MG                                   225 
+1    1631 PRINDOL 3                                       225 
+1    1429 BRIVA 25 TABLET                               224.9 
+1    1438 A-MECTIN 12 TABLET                            224.9 
+1    1246 ROSTAB 20MG                                   224.9 
+1    1313 A-KIT                                        224.89 
+1    1326 FAMICLAV 500MG                               224.88 
+1    1332 LINO 5MG                                      224.8 
+1    1520 BILAN KIDS ODT                                224.8 
+1    1049 CIPRO-A 500MG                                 224.8 
+1    1127 DACTUS 2MG                                    224.4 
+1    1382 MONAS 5 OFT                                   213.6 
+1    1303 ORBAPIN 5/20                                  213.6 
+1    1214 SETORIB 120                                   211.4 
+1    1212 SETORIB 60                                    211.2 
+1    1249 JANVIA 100                                    210.5 
+1    1090 GLICLID 80MG                                  210.4 
+1    1615 OMARI 12.5MG                                 209.88 
+1    1351 LINO-M 850MG                                  209.8 
+1    1067 KETO-A 100MG                                  207.5 
+1    1130 RIZAT 5MG                                     203.7 
+1    1298 CO-VALTIN 5/80                                203.1 
+1    1284 VALTIN 80MG                                   203.1 
+1    1229 SEVEL 400MG                                  202.98 
+1    1411 ALIA 5MG                                      202.5 
+1    1251 SKELOFEN 10MG                                 202.5 
+1    1253 DAOMIN XR 1000 MG                             202.5 
+1    1268 ALANIL 120 MG                                 202.5 
+1    1441 FOLIX-5                                       202.5 
+1    1335 DOPHYLIN 400MG                                202.5 
+1    1180 MONAS 5MG (PS-30)                             202.5 
+1    1237 THYROLAR 50MG                                 202.5 
+1    1689 MONAS 5MG (PS-30)(COMMERCIAL)                 202.5 
+1    1516 LM 5 TABLET                                   202.5 
+1    1208 LIPTOR-40                                     202.4 
+1    1139 FLUCONAL 150MG                                199.2 
+1    1029 POLITRIM-DS 960MG                               198 
+1    1105 EROCIN 250MG                                    194 
+1    1124 LEO 250MG                                     193.6 
+1    1045 CIPRO-A 250MG                                 192.6 
+1    1178 TPC                                             192 
+1    1071 ANTOX (STRIP)                                   191 
+1    1191 ORINEX 5MG                                      189 
+1    1235 RABIZOL 20MG                                    188 
+1    1030 RANIDIN 150MG                                   188 
+1    1282 AMLOPIN 5MG (PS-50)                             188 
+1    1201 PROTOCID 20                                   187.5 
+1    1126 DACTUS 1MG                                    187.5 
+1    1641 ITOPID TABLET                                 187.5 
+1    1512 LOSART 25MG(50'S)                             187.5 
+1    1286 A-MEB 135MG                                   187.5 
+1    1147 ULIV 300MG                                    187.4 
+1    1486 BARINIX                                       187.4 
+1    1204 PIDUS 15MG                                    181.5 
+1    1143 CARVIPRESS 25MG                               181.5 
+1    1162 MIZOLAM 7.5MG                                 181.5 
+1    1232 UNIPRIL 5MG                                   181.5 
+1    1146 ULIV 150MG                                    181.2 
+1    1149 LEO 750MG                                    181.08 
+1    1312 ORBAS PLUS 20/12.5                            180.6 
+1    1230 ENOCAM 20MG                                   180.6 
+1    1115 EDIMIDE 20MG                                  180.6 
+1    1161 LOSART PLUS                                   180.6 
+1    1263 FASTDOL                                       180.6 
+1    1108 LOSART 50MG                                   180.6 
+1    1272 MEGAFIL 20MG (4PCS)                          180.44 
+1    1306 ELODEP 5MG                                      180 
+1    1134 NUTRUM 50+                                      180 
+1    1077 DAOMIN 850MG                                    180 
+1    1137 ECOSPRIN PLUS                                   180 
+1    1350 LINO-M 500MG                                    180 
+1    1628 MIRABA 2.5 TABLET                               180 
+1    1427 LEPTIC 1MG (30 PCS)                             180 
+1    1155 WINOP 10MG                                      180 
+1    1436 DULOX 20MG (30 PCS)                             180 
+1    1068 CLARICIN 250MG                               179.92 
+1    1064 A-TETRA 500MG                                   172 
+1    1234 LEVOPA 275MG                                  169.2 
+1    1181 MONAS 10MG(PS-15)                             169.2 
+1    1318 A-CAL DX                                      168.6 
+1    1381 MONAS 4 OFT                                   168.6 
+1    1078 SIMVATIN 10MG                                   166 
+1    1086 GLUCO-A 50MG                                    166 
+1    1081 FLUCONAL 150MG                                  166 
+1    1270 GOUSTAT 40 MG                                   165 
+1    1226 AZIN-500MG                                   157.92 
+1    1057 AMLOPIN 10MG                                  157.8 
+1    1341 DUOCARD 5MG                                   157.5 
+1    1179 MONAS 4MG (PS-30)                             157.5 
+1    1515 LM 2.5 TABLET                                 157.5 
+1    1254 BETABIS 2.5MG                                 157.5 
+1    1593 VONIX 10MG                                    157.5 
+1    1483 LEPTIC ODT 0.5                                157.5 
+1    1688 MONAS 4MG (PS-30)(COMMERCIAL)                 157.5 
+1    1189 A-CAL D 30PSC TAB.                            157.5 
+1    1594 DEQUADIN VT TABLET                           157.44 
+1    1389 SOLICARE 5 TABLET                            157.36 
+1    1218 LACITAB-2                                       151 
+1    1101 DON-A  10MG                                     151 
+1    1159 LIPTOR 10MG                                     151 
+1    1131 GATOX 400MG                                     151 
+1    1087 GLUCO-A 100MG                                 150.9 
+1    1305 VINPOTON 5MG                                  150.5 
+1    1319 AXIMIN 200MG                                  150.4 
+1    1244 PAVIGARD 2MG                                  150.4 
+1    1258 BETAONE 50MG                                    150 
+1    1043 OXECONE-S                                       150 
+1    1257 FLUZIN 5MG                                      150 
+1    1070 A-FENAC-K 50MG                                  150 
+1    1643 CINAZIN PLUS (10X10'S)                          150 
+1    1016 ELECTRO-K 600MG                                 150 
+1    1039 FAMODIN 20MG                                    150 
+1    1003 A-FENAC 50MG                                    150 
+1    1259 FAST XR                                         150 
+1    1417 FEZOL 2.5MG                                  149.95 
+1    1415 EM-PILL TABLET                               146.18 
+1    1140 FAST PLUS                                       143 
+1    1464 CECON 250 MG (SUGAR FREE)                       142 
+1    1151 BABY ZINC                                       142 
+1    1008 CECON 250MG                                     142 
+1    1052 DILOXIDE 500MG                                  140 
+1    1199 NIDOZOX 500                                   135.9 
+1    1219 LACITAB-4                                     135.9 
+1    1160 LIPTOR 20MG                                   135.8 
+1    1079 SIMVATIN 20MG                                 135.8 
+1    1280 ACMEGRA 100MG                                135.32 
+1    1132 AMLOTEN 50MG                                  135.3 
+1    1328 RHITIN 10MG                                     135 
+1    1405 BETABIS-A 2.5/5                                 135 
+1    1182 NUTRUM GOLD (PS 15)                             135 
+1    1504 BETABIS PLUS 2.5                                135 
+1    1325 FAMICLAV 250MG                               134.94 
+1    1190 BABY ZINK (10'S PK. DISPLAY)                    132 
+1    1116 DOT                                             132 
+1    1066 KETO-A 50MG                                     132 
+1    1223 ANGIRID MR 35MG                               130.5 
+1    1015 ECOSPRIN-300MG                                  129 
+1    1197 RISOMAR 2                                       128 
+1    1221 SALMOLIN-L 2                                    127 
+1    1014 DIROZYL 400MG                                   127 
+1    1054 LIPRIL 10MG                                   124.5 
+1    1273 SKELOFEN 5MG                                  123.6 
+1    1072 FLUCONAL 50MG                                   121 
+1    1168 PILESTOP                                        121 
+1    1497 ECOSPRIN 75 TABLET(200'S)                       120 
+1    1186 AMLOTEN 25MG                                  118.5 
+1    1096 FLOXIPAR 200MG                                  117 
+1    1222 DARIFEN ER 7.5 MG                            115.78 
+1    1129 VIB 20MG                                      113.1 
+1    1231 UNIPRIL 2.5MG                                 113.1 
+1    1122 NUTRUM PN                                     113.1 
+1    1142 CARVIPRESS 12.50MG                            113.1 
+1    1173 SIZOPRA 10MG                                  113.1 
+1    1128 VIB 10MG                                        113 
+1    1206 DEFAZ                                           113 
+1    1296 BETAONE 25MG                                    113 
+1    1053 LIPRIL 5MG                                      113 
+1    1154 MUTEROL 20MG                                    113 
+1    1194 N V P                                           113 
+1    1153 MUTEROL 10MG                                    113 
+1    1056 AMLOPIN 5MG                                   112.8 
+1    1248 JANVIA 50                                     112.7 
+1    1171 ANGIST SR 2.6MG                               112.5 
+1    1600 GAVISUS CHEWABLE TABLET                       112.5 
+1    1437 A-MECTIN 6 TABLET                             112.4 
+1    1047 A-SPASM 5MG                                     108 
+1    1110 A-CARD 20MG                                     107 
+1    1028 POLITRIM 480MG                                  107 
+1    1075 PROFEN 400MG                                    107 
+1    1174 SIZOPRA 15MG                                  105.6 
+1    1271 MEGAFIL 10MG (4PCS)                          105.28 
+1    1185 ZERO 8MG                                        105 
+1    1187 ZERO TAB.(CONTAINER)                            105 
+1    1225 AZEPAM 5MG                                      104 
+1    1033 TENOLOC 100MG                                   103 
+1    1107 LOSART 25MG                                   101.4 
+1    1165 THENGLATE SR 400MG                              101 
+1    1058 BEN-A 200MG                                     101 
+1    1041 CINAZIN 15MG                                    101 
+1    1083 PRONIL-DS 1G                                  96.64 
+1    1295 FAST-M                                           94 
+1    1059 BEN-A 400MG                                      94 
+1    1205 KETO-D 25MG                                    90.6 
+1    1123 NUTRUM SUPER                                   90.6 
+1    1156 NUTRUM BONE                                    90.6 
+1    1413 DESOPIL 30                                    90.51 
+1    1233 LEVOPA 110MG                                   90.3 
+1    1183 NUTRUM 50+ (PS 15)                               90 
+1    1482 LEPTIC ODT 0.25                                  90 
+1    1150 MB- 12                                         85.5 
+1    1076 PYRIN 500MG                                      84 
+1    1279 ACMEGRA 50MG                                  81.24 
+1    1239 JANMET 1000MG                                 81.12 
+1    1118 TOMIDE 5MG                                     79.2 
+1    1109 NORFLU                                           79 
+1    1073 AZIN 500MG                                    78.96 
+1    1188 A-CAL D 15PCS TAB.                            78.75 
+1    1412 DESOPIL 20                                     77.7 
+1    1145 DULOX 30MG                                     75.5 
+1    1114 IBSAN 150MG                                    75.5 
+1    1113 IBSAN 75MG                                     75.4 
+1    1027 OXECONE-M 400MG                                  75 
+1    1236 BET-A 0.5MG                                      75 
+1    1051 STERON 0.5MG                                     75 
+1    1091 A-CAL 250MG                                      75 
+1    1217 CINAZIN PLUS                                     75 
+1    1238 JANMET 500MG                                  72.12 
+1    1200 ECOSPRIN 150MG                                   69 
+1    1196 RISOMAR 1                                        68 
+1    1220 SALMOLIN-L 1                                     68 
+1    1141 CARVIPRESS 6.25MG                              67.8 
+1    1164 THENGLATE SR 250MG                               66 
+1    1022 NEOTRAX 40MG                                     64 
+1    1050 A-B1 100MG                                       64 
+1    1170 SONO 2MG                                       60.9 
+1    1032 TENOLOC 50MG                                     58 
+1    1297 UNIPRIL 1.25MG                                 56.4 
+1    1104 MONAS 10MG                                     56.4 
+1    1026 OXECONE 650MG                                    55 
+1    1278 ACMEGRA 25MG                                  54.16 
+1    1144 DULOX 20MG                                     52.8 
+1    1085 RIB 25MG                                       52.8 
+1    1055 SUCROL 18MG                                      52 
+1    1082 PRONIL 500MG                                  51.92 
+1    1277 THYROMEGA 100MG                                51.9 
+1    1013 DIROZYL 200MG                                    50 
+1    1038 ECOSPRIN 75MG                                    47 
+1    1293 THYROLAR 25MCG                                 46.8 
+1    1117 TOMIDE 2.5MG                                   45.3 
+1    1193 CLOTRIM V T 200MG                             45.27 
+1    1034 V-PLEX                                           45 
+1    1333 DEFROL                                           45 
+1    1042 V-PLEX PLUS                                      45 
+1    1004 A-FENAC 25MG                                     41 
+1    1169 SONO 1MG                                       40.8 
+1    1062 ANTOX (BOTTLE)                                 38.2 
+1    1061 ISOTAB 300MG                                     38 
+1    1304 ECOSPRIN 150MG (50PCS)                         34.5 
+1    1031 SALMOLIN 4MG                                     34 
+1    1224 KIDCAL CHEWABLE                                33.9 
+1    1112 A-CAL 250 CHEWABLE                             33.9 
+1    1103 MONAS 5MG                                     30.25 
+1    1084 RIB 12.5MG                                     30.2 
+1    1023 NIFIN 10MG                                       26 
+1    1024 NUTRAMID 10MG                                    26 
+1    1215 AZEPAM 5MG                                       26 
+1    1472 ECOSPRIN 81MG                                  25.5 
+1    1102 MONAS 4MG                                     22.65 
+1    1037 NYSTAT  V.T.                                  22.05 
+1    1019 HISTALEX 4MG                                     22 
+1    1018 GLUCONIL 5MG                                     21 
+1    1418 MAYAPILL TABLET                               19.95 
+1    1060 ISOTAB 100MG                                     19 
+1    1120 AAA                                              18 
+1    1017 FEROCIT                                          13 
+  **      ----------------------------------------            
+  co                                           508            
+1 09 1002 NEOTRACIN POWDER 10GM                         15.09 
+1    1001 NEOTRACIN POWDER 5G                            7.63 
+  **      ----------------------------------------            
+  co                                             2            
+1 11 1007 CECON SACHET                                    150 
+1    1013 ACME'S ORS (NEW CODE)                            90 
+1    1001 ACME'S ORS                                       90 
+1    1005 HAPPYMIX SACHET 1GM                            67.5 
+1    1006 HAPPYMIX SACHET 5 1GM                          56.1 
+1    1008 ZERO 12MG                                        45 
+  **      ----------------------------------------            
+  co                                             6            
+1 13 1028 TRIHALE 200 ROTACAP                          2024.1 
+1    1027 TRIHALE 100 ROTACAP                          1574.1 
+1    1026 INDICA-G DPI                                 1124.4 
+1    1037 BIHALE 200 ROTACAP                            674.7 
+1    1036 TRIHALE 200 ROTACAP (1X10'S)                  674.7 
+1    1035 TRIHALE 100 ROTACAP (1X10'S)                  524.7 
+1    1038 BIHALE 100 ROTACAP                            494.7 
+1    1029 SALFLU 250 ROTA. (5X10'S) BILS                  450 
+1    1032 SALFLU 500 ROTA(BLS)COMERCIAL                 382.2 
+1    1018 SALFLU 500 ROTACAP (BLISTER)                  382.2 
+1    1012 SALFLU 500                                    359.7 
+1    1024 BUDEFORT 400                                  314.7 
+1    1009 FLUTICON 500                                  294.3 
+1    1017 SALFLU 250 ROTACAP (BLISTER)                    270 
+1    1025 EASY RELIEF(VAPORIZER)                          250 
+1    1011 SALFLU 250                                    236.1 
+1    1023 BUDEFORT 200                                  202.5 
+1    1021 EASYHALER DEVICE                             187.41 
+1    1008 FLUTICON 250                                  181.5 
+1    1031 TOPIUM ROTACAP (BLS) (COMMERCIAL)               180 
+1    1020 TOPIUM ROTACAP (BLISTER)                        180 
+1    1022 BUDEFORT 100                                  157.5 
+1    1014 TOPIUM                                        157.5 
+1    1016 SALFLU 100 ROTACAP (BLISTER)                  146.1 
+1    1010 SALFLU 100                                    146.1 
+1    1007 ROTAHALER DEVICE                             132.08 
+1    1030 SALMOLIN 200 ROTA (5X10'S) BLI                  103 
+1    1005 FLUTICON 100                                   96.3 
+1    1015 SALMOLIN 200(STRIP)                              94 
+1    1003 BUDESON 200                                    67.8 
+1    1004 FLUTICON 50                                    56.7 
+1    1019 SALMOLIN 200 ROTACAP (BLISTER)                 56.4 
+1    1006 SALMOLIN 200                                   56.4 
+1    1002 BECLOD 200                                       48 
+1    1013 SALMEROL 50                                    45.3 
+1    1001 BECLOD 100                                     33.9 
+  **      ----------------------------------------            
+  co                                            36            
+1 14 1010 TYCON 300MG                                   226.4 
+1    1014 GYNASTIN VAGINAL SUPPOSITORY                  216.6 
+1    1004 A-FENAC 50MG                                  112.4 
+1    1007 DIROZYL 500MG                                  90.6 
+1    1005 KETO-A 100MG                                   90.6 
+1    1011 CINOPLUS                                       67.7 
+1    1003 A-FENAC 12.5MG                                 67.5 
+1    1012 FAST 500MG                                     60.5 
+1    1009 DON-A 30MG                                     60.5 
+1    1017 INDO-A 100 SUPPOSITORY (COMMERCIAL)            52.8 
+1    1006 INDO-A 100MG                                   52.8 
+1    1013 CLOTRIM 200MG                                 45.27 
+1    1008 DON-A 15MG                                     37.7 
+1    1002 FAST 250MG                                     37.7 
+1    1001 FAST 125MG                                     30.2 
+  **      ----------------------------------------            
+  co                                            15            
+1 15 1022 MOMET-F 200/5 MDI                            670.91 
+1    1013 SALFLU 25/250 (HFA)                          597.74 
+1    1007 AXINAT-F 25/250 (120 PUFF)                   566.04 
+1    1021 MOMET-F 100/5 MDI                            520.99 
+1    1012 SALFLU 25/125 (HFA)                          447.37 
+1    1006 AXINAT-F 25/125 (120 PUFF)                   433.95 
+1    1019 ASCON-F 200 MDI                              412.29 
+1    1014 SALFLU 50 MDI (HFA)                          390.98 
+1    1020 MOMET-F 50/5 MDI                             371.06 
+1    1018 ASCON-F 100 MDI                              337.33 
+1    1023 AIRFORS 90/80 HFA INHALER (MDI)              262.37 
+1    1010 ASCON 250 MDI(H F A)                          240.6 
+1    1009 ASCON 100 MDI (HFA)                          203.01 
+1    1005 ASCON 250 (200 PUFF)                         188.68 
+1    1015 SALPIUM MDI (HFA)                            187.98 
+1    1008 SALPIUM                                      173.58 
+1    1017 SALPIUM MDI REFIL                            172.93 
+1    1011 SALMOLIN MDI (HFA)                           172.41 
+1    1001 ASCON                                        150.94 
+1    1016 SALMOLIN MDI REFIL                           149.93 
+1    1004 AXINAT 25 (200 PUFFS)                         143.4 
+1    1003 SALMOLIN 200 MDI                             135.85 
+1    1002 AXINAT                                        94.34 
+  **      ----------------------------------------            
+  co                                            23            
+1 16 1008 PROGEL VAGINAL GEL 22.5G                     374.81 
+1    1001 ACNE GEL 10GM                                 120.3 
+1    1005 A-MIGEL 15GM                                  56.22 
+1    1004 A-FENAC PLUS GEL 30GM                         33.83 
+1    1002 ORATICS GEL 5GM                               30.07 
+1    1003 A-FENAC GEL                                    9.81 
+  **      ----------------------------------------            
+  co                                             6            
+1 17 1026 ZOLIDON 600 IV INFUSION                      333.58 
+1    1021 MOXIFIX IV INFUSION 250ML                    262.37 
+1    1020 ACME'S MANNITOL 20 IV 500ML                  116.54 
+1    1015 CIPRO-A 100ML                                110.15 
+1    1006 ACME'S DEXTROSE DS 10% 1000 ML                79.31 
+1    1012 ACME'S DEXTROSE-N SALINE1000ML                75.86 
+1    1008 ACME'S HARTMAN SOLUTION 1000ML                68.96 
+1    1002 ACME'S CHOLERA SALINE 1000 ML                 68.96 
+1    1004 ACME'S DEXTROSE 5% 1000 ML                    68.96 
+1    1010 ACME'S NORMAL SALINE 1000 ML                  65.51 
+1    1016 DIROZYL IV 100ML                              64.09 
+1    1037 ACME'S DEXTROS 10% 500ML INFUSION BAG         58.62 
+1    1005 ACME'S DEXTROSE DS 10% 500 ML                 58.62 
+1    1033 ACME'S DEXTROSE-N 500ML INFUSION BAG          56.89 
+1    1011 ACME'S DEXTROSE-N SALINE 500 ML               56.89 
+1    1019 KIDSOL DS 500ML                               55.17 
+1    1018 KIDSOL 500ML                                  54.15 
+1    1007 ACME'S HARTMAN SOLUTION 500 ML                53.45 
+1    1003 ACME'S DEXTROSE 5% 500 ML                     53.45 
+1    1029 ACME'S HARTMAN SOL 500ML INFUSION BAG         53.45 
+1    1028 ACME'S DEXTROSE 5% 500ML INFUSION BAG         53.45 
+1    1036 ACME'S CHOLERA SAL. 500ML INFUSION BAG        52.58 
+1    1001 ACME'S CHOLERA SALINE 500 ML                  52.58 
+1    1009 ACME'S NORMAL SALINE 500 ML                   50.86 
+1    1032 ACME'S NORMAL SAL. 500ML INFUSION BAG         50.86 
+  **      ----------------------------------------            
+  co                                            25            
+1 20 1004 CLEANSOL HANDRUB 250ML                        97.45 
+1    1007 CLEANSOL HP HANDRUB 200ML                     97.45 
+1    1006 CLEANSOL HP HANDRUB 100ML                     52.47 
+1    1002 CLEANSOL HANDRUB 100ML                        38.98 
+1    1005 CLEANSOL HP HANDRUB 50ML                      29.99 
+1    1001 CLEANSOL HANDRUB 50ML                         29.99 
+  **      ----------------------------------------            
+  co                                             6            
+1 25 1003 PREMIUM DRINKING WATER 1500ML                   177 
+1    1004 DRINKING WATER 500ML (1X24)                  172.08 
+1    1002 PREMIUM DRINKING WATER 1000ML                136.56 
+1    1001 PREMIUM DRINKING WATER 500ML                  86.04 
+  **      ----------------------------------------            
+  co                                             4            
+1 26 1071 FERTI-Q 200 CAPSULE                          1465.6 
+1    1070 FERTI-Q 100 CAPSULE                          1163.7 
+1    1077 FOLIHAIR  5000 CAPSULE                       1034.4 
+1    1066 ORTHOGEN TABLET                               775.8 
+1    1074 UTIPRO CAPSULE                                775.8 
+1    1078 FOLIVE CAPSULE                                775.8 
+1    1072 TRUGUT CAPSULE                                646.5 
+1    1076 EZYGUT CAPSULE                               620.64 
+1    1069 FOLIHAIR 1000MCG CAPSULE                      517.2 
+1    1025 VIGOREX TABLET                                517.2 
+1    1075 CYSTNIL TABLET                                  431 
+1    1002 VIGO-FORT 250MG                                 309 
+1    1056 GINTONIC 200ML                               301.72 
+1    1058 FECILAX 100GM POWDER                         301.72 
+1    1068 DISUGAR TABLET 30MG                             259 
+1    1040 MEGAJOY 5.4MG                                 258.6 
+1    1067 MORINGA 500MG                                 258.6 
+1    1043 GINGO 60MG                                    258.6 
+1    1011 GINGO 40MG                                    215.5 
+1    1042 RENOCARE 250MG                                  207 
+1    1059 ALOVERA 345MG                                   207 
+1    1036 HEPATOLIN 450ML                               206.9 
+1    1019 GINTONIC 500MG                                180.9 
+1    1015 PROSTACARE 500MG                              180.9 
+1    1062 ACME'S CHYABANPRASH 200GM                    172.41 
+1    1053 HEPAMILK 175MG                                155.2 
+1    1026 SANTONIC 450ML                               155.17 
+1    1033 AMLACID 450ML                                129.31 
+1    1054 ASPAREX 200ML                                129.31 
+1    1045 NIM GOLD 250MG                                129.3 
+1    1044 HEPAFIT 250MG                                 129.3 
+1    1041 FEMITON 500MG                                 129.3 
+1    1024 NIM-A 500MG                                   129.3 
+1    1049 HEPAMILK 87.5MG CAP. (30PCS)                  129.3 
+1    1012 MENOCARE                                      129.3 
+1    1063 MOUTH CARE 200ML                             120.69 
+1    1080 MOUTHCARE 200 ML 1% LIQUID                   120.69 
+1    1037 LECOSAV 200ML                                120.69 
+1    1032 SAFKIN 450ML                                 112.07 
+1    1013 ACME'S SPIRULINA 450MG                        103.5 
+1    1003 HEPATOLIN 200ML                              103.45 
+1    1061 ACME'S CHYABANPRASH 100GM                     94.83 
+1    1057 REUMACARE 200ML                               94.83 
+1    1065 ACME'S BASOK 200ML(SUGAR FREE)                94.83 
+1    1007 HAJMO-A (PS-130)                               89.7 
+1    1023 ASMARID 200ML                                 86.21 
+1    1030 ACME'S BASOK 200ML                            86.21 
+1    1034 SWEET DROP 15ML                               86.21 
+1    1020 SANTONIC 200ML                                86.21 
+1    1027 BALARIST-A 200ML                              86.21 
+1    1018 ECHINA 450MG                                   86.2 
+1    1010 HEPAMILK 87.5MG                                86.2 
+1    1001 FERODIN 500MG                                  85.5 
+1    1028 ARJUNACARD 200ML                              77.59 
+1    1021 AMLACID 200ML                                 68.97 
+1    1046 KIDCARE 100ML                                 68.97 
+1    1029 DIGAC 200ML                                   68.97 
+1    1050 NERVOLIN 200ML                                68.97 
+1    1009 MENOTOX 200ML                                 68.97 
+1    1052 HONEYBAS SYRUP 100ML                          68.97 
+1    1031 MOUTH CARE 100ML                              64.66 
+1    1051 BRAINTEL 100ML                                64.66 
+1    1048 URICOOL 200ML                                 64.66 
+1    1079 MOUTHCARE 100 ML 1% LIQUID                    64.66 
+1    1055 ARKID 100ML                                   60.34 
+1    1064 ACME'S BASOK 100ML(SUGAR FREE)                60.34 
+1    1039 COOL MAX 20GM                                 60.34 
+1    1008 ACMINA 200ML                                  60.34 
+1    1005 ACME'S BASOK 100ML                            56.03 
+1    1017 PERKUP 300MG                                   51.8 
+1    1022 HEMORIST 200ML                                51.72 
+1    1038 WOMENTON 200ML                                51.72 
+1    1014 SAFKIN 200ML SYRUP                            51.72 
+1    1016 LOPID                                          51.6 
+1    1035 MARIMENT 10GM                                  43.1 
+1    1004 DIGAC 100ML                                   38.79 
+1    1047 URICOOL 100ML                                 38.79 
+1    1006 HAJMO-A (PS-25)                               17.25 
+  **      ----------------------------------------            
+  co                                            78            
+1 27 1005 DISPOSABLE SYRINGE 10ML                         526 
+1    1004 DISPOSABLE SYRINGE 5ML                          376 
+1    1003 DISPOSABLE SYRINGE 3ML                          338 
+1    1002 BECKY SYRINGE 5ML                               320 
+1    1001 BECKY SYRINGE 3ML                               301 
+  **      ----------------------------------------            
+  co                                             5            
+          ----------------------------------------            
+c                                             1097            
+
+1097 rows selected.
+
+
+                 All product price of a depot                 
+                                                              
+D CA PRD_ PROD_NM                                    TRADE_PR 
+- -- ---- ---------------------------------------- ---------- 
+2 04 4001 CIPRO-D VET EYE DROP 5ML                      56.22 
+  **      ----------------------------------------            
+  co                                             1            
+2 05 4131 LSD-NDOLL VACCINE WITH DILUENT                 2400 
+2    4102 SB NATE VET INJECTION 500ML                  749.63 
+2    4056 VITA-ADE FORTE 100ML                          620.3 
+2    4129 STERON VET PLUS INJECTION, 30 ML              599.7 
+2    4088 A-CAL VET INJECTION 500 ML                    592.2 
+2    4027 MOXILIN VET LA 100ML INJ                     435.28 
+2    4080 AMFLOR VET PLUS INJ. 30ML                    423.54 
+2    4094 TULAVET INECTION 10ML                        408.55 
+2    4101 SB NATE VET INJECTION 250ML                  374.81 
+2    4086 LEGA VET 1.5G INJECTION 30ML                 374.81 
+2    4062 TIFUR VET 1GM                                374.81 
+2    4092 CEFQUEEN VET 450 INJECTION                   359.82 
+2    4016 A-SOL VET 100ML                              348.58 
+2    4046 MEL-VET 10ML                                  337.3 
+2    4004 A-FENAC VET 30ML                             330.48 
+2    4087 A-CAL VET INJECTION 250 ML                   314.84 
+2    4007 VITA-ADE 100ML                               300.75 
+2    4078 AMFLOR VET INJECTION 30ML                     296.1 
+2    4040 GENTA-10 100ML                               292.48 
+2    4076 ARBOCIN VET INJECTION 10ML                   262.37 
+2    4053 A-MECTIN PLUS 30ML                           244.36 
+2    4034 KETO-A VET 30ML                              233.95 
+2    4003 A-FENAC VET 10ML                              227.9 
+2    4055 VITA-ADE FORTE 30ML                          225.56 
+2    4128 STERON VET PLUS INJECTION, 10 ML             224.89 
+2    4093 TULAVET INJECTION 5ML                        217.39 
+2    4072 TAMIC VET INJ. 30ML                          212.89 
+2    4002 SP-VET                                       212.28 
+2    4038 TRIZON-VET 2GM                               206.15 
+2    4099 MOXILIN VET INJ. 3GM                          202.4 
+2    4022 CIPRO-A VET 100ML                               200 
+2    4043 V-PLEX VET PLUS 100ML                        188.68 
+2    4091 CEFQUEEN VET 225 INJECTION                   187.41 
+2    4067 TIFUR VET .5GM                               187.41 
+2    4030 POLITRIM VET 100ML                           185.34 
+2    4014 SULFASOL VET 30ML                            179.94 
+2    4100 SB NATE VET INJECTION 100ML                  172.41 
+2    4035 NITROX-A 30ML                                160.42 
+2    4036 BABECURE 2ML                                  151.9 
+2    4081 AMFLOR VET PLUS INJ. 10ML                    149.93 
+2    4085 LEGA VET 0.5G INJECTION 10ML                 149.93 
+2    4020 TETRAVET 100ML                                  145 
+2    4083 PRYCIN VET INJECTION 30ML                    138.68 
+2    4070 MOXILIN VET INJ. 2GM                         137.18 
+2    4098 A-CAL VET INJECTION 100 ML                   134.93 
+2    4009 TETRAVET 10ML                                 132.1 
+2    4041 MOXILIN VET LA 30ML                          131.57 
+2    4019 A-SOL VET 30ML                               113.21 
+2    4065 MOXICLOX VET 2.5GM                           112.77 
+2    4001 ASTA-VET                                      112.7 
+2    4037 TRIZON-VET 1GM                               110.94 
+2    4077 AMFLOR VET INJECTION 10ML                    104.95 
+2    4032 COMBIPEN VET 8 LACS                           101.9 
+2    4017 DECAM VET 200ML                               101.2 
+2    4049 TRACID VET 30ML                               97.74 
+2    4073 TIFUR VET 0.25G INJ.                          97.45 
+2    4039 GENTA-10 30ML                                 90.57 
+2    4018 ASTA-VET 100ML                                90.23 
+2    4047 E-VET PLUS 30ML                               90.23 
+2    4054 VITA-ADE FORTE 10ML                           89.96 
+2    4015 SULFASOL VET 100ML                            89.96 
+2    4033 KETO-A VET 10ML                               83.02 
+2    4069 MOXILIN VET INJ. 1GM                          77.21 
+2    4013 V-PLEX VET 100ML                              75.19 
+2    4071 TAMIC VET INJ. 10ML                           74.96 
+2    4064 TRIZON VET 0.5GM                              73.46 
+2    4058 MEL VET PLUS 10ML                             71.43 
+2    4057 MEL VET 30ML                                  71.43 
+2    4025 CIPRO-A VET 30ML                              70.19 
+2    4011 SP-VET 2.5GM                                  69.93 
+2    4029 POLITRIM VET 30ML                             64.66 
+2    4068 MEL-VET 2% INJECTION 10ML                     63.72 
+2    4061 STERON VET 30ML                               63.72 
+2    4066 SB NATE VET 100ML                             63.72 
+2    4052 A-MECTIN PLUS 5ML                             56.39 
+2    4028 NITROX-A 10ML                                 55.85 
+2    4084 PRYCIN VET INJECTION 10ML                     52.47 
+2    4026 MOXILIN VET LA 10ML INJ                          52 
+2    4023 A-MECTIN 5ML                                  45.28 
+2    4044 TYLOVET 10ML                                  45.11 
+2    4059 MEL VET PLUS 5ML                              41.35 
+2    4012 COMBIPEN VET 40 LACS                          40.99 
+2    4006 VITA-ADE 10ML                                 38.98 
+2    4008 TETRAVET LA 10ML                              37.74 
+2    4048 TRACID VET 10ML                               37.59 
+2    4021 GENTA 10ML                                    33.95 
+2    4051 PHENADRYL VET 30ML                            30.07 
+2    4060 CIPRO-A VET 10ML                              26.32 
+2    4045 STERON VET 10ML                               26.24 
+2    4031 TROPIN VET 10ML                               24.09 
+2    4042 V-PLEX VET PLUS 10ML                          22.64 
+2    4024 TETRAVET-100 10ML                             20.38 
+2    4010 SP-VET  0.50GM                                 18.8 
+2    4005 V-PLEX VET 10ML                               15.04 
+2    4050 PHENADRYL VET 10ML                            12.74 
+2    4063 ASTA-VET 10ML (1PC)                           11.99 
+  **      ----------------------------------------            
+  co                                            96            
+2 06 4087 NIMOCIN VET PLUS ORAL SOLU 500 ML           2623.69 
+2    4121 HEPAFIT VET LIQUID 3L                          2500 
+2    4088 AMFLOR VET ORAL SOLUTION 500ML              2361.32 
+2    4093 ATICAL VET LIQUID 5L                           2295 
+2    4116 ECSE VET LIQUID 500 ML                         2100 
+2    4080 COLITIN VET ORAL SOL. 1 LTR                 1949.03 
+2    4011 VITA ADE 1 LITRE                               1875 
+2    4009 ENROVET 1 LITER                             1287.55 
+2    4010 ATIVET 1 LITER                              1274.36 
+2    4069 ANTICOC ORAL SOLUTION 500ML                  1206.9 
+2    4053 BETALYTE VET 1 LITRE                           1200 
+2    4058 VITALAMINO FORTE 1 LTR                         1080 
+2    4048 AURITOX-PLUS 1 LTR                             1020 
+2    4032 VITA ADE 500ML                                 1000 
+2    4016 E-VET PLUS 1 LTR                             949.56 
+2    4062 ZIS VET SYRUP 5 LITER                           900 
+2    4065 HEPAFIT VET ORAL SOLU. 1 LTR                    900 
+2    4071 DILORES VET 500ML                               850 
+2    4097 BENAZOL VET SUSPENSION 500ML                 824.59 
+2    4074 LEOVET ORAL SPLU. 500ML                      824.59 
+2    4024 CIPRO-A VET 500ML                             809.6 
+2    4084 HEPAFIT AQUA ORAL SOL. 1 LTR                    765 
+2    4049 CP-VET 5LTR                                     750 
+2    4045 ACIDIFIER VET 1 LTR                             725 
+2    4052 BETALYTE VET 500ML                              645 
+2    4002 VITA - ADE 460ML                                625 
+2    4114 VITA-D PLUS VET 1 L                             620 
+2    4079 ACMETIL VET ORAL SOL.100ML                   618.44 
+2    4031 ATIVET SUSPENSION 500ML                      612.77 
+2    4129 HEPATOVET LIQUID 3 L                            570 
+2    4086 NIMOCIN VET PLUS ORAL SOLU 100ML             562.22 
+2    4078 AMFLOR VET ORAL SOLUTION 100ML               562.22 
+2    4092 ATICAL VET LIQUID 1L                            555 
+2    4057 VITALAMINO FORTE 500ML                          555 
+2    4047 AURITOX-PLUS 500ML                              550 
+2    4061 FENAZOL VET 500ML                            539.73 
+2    4007 ATIVET 460ML                                 526.32 
+2    4055 NEFTONIC VET 500ML                              520 
+2    4122 ZIS-VET SYRUP 3L                                500 
+2    4064 HEPAFIT VET ORAL SOLU. 500 ML                   490 
+2    4059 E-VET PLUS 500ML                                475 
+2    4115 ECSE VET LIQUID 100 ML                          450 
+2    4083 HEPAFIT AQUA ORAL SOL. 500ML                    415 
+2    4067 A-MECTIN VET 500ML                           408.55 
+2    4044 ACIDIFIER VET 500ML                             385 
+2    4036 ANTICOC ORAL SOLUTION 100ML                  352.32 
+2    4120 UTERON VET LIQUID 450ML                         340 
+2    4072 U-TONIC VET 450ML                               335 
+2    4076 VITA-D PLUS VET 500 ML                          330 
+2    4033 NORVET 500ML                                 327.07 
+2    4034 FEROVET ORAL SOLUTION 1 LTR                   312.5 
+2    4094 ATICAL VET LIQUID 500ML                         305 
+2    4008 NORVET 460ML                                 301.89 
+2    4038 AMMOCURE SOLUTION 100ML                         250 
+2    4113 ACME'S BKC SOLUTION 100 ML                      250 
+2    4025 BRONCHOVET 1 LITRE                              234 
+2    4017 HEPATOVET 1LITRE                                220 
+2    4023 VITA ADE 100ML                                  213 
+2    4019 ZIS-VET 1 LITRE                                 210 
+2    4041 VITA -D PLUS 400ML                              210 
+2    4070 DILORES VET 100ML                               200 
+2    4073 LEOVET ORAL SPLU. 100ML                       194.9 
+2    4096 BENAZOL VET SUSPENSION 100ML                  194.9 
+2    4006 CIPRO-A VET 100ML                             190.4 
+2    4014 CP-VET 1 LITER                               186.96 
+2    4089 AMMOGUT VET LIQUID 100 ML                       180 
+2    4042 MAGVET PLUS 500ML                            176.16 
+2    4075 OXECONE-S VET SUSP. 500ML                    168.67 
+2    4020 FEROVET 500ML                                166.67 
+2    4005 ENROVET 100ML                                164.92 
+2    4056 VITALAMINO FORTE 100ML                          150 
+2    4051 BETALYTE VET 100ML                              140 
+2    4004 ATIVET 60ML                                  131.84 
+2    4060 FENAZOL VET 100ML                            127.44 
+2    4026 BRONCHOVET 500ML                                127 
+2    4022 HEPATOVET 500ML                                 123 
+2    4046 AURITOX-PLUS 100ML                              120 
+2    4054 NEFTONIC VET 100ML                              115 
+2    4063 HEPAFIT VET ORAL SOLU. 100 ML                   110 
+2    4018 ZIS-VET 500ML                                   110 
+2    4012 E-VET PLUS 100ML                             105.22 
+2    4085 NIMOCIN VET PLUS ORAL SOLU. 15ML              101.2 
+2    4037 CP-VET ORAL SOLUTION 500ML                       98 
+2    4082 HEPAFIT AQUA ORAL SOL. 100ML                     95 
+2    4043 ACIDIFIER VET 100ML                              90 
+2    4077 AMFLOR VET ORAL SOLUTION 15ML                 89.96 
+2    4066 A-MECTIN VET 100ML                            86.21 
+2    4003 NORVET 100ML                                     80 
+2    4015 HEPATOVIT 400ML                                77.6 
+2    4021 FMD CURE 500ML                                75.47 
+2    4028 MAGVET 500ML                                  71.43 
+2    4013 VITA-D PLUS 100ML                                70 
+2    4106 VITA-ADE VET (PET) 20 ML                         60 
+2    4001 VITA - ADE 60ML                                  55 
+2    4029 BLOAT STOP 100ML EMULSION                     52.63 
+2    4102 HEPAFIT VET (PET) LIQUID 20 ML                   45 
+2    4108 E-VET PLUS (PET) LIQUID 20 ML                    45 
+2    4035 FEROVET ORAL SOLUTION 100ML                    37.5 
+2    4095 BENAZOL VET SUSPENSION 10ML                   37.48 
+2    4104 NEFTONIC VET (PET) 20 ML                         35 
+2    4027 ZIS-VET 100ML                                    35 
+2    4050 A-MECTIN VET POUR ON 15ML                     33.73 
+2    4039 BRONCHOVET 100ML                                 30 
+2    4040 HEPATOVET 100ML                                  29 
+2    4030 NEOTRAX VET SYRUP 30ML                        16.49 
+  **      ----------------------------------------            
+  co                                           105            
+2 07 4001 DRESS GEL-FR 50GM                            129.31 
+2    4002 DRESS GEL-FR 20 GM                               60 
+  **      ----------------------------------------            
+  co                                             2            
+2 10 4053 OF-VET BOLUS                                   1510 
+2    4052 DOLORYL VET 500 BOLUS                        1274.4 
+2    4036 LT-VET DS                                     674.6 
+2    4040 ARBOCIN VET DS BOLUS                          599.8 
+2    4031 OXY-A BOLUS                                     570 
+2    4044 FAST VET BOLUS (150 PCS)                      505.5 
+2    4038 MOXILIN-CV DS VET BOLUS                       494.8 
+2    4039 ARBOCIN VET BOLUS                             374.8 
+2    4011 LT-VET                                        374.8 
+2    4033 EDECURE VET 2.0 G                             359.8 
+2    4051 DIROVET BOLUS (60 PCS)                          333 
+2    4003 LEVANID                                       315.8 
+2    4030 VITAORAL VET                                    308 
+2    4023 CIPRO-A VET 1GM                               300.8 
+2    4021 KETO-A VET                                    300.8 
+2    4029 A-COLD VET 100MG                                300 
+2    4041 DOLORYL VET 100 BOLUS                         299.8 
+2    4034 TAMIC VET 200                                 299.8 
+2    4005 SULPHADIN                                     299.8 
+2    4037 MOXILIN-CV VET BOLUS                          284.8 
+2    4045 MEL VET BOLUS (60 PCS)                        270.6 
+2    4050 ZIS VET BOLUS (60 PCS)                        270.6 
+2    4006 SULPHADIN-S                                   270.4 
+2    4047 STERON VET BOLUS (60 PCS)                     225.6 
+2    4022 ANORA DS                                        225 
+2    4027 DIROVET 2GM (40PCS)                             222 
+2    4025 FAST VET BOLUS 2GM(60PCS)                     202.2 
+2    4013 SALFASOL VET                                  180.4 
+2    4020 MEL-VET 100MG                                 180.4 
+2    4046 PHENADRYL VET BOLUS (60 PCS)                    180 
+2    4016 A-MILK                                          173 
+2    4002 HEXATIN                                       163.4 
+2    4018 MOXILIN VET                                   150.4 
+2    4019 STERON VET BOLUS                              150.4 
+2    4028 RUMIGEST VET                                    150 
+2    4048 TETRAVET BOLUS (60 PCS)                       135.6 
+2    4009 ANORA                                           135 
+2    4026 PHENADRYL VET                                   120 
+2    4004 LEVAVET                                         120 
+2    4032 MEL-VET PLUS                                    120 
+2    4001 BENAZOL                                         115 
+2    4015 ZIS VET                                        90.2 
+2    4024 FENAZOL VET BOLUS                              86.4 
+2    4017 CP VET PLUS BOLUS                                80 
+2    4014 DIROVET 2GM                                    67.2 
+2    4010 POLITRIM VET                                   65.4 
+2    4007 TETRAVET                                       45.2 
+2    4008 A-FEANC (VET) 100MG                            36.4 
+2    4012 FAST-VET 2GM                                     34 
+  **      ----------------------------------------            
+  co                                            49            
+2 11 4045 PREMAFAT VET PREMIX 25 KG                     12500 
+2    4032 GLUCOLYTE 20KG                                 3100 
+2    4030 GLUCOLYTE 25KG                                 2890 
+2    4039 VITAMIX F AQUA PREMIUM 10KG                    2350 
+2    4007 VITAMIX -DB 10KG                               2000 
+2    4034 VITAMIX DB 10KG                                2000 
+2    4026 VITAMIX-B 10KG                                 1625 
+2    4020 VITAMIX -L 10KG                                1500 
+2    4006 VITAMEX - 10KG                                 1470 
+2    4023 VITAMIX-GS 10KG                                1440 
+2    4010 VITAMIX -P 10KG                                1419 
+2    4001 GLUCOLYTE - 10KG                               1207 
+2    4054 PLANKTOGEN PREMIX 2 KG                          950 
+2    4002 GLUCOLYTE - 5KG                               892.5 
+2    4025 VITAMIX-B 5KG                                   855 
+2    4008 VITAMIX -DB 5KG                                 840 
+2    4005 VITAMIX - 5KG                                   840 
+2    4011 VITAMIX -P 5KG                                  789 
+2    4019 VITAMIX -L 5KG                                787.5 
+2    4022 VITAMIX-GS 5KG                                787.5 
+2    4043 BIOGUT VET 10GM                                 640 
+2    4050 BIOVIGOR GEL 1LTR                               600 
+2    4044 PREMAFAT VET PREMIX 1 KG                        550 
+2    4057 AC-MILK VET PREMIX 1 KG                         490 
+2    4046 BOVI CARE VET 30 GM                             450 
+2    4048 ECOPOND 1KG                                     420 
+2    4027 GLUCOLYTE 2KG                                 382.5 
+2    4024 VITAMIX-B 2KG                                   360 
+2    4021 VITAMIX-GS 2KG                                  324 
+2    4018 VITAMIX -L 2KG                                  324 
+2    4037 VITAMIX DB SUPER 1KG                            305 
+2    4033 VITAMIX DB 1KG                                  280 
+2    4036 VITAMIX F AQUA PREMIUM                          280 
+2    4052 ZYMOVET-20GM PREMIX-(20X20)                   262.4 
+2    4053 VITAMIX DB SUPER VET SACHET 1 KG                210 
+2    4047 PROMAST VET 120GM                               200 
+2    4038 VITAMIX DB SUPER 500GM                          175 
+2    4040 BOVI CARE 125GM                                 170 
+2    4003 GLUCOLYTE 25G                                   160 
+2    4035 VITAMIX DB 500GM                                155 
+2    4028 GLUCOVET 1KG                                  148.5 
+2    4013 ZYMOVET 20G                                  137.55 
+2    4041 GLUCOLYTE 1KG                                   122 
+2    4015 VITAMIX DB 30G                                  115 
+2    4014 VITAMIX - 10G                                   100 
+2    4016 ZYMOVET 20GM                                   97.5 
+2    4029 GLUCOVET 500G                                    81 
+2    4042 ACME'S ORS                                       75 
+2    4017 VITAMIX-P 10G                                    60 
+2    4031 VITAMIX DB 100GM                                 34 
+  **      ----------------------------------------            
+  co                                            50            
+2 12 4116 VITAMIX-C VET WSP 25 KG                       20500 
+2    4047 LECIPHOS WSP 25KG                             14655 
+2    4050 LECIPHOS WSP 20KG                              8275 
+2    4023 FURAVET WSP 5KG                             5283.02 
+2    4049 ACMEZYME WSP 10KG                              5172 
+2    4055 ACME'S EGG FORMULA 1KG                         4000 
+2    4077 PROZYME VET 1KG                                2250 
+2    4005 TYLOVET WSP 1KG                             1574.21 
+2    4117 ERAPRIM VET WSP 500 G                       1386.81 
+2    4079 PROZYME VET 500GM                              1250 
+2    4036 DOXY-A VET WSP 1KG                          1165.41 
+2    4088 TYLVASIN VET 100 GM                         1124.44 
+2    4081 COCCI-OFF WSP 500GM                         1120.69 
+2    4100 VITAMIX-C AQUA WSP 1KG                         1100 
+2    4028 VITAMIX-C 1KG                                  1100 
+2    4064 MOXILIN PLUS 500GM                          1090.23 
+2    4109 MOXILIN-CV VET WSP 500G                     1049.48 
+2    4059 MOXILIN VET DS WSP 500GM                     943.39 
+2    4031 MOXILIN 15% WSP (VET) 1KG                    939.85 
+2    4067 ACME'S EGG FORMULA 1KG (1PC)                    800 
+2    4060 TYLOVET WSP 500GM                            751.88 
+2    4103 XILIAN VET WSP 10G                              750 
+2    4048 LESIPHOS WSP 1KG                                742 
+2    4027 E-VET WSP 1KG                                721.99 
+2    4086 XILIAN VET WSP 100 GM                           680 
+2    4099 VITAMIX-C AQUA WSP 500G                         600 
+2    4032 TETRAVET 200 WSP 1KG                         550.94 
+2    4035 PERAVET WSP 500MG                            545.11 
+2    4104 MURA PLUS VET WSP 10 G                          541 
+2    4045 ACMEZYME 500GM                                  500 
+2    4105 MURA PLUS VET WSP 100 G                         500 
+2    4033 NEOTRAX VET WSP 500MG                        498.12 
+2    4041 OXY-A 1KG                                       480 
+2    4043 ACME'S ZEOLITE 10KG                             420 
+2    4034 V-PLEX (B+C) WSP 1KG                            407 
+2    4026 E-VET WSP 500GM                              385.07 
+2    4025 FURAVET WSP 1KG                              377.36 
+2    4056 MIRACLE LIME(MILA) 10KG                         375 
+2    4114 TIM-AC WSP 50GM                                 365 
+2    4024 FURAVET WSP 500GM                            358.49 
+2    4076 M-LIME WSP 1KG                                  350 
+2    4069 AZIN VET 100GM                               348.58 
+2    4003 VITAMIX WS 100GM                                340 
+2    4087 ERAPRIM VET WSP 10GM                          339.6 
+2    4078 PROZYME VET 100GM                               335 
+2    4061 ERAPRIM 100GM                                316.98 
+2    4083 FAST VET WSP 500 GM                          314.84 
+2    4062 DOXY-N (VET) WSP 100GM                       308.27 
+2    4101 NIMOCIN VET WSP 10G                           299.9 
+2    4092 ERAPLUS VET WSP 10G                           299.9 
+2    4102 NIMOCIN VET WSP 100G                         292.35 
+2    4093 ERAPLUS VET WSP 100G                         273.61 
+2    4070 TICOFON VET 10GM                              263.2 
+2    4090 MOXILIN CV VET WSP 10GM                       262.4 
+2    4074 TYLOVET + WSP 100GM                          262.37 
+2    4038 CP-VET 500GM                                    250 
+2    4057 COCCI OFF WSP 100GM                          243.63 
+2    4063 MOXILIN PLUS 100GM                           225.56 
+2    4053 GLUCOVET WSP 1KG                                225 
+2    4096 GLUCOVET AQUA WSP 1KG                           225 
+2    4042 ACME'S ZEOLITE 5KG                              225 
+2    4089 MOXILIN CV VET WSP 100GM                     224.89 
+2    4058 MOXILIN VET DS WSP 100GM                     207.55 
+2    4009 DOXY-A (VET) 10GM                             204.6 
+2    4068 AZIN VET 10GM                                 187.4 
+2    4012 SCZ WSP 10GM                                  184.6 
+2    4046 VITA-K WSP 10GM                                 180 
+2    4021 V-PLEX VET (B+C)                                170 
+2    4013 SCZ WSP 100GM                                161.17 
+2    4006 TYLOVET WSP 100GM                             160.3 
+2    4113 TIM-AC WSP 20GM                                 160 
+2    4085 VITA-3 WSP 10GM                                 160 
+2    4073 TYLOVET + WSP 10GM                           149.95 
+2    4080 NEFGUARD VET WSP 100GM                       149.93 
+2    4008 DOXY-A (VET) 100GM                           149.93 
+2    4007 FURAVET WSP 10g                               146.4 
+2    4084 PERAVET WSP 10 GM                             134.9 
+2    4044 ACMEZYME 100GM                               133.34 
+2    4015 PERAVET WSP 100GM                            130.07 
+2    4017 NEOTRAX VET 100G                             127.82 
+2    4065 PEFLOX 10GM                                   127.7 
+2    4095 GLUCOVET AQUA WSP 500G                          120 
+2    4054 GLUCOVET WSP 500GM                              120 
+2    4010 FLUVET WSP 10g                                114.5 
+2    4001 TETRAVET WSP                                  114.5 
+2    4066 PEFLOX 100GM                                 112.77 
+2    4019 MOXILIN 15% WSP (VET) 100G                   112.07 
+2    4098 VITAMIX-C AQUA WSP 100G                         112 
+2    4018 VITAMIX-C 100GM                                 112 
+2    4039 VITAMIX-C AQUA 100GM                            108 
+2    4040 LECIPHOS 100GM                                  105 
+2    4091 DIROVET WSP 10G                               104.9 
+2    4022 SULPHAVET WSP 10GM                            104.9 
+2    4072 DIROVET 100GM                                 101.2 
+2    4011 FLUVET WSP 100g                               99.24 
+2    4051 ACME'S EGG FORMULA 100GM                         90 
+2    4082 FAST VET WSP 10 GM                               90 
+2    4037 VITA-3 WSP 100GM                                 83 
+2    4014 E-VET WSP 100GM                               80.35 
+2    4071 A-COLD VET 100GM                              73.94 
+2    4004 T-VET WS                                       67.5 
+2    4002 VITAMIX-P WS                                   67.5 
+2    4020 TETRAVET 200 WSP                              67.47 
+2    4075 FAST-VET 100GM                                63.72 
+2    4030 FURAVET WSP 100GM                             45.28 
+2    4029 VITAMIX-WS 10GM                                  45 
+2    4052 GLUCOVET WSP 100GM                               32 
+2    4094 GLUCOVET AQUA WSP 100G                           32 
+2    4016 NEOTRAX VET 20GM                              22.64 
+  **      ----------------------------------------            
+  co                                           109            
+2 17 4006 ACME'S DEXTROSE DS 10 % 1000ML                79.31 
+2    4012 ACME'S DEXTROSE-N SALINE1000ML                75.86 
+2    4002 ACME'S CHOLERA SALINE 1000ML                  68.96 
+2    4004 ACME'S DEXTROSE 5% 1000ML                     68.96 
+2    4008 ACME'S HARTMAN SOLUTION 1000ML                68.96 
+2    4010 ACME'S NORMAL SALINE 1000ML                   65.51 
+2    4014 ACME'S DEXTROSE DS 500 ML SB                  58.62 
+2    4005 ACME'S DEXTROSE DS 10 % 500ML                 58.62 
+2    4020 ACME'S DEXTROSE-N 500ML SB                    56.89 
+2    4011 ACME'S DEXTROSE-N SALINE 500ML                56.89 
+2    4003 ACME'S DEXTROS 5% 500ML                       53.45 
+2    4016 ACME'S DEXTROSE 5% 500ML SB                   53.45 
+2    4022 ACME'S HARTMAN'S SOLUTION 500ML SB            53.45 
+2    4007 ACME'S HARTMAN SOLUTION 500ML                 53.45 
+2    4013 ACME'S CHOLERA SALINE 500ML SB                52.58 
+2    4001 ACME'S CHOLERA SALINE 500ML                   52.58 
+2    4024 ACME'S NORMAL SALINE 500ML SB                 50.86 
+2    4009 ACME'S NORMAL SALINE 500ML                    50.86 
+  **      ----------------------------------------            
+  co                                            18            
+2 27 4005 DISPOSABLE SYRINGE 10ML                         526 
+2    4004 DISPOSABLE SYRINGE 5ML                          376 
+2    4003 DISPOSABLE SYRINGE 3ML                          338 
+  **      ----------------------------------------            
+  co                                             3            
+          ----------------------------------------            
+c                                              433            
+
+433 rows selected.
+

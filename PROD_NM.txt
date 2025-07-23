@@ -1,0 +1,28 @@
+SET LINE 188
+
+
+SELECT * FROM SCENT.INV_PROD WHERE TYP_CD='09'AND DIV_CD='&&DIV' AND CAT_CD||PRD_CD='&CAT_PROD'
+/
+---SELECT * FROM SCENT.INV_PROD WHERE TYP_CD='09'AND DIV_CD='1' ORDER BY CAT_CD, PRD_CD;
+--- FOR ALL PRODECT
+
+
+=====================================
+
+
+SQL> @PROD_NM
+Enter value for div: 1
+Enter value for cat_prod: 081163
+old   1: SELECT * FROM SCENT.INV_PROD WHERE TYP_CD='09'AND DIV_CD='&&DIV' AND CAT_CD||PRD_CD='&CAT_PROD'
+new   1: SELECT * FROM SCENT.INV_PROD WHERE TYP_CD='09'AND DIV_CD='1' AND CAT_CD||PRD_CD='081163'
+
+TY CA PRD_ PROD_NM                                  D UNIT  S DRGS_NM                                  IN_DT     OF_DT     CR_BY CR_DT     UP_BY UP_DT     F DIST_CD              SAP_CD   D
+-- -- ---- ---------------------------------------- - ----- - ---------------------------------------- --------- --------- ----- --------- ----- --------- - -------------------- -------- -
+MAPP_OLD_C
+----------
+09 08 1163 TRACID 500MG                             1 BOX                                              01-OCT-06                                             004700810096
+
+
+
+Input truncated to 19 characters
+SQL> 

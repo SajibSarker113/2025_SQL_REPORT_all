@@ -1,0 +1,128 @@
+
+SET VER OFF
+
+SET LINES 187
+SET PAGES 15000
+COMPUTE COUNT OF PROD_NM ON P_CODE
+BREAK ON REPORT ON P_CODE
+
+
+SPOOL ON
+
+SELECT A.SC_CD, A.FP_ID, A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID CL_ID, INITCAP(SUBSTR(C.CL_NM,1,18)) CL_NM, A.BILL_NO, A.DELI_DT, A.SALE_NET, A.SALE_CD, D.CAT_CD||D.PRD_CD P_CODE,
+INITCAP(SUBSTR(E.PROD_NM,1,20)) PROD_NM, F.DIS_PCT, D.FLAT_RT BILL_RT, F.FLAT_RT APPV_RT, (D.FLAT_RT- F.FLAT_RT) DIFF, (D.FLAT_RT- F.FLAT_RT)*D.PRO_QTY MY_BE_LOSS,  D.PRO_QTY, D.SALE_GR, D.SALE_NET
+	FROM SCENT.BILL_MAS A,SCENT.FP_MGR B,SCENT.CL_INFO C, SCENT.BILL_DET D, SCENT.INV_PROD E, SCENT.FLAT_RATE_INS F
+	WHERE A.SC_CD='&&SC_CD'AND
+	A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID = F.DIST_CD||F.THA_CD||F.UN_CD||F.CL_ID AND
+	A.DELI_DT BETWEEN '&DATE1' AND '&DATE2' AND
+	A.BILL_NO = D.BILL_NO AND
+	A.SC_CD=B.SC_CD AND
+	A.SC_CD=C.SC_CD AND
+	A.SC_CD=D.SC_CD AND
+	A.SC_CD=F.SC_CD AND
+	A.FP_ID=B.FP_ID AND
+	A.DIST_CD=C.DIST_CD AND
+	A.THA_CD=C.THA_CD AND
+	A.UN_CD=C.UN_CD AND
+	A.CL_ID=C.CL_ID AND 
+	A.SALE_CD IN('IC','IM','IN') AND
+	A.FL_MVH='1' AND
+	D.TYP_CD=E.TYP_CD AND 
+	D.CAT_CD=E.CAT_CD AND
+	D.PRD_CD=E.PRD_CD AND
+	D.TYP_CD=F.TYP_CD AND 
+	D.CAT_CD=F.CAT_CD AND
+	D.PRD_CD=F.PRD_CD AND
+	F.DIS_PCT > '&PCT'
+	GROUP BY A.SC_CD, A.FP_ID, A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID, C.CL_NM, A.BILL_NO, A.DELI_DT, A.SALE_NET, A.SALE_CD, D.CAT_CD||D.PRD_CD, E.PROD_NM, F.DIS_PCT, D.FLAT_RT, F.FLAT_RT, D.PRO_QTY, D.SALE_GR, D.SALE_NET
+	HAVING (D.FLAT_RT- F.FLAT_RT) < 0
+	ORDER BY C.CL_NM, CL_ID, P_CODE, A.BILL_NO
+
+/
+
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+=========================================
+
+Enter value for sc_cd: 11
+Enter value for date1: 01jan25
+Enter value for date2: 30jun25
+Enter value for pct: 5
+
+SC FP_ID CL_ID      CL_NM              BILL_NO DELI_DT     SALE_NET SA P_CODE PROD_NM                 DIS_PCT    BILL_RT    APPV_RT       DIFF MY_BE_LOSS    PRO_QTY    SALE_GR   SALE_NET 
+-- ----- ---------- ------------------ ------- --------- ---------- -- ------ -------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- 
+11 50185 5513169001 Comilla Trauma Cen 1520397 02-JAN-25   45899.12 IC 081491 Cipro-A 500 Tab (2x1         10     241.52     265.66     -24.14     -24.14          1        264     241.52 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 22026 5513169001 Comilla Trauma Cen 1538684 02-MAR-25      64814 IC 261052 Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -11.64          3     193.98     174.57 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 22026 5513169001 Comilla Trauma Cen 1521670 06-JAN-25    5138.33 IC 261066 Orthogen Tablet              10     581.85     698.22    -116.37    -116.37          1      646.5     581.85 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 22026 5513169002 Comilla Trauma Cen 1521303 05-JAN-25   16724.49 IC 081491 Cipro-A 500 Tab (2x1         10     241.52     265.66     -24.14     -24.14          1        264     241.52 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 22026 5513169002 Comilla Trauma Cen 1522730 09-JAN-25   15917.66 IC 261052 Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -23.28          6     387.96     349.14 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 22026 5513169002 Comilla Trauma Cen 1523645 13-JAN-25  100985.46 IC 261066 Orthogen Tablet              10     581.85     698.22    -116.37    -930.96          8       5172     4654.8 
+11 22026 5513169002 Comilla Trauma Cen 1524048 14-JAN-25   63561.59 IC        Orthogen Tablet              10     581.85     698.22    -116.37   -8727.75         75    48487.5   43638.75 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     2                                                                                         
+11 20542 5504064001 Eastern Mead. Coll 1522721 09-JAN-25    2008.36 IC 081491 Cipro-A 500 Tab (2x1          6     250.51     275.56     -25.05     -25.05          1        264     250.51 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 20542 5504064001 Eastern Mead. Coll 1520992 04-JAN-25   28330.24 IC 261066 Orthogen Tablet               6     607.71     729.25    -121.54    -364.62          3     1939.5    1823.13 
+11 20542 5504064001 Eastern Mead. Coll 1523650 13-JAN-25   19958.24 IC        Orthogen Tablet               6     607.71     729.25    -121.54    -243.08          2       1293    1215.42 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     2                                                                                         
+11 21015 5513031028 Green Life Hospita 1550162 10-APR-25    9510.32 IC 171021 Moxifix Iv Infusion          10     255.55     281.78     -26.23     -262.3         10     3080.2     2555.5 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 21497 5513153001 Holy Care Medical  1532006 09-FEB-25   19254.77 IC 171015 Cipro-A 100ml                10      86.21     118.31      -32.1       -321         10     1293.2      862.1 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 02Q68 5513010047 Ibn Sina Diag & Co 1532737 11-FEB-25   15310.03 IC 261052 Honeybas Syrup 100ml         10      58.19      62.07      -3.88      -19.4          5      323.3     290.95 
+11 02Q68 5513010047 Ibn Sina Diag & Co 1535662 20-FEB-25   16197.76 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -11.64          3     193.98     174.57 
+11 26384 5513275015 K Ali Pharmacy     1520395 02-JAN-25   26805.42 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -93.12         24    1551.84    1396.56 
+11 26384 5513275015 K Ali Pharmacy     1547748 01-APR-25   14325.52 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -46.56         12     775.92     698.28 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     4                                                                                         
+11 20844 5513123002 Medicine Square    1524010 14-JAN-25   71160.65 IC 261066 Orthogen Tablet              10     581.85     698.22    -116.37    -6982.2         60      38790      34911 
+11 21267 5513123009 Medicine Square Th 1522114 07-JAN-25    5471.14 IC        Orthogen Tablet              10     581.85     698.22    -116.37    -232.74          2       1293     1163.7 
+11 20844 5513123009 Medicine Square Th 1524051 14-JAN-25     9356.1 IC        Orthogen Tablet              10     581.85     698.22    -116.37    -1163.7         10       6465     5818.5 
+11 20844 5513123008 Medicine Square Tw 1524756 16-JAN-25    2744.03 IC        Orthogen Tablet              10     581.85     698.22    -116.37    -232.74          2       1293     1163.7 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     4                                                                                         
+11 26384 5513219001 Mim Pharmacy       1532419 10-FEB-25   56086.12 IC 261052 Honeybas Syrup 100ml         10      58.19      62.07      -3.88    -139.68         36    2327.76    2094.84 
+11 26384 5513219001 Mim Pharmacy       1533559 13-FEB-25     9844.6 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88       -388        100       6466       5819 
+11 26384 5513219001 Mim Pharmacy       1539826 05-MAR-25   94349.51 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88       -388        100       6466       5819 
+11 50026 5513219001 Mim Pharmacy       1540840 08-MAR-25   76613.26 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88       -194         50       3233     2909.5 
+11 26384 5513219001 Mim Pharmacy       1542214 12-MAR-25   16348.42 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88    -139.68         36    2327.76    2094.84 
+11 50026 5513219001 Mim Pharmacy       1545159 22-MAR-25   15828.56 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88     -93.12         24    1551.84    1396.56 
+11 26384 5513219001 Mim Pharmacy       1547115 01-APR-25      56807 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88    -139.68         36    2327.76    2094.84 
+11 26384 5513219001 Mim Pharmacy       1548634 06-APR-25   28381.54 IC        Honeybas Syrup 100ml         10      58.19      62.07      -3.88    -139.68         36    2327.76    2094.84 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     8                                                                                         
+11 26384 5513083001 Moon  Hospital     1521663 06-JAN-25   37886.68 IC 081491 Cipro-A 500 Tab (2x1         10     241.52     265.66     -24.14     -96.56          4       1056     966.08 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     1                                                                                         
+11 26384 5513083001 Moon  Hospital     1520804 03-JAN-25   10296.83 IC 261066 Orthogen Tablet              10     581.85     698.22    -116.37    -581.85          5     3232.5    2909.25 
+11 26384 5513083001 Moon  Hospital     1522013 07-JAN-25    31172.6 IC        Orthogen Tablet              10     581.85     698.22    -116.37    -581.85          5     3232.5    2909.25 
+11 26384 5513083001 Moon  Hospital     1524000 14-JAN-25   14417.35 IC        Orthogen Tablet              10     581.85     698.22    -116.37    -2327.4         20      12930      11637 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     3                                                                                         
+11 02EC8 5513207003 N S Pharmacy       1526770 23-JAN-25       7590 IC 171026 Zolidon 600 Iv Infus         27        290        300        -10        -60          6    2349.72       1740 
+11 02EC8 5513207003 N S Pharmacy       1529213 01-FEB-25  172679.35 IC        Zolidon 600 Iv Infus         27        290        300        -10       -100         10     3916.2       2900 
+11 02EC8 5513207003 N S Pharmacy       1546490 26-MAR-25  108536.61 IC        Zolidon 600 Iv Infus         27        290        300        -10       -100         10     3916.2       2900 
+                                                                       ****** --------------------                                                                                         
+                                                                       count                     3                                                                                         
+
+35 rows selected.
+

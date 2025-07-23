@@ -1,0 +1,39 @@
+COMPUTE SUM OF CHQ_AMT ON REPORT
+BREAK ON CHQ_AMT ON REPORT
+COMPUTE SUM OF B.COLL_AMT ON REPORT
+BREAK ON B.COLL_AMT ON REPORT
+
+
+SET LINES 112
+SET PAGES 500
+
+SPOOL ON
+
+SET NUMFORMAT 9,99,99,999.99
+
+SELECT A.FP_ID,A.REF_NO,A.REF_DT,A.CHQ_DT,A.CHQ_NO,A.CHQ_AMT,B.COLL_AMT,(C.SALE_NET) SALES,ROUND(SYSDATE-A.REF_DT) DAYS  
+FROM SCENT.CHQ_INFO A,SCENT.CHQ_BILL B,SCENT.BILL_MAS C 
+WHERE A.SC_CD=B.SC_CD AND A.SC_CD=C.SC_CD AND A.SC_CD='&SC_CD' 
+AND A.REF_NO=B.REF_NO 
+AND B.BILL_NO=C.BILL_NO
+AND B.RMT_NO IS NULL
+AND A.REF_DT>='01JAN2022'
+ORDER BY A.REF_NO, A.FP_ID
+/
+
+SPOOL OFF
+ED ON.LST
+
+
+=================================================================
+Enter value for sc_cd: 
+old   3: WHERE A.SC_CD=B.SC_CD AND A.SC_CD=C.SC_CD AND A.SC_CD='&SC_CD'
+new   3: WHERE A.SC_CD=B.SC_CD AND A.SC_CD=C.SC_CD AND A.SC_CD=''
+
+FP_ID REF_NO REF_DT    CHQ_DT    CHQ_NO                  CHQ_AMT        COLL_AMT           SALES            DAYS
+----- ------ --------- --------- --------------- --------------- --------------- --------------- ---------------
+                                                 ---------------                                                
+sum                                                                                                             
+
+no rows selected
+

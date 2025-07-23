@@ -1,0 +1,54 @@
+---COMPUTE COUNT OF BILL_NO ON REPORT
+COMPUTE SUM OF SALE_NET ON CL_ID
+BREAK ON REPORT ON CL_ID
+COL SALE_NET FORMAT 99,99,999.99
+SET LINE 120
+SET PAGES 25000
+
+SPOOL ON
+
+SELECT A.FP_ID, C.DIST_CD||C.THA_CD||C.UN_CD||C.CL_ID CL_ID,C.CL_NM,A.BILL_NO,A.DELI_DT,A.SALE_NET,A.SALE_CD,C.OUT_DAY,C.CREDIT_LIMIT
+FROM SCENT.BILL_MAS A,SCENT.FP_MGR B,SCENT.CL_INFO C
+WHERE A.SC_CD=B.SC_CD AND
+A.SC_CD=C.SC_CD AND
+A.FP_ID=B.FP_ID AND
+A.DIST_CD=C.DIST_CD AND
+A.THA_CD=C.THA_CD AND
+A.UN_CD=C.UN_CD AND 
+A.SC_CD='&&SC_CD'AND
+C.DIST_CD||C.THA_CD||C.UN_CD||C.CL_ID ='&CL_ID' AND
+A.CL_ID=C.CL_ID AND 
+A.DELI_DT BETWEEN '&&DATE1' AND '&&DATE2'
+---AND A.SALE_CD IN('IC','IM','IN') 
+AND A.FL_MVH='1'
+ORDER BY C.CL_NM,CL_ID,A.SALE_CD,A.BILL_NO
+/
+
+SPOOL OFF
+
+ED ON.LST
+
+
+======================================================================================================
+
+Enter value for sc_cd: 11
+old   9: A.SC_CD='&&SC_CD'AND
+new   9: A.SC_CD='11'AND
+Enter value for cl_id: 5403003098
+old  10: C.DIST_CD||C.THA_CD||C.UN_CD||C.CL_ID ='&CL_ID' AND
+new  10: C.DIST_CD||C.THA_CD||C.UN_CD||C.CL_ID ='5403003098' AND
+Enter value for date1: 01jan25
+Enter value for date2: 31mar25
+old  12: A.DELI_DT BETWEEN '&&DATE1' AND '&&DATE2'
+new  12: A.DELI_DT BETWEEN '01jan25' AND '31mar25'
+
+FP_ID CL_ID      CL_NM                                    BILL_NO DELI_DT        SALE_NET SA    OUT_DAY CREDIT_LIMIT    
+----- ---------- ---------------------------------------- ------- --------- ------------- -- ---------- ------------    
+21646 5403003098 BHAI BHAI PHARMACY                       1528415 29-JAN-25     85,804.07 WM         30       130000    
+21646            BHAI BHAI PHARMACY                       1534218 16-FEB-25      3,090.30 WM         30       130000    
+21646            BHAI BHAI PHARMACY                       1537305 26-FEB-25     90,166.61 WM         30       130000    
+21646            BHAI BHAI PHARMACY                       1546235 25-MAR-25   1,02,277.46 WM         30       130000    
+22083            BHAI BHAI PHARMACY                       1522528 08-JAN-25      2,024.10 WO         30       130000    
+      **********                                                            -------------                               
+      sum                                                                     2,83,362.54                               
+

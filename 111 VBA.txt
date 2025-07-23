@@ -1,0 +1,47 @@
+Sub CreateEmptyTextFiles_ByCellContent()
+    Dim i As Integer
+    Dim fileName As String
+    Dim filePath As String
+    Dim fileNum As Integer
+    Dim folderPath As String
+
+    ' 🔁 Change this to your target folder (make sure it exists)
+    folderPath = "C:\Users\YourName\Desktop\ExcelTexts\" ' ← update this!
+
+    ' Ensure the path ends with a backslash
+    If Right(folderPath, 1) <> "\" Then folderPath = folderPath & "\"
+
+    ' Loop through first 50 cells in Column A
+    For i = 1 To 50
+        fileName = Trim(Cells(i, 1).Value)
+        
+        ' Only create file if the cell has text
+        If fileName <> "" Then
+            ' Clean the file name of invalid characters
+            fileName = CleanFileName(fileName)
+            filePath = folderPath & fileName & ".txt"
+            
+            ' Create an empty file
+            fileNum = FreeFile
+            Open filePath For Output As #fileNum
+            ' No content written
+            Close #fileNum
+        End If
+    Next i
+
+    MsgBox "✅ Empty text files created using cell content as file names!"
+End Sub
+
+' 🔧 Function to remove invalid file name characters
+Function CleanFileName(ByVal name As String) As String
+    Dim invalidChars As Variant
+    Dim c As Variant
+
+    invalidChars = Array("\", "/", ":", "*", "?", """", "<", ">", "|")
+    
+    For Each c In invalidChars
+        name = Replace(name, c, "_")
+    Next c
+    
+    CleanFileName = name
+End Function

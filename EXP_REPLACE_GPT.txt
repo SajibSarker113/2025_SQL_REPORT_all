@@ -1,0 +1,60 @@
+
+SET VER OFF
+SET LINE 40
+SET PAGES 20000
+COLUMN EXP_VALUE FORMAT 99,99,999.99
+COLUMN SALE_NET FORMAT 99,99,999.99
+
+
+--TTITLE center 'Depot:'SC_CD', RV of Expired Medicine Month wise' SKIP2
+
+
+
+SPOOL ON
+
+SELECT 
+    LOC_CD, 
+    TO_CHAR(RV_DT, 'YYYY-MM') AS MONTH_YEAR, 
+    --DIV_CD, 
+    --SUM(RV_QTY) AS TOTAL_RV_QTY, 
+    SUM(T_VAT * RV_QTY) AS EXP_VALUE 
+FROM 
+    INV.RECV_SUB 
+WHERE 
+    LOC_CD = '&&SC_CD' 
+    AND RV_DT BETWEEN '&&DATE1' AND '&&DATE2'
+    --AND DIV_CD IN ('1', '2') 
+    AND RV_TYP = '47' 
+GROUP BY 
+    LOC_CD,
+    TO_CHAR(RV_DT, 'YYYY-MM')
+    --DIV_CD 
+ORDER BY 
+    MONTH_YEAR;
+
+
+
+SELECT SC_CD, 
+    TO_CHAR(DELI_DT, 'YYYY-MM') AS MONTH_YEAR,
+    --FL_MVH, 
+    SUM(SALE_NET) AS SALE_NET, SALE_CD
+FROM 
+    scent.bill_replace1
+WHERE 
+    SC_CD = '&&SC_CD'
+    AND DELI_DT BETWEEN '&&DATE1' AND '&&DATE2'
+    AND SALE_CD = 'RS'  
+GROUP BY 
+    SC_CD,
+    TO_CHAR(DELI_DT, 'YYYY-MM'), SALE_CD
+    --FL_MVH 
+ORDER BY 
+    MONTH_YEAR;
+
+ 
+SPOOL OFF
+
+ED ON.LST
+
+=============================================================================
+

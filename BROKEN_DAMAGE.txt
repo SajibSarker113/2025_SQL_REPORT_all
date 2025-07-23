@@ -1,0 +1,109 @@
+ACCEPT LOC_CD CHAR PROMPT 'ENTER DEPOT CODE : '
+ACCEPT DATE1 CHAR PROMPT 'DATE1 :'
+ACCEPT DATE2 CHAR PROMPT 'DATE2 :'
+
+
+DROP TABLE BROKEN
+/
+COMMIT
+/
+CREATE TABLE BROKEN AS 
+SELECT DISTINCT DIV_CD, TYP_CD, CAT_CD, PRD_CD, SUM(RV_QTY) RCV_Q , SUM(T_VAT*RV_QTY) TP_VAT
+FROM INV.RECV_SUB
+WHERE LOC_CD='&&LOC_CD'
+AND TYP_CD='09'
+--AND  CAT_CD IN('03','05','06')
+AND RV_TYP='39' 
+---01 holo market n others and 02 holo Stroe broken
+---LOCK_CD Holo SC_CD
+AND RCV_FRM IN('01','02')
+AND IV_NO IN(SELECT DISTINCT IV_NO FROM INV.FG_IV WHERE IV_DT BETWEEN '&&DATE1' AND '&&DATE2' AND IV_TYPE='39' AND LOC_CD='&&LOC_CD') 
+AND LOC_CD='&&LOC_CD'
+GROUP BY DIV_CD, TYP_CD, CAT_CD, PRD_CD
+/
+ALTER TABLE BROKEN ADD(ST_DT DATE)
+/
+ALTER TABLE BROKEN ADD(EN_DT DATE)
+/
+UPDATE BROKEN SET ST_DT='&&DATE1', EN_DT='&&DATE2'
+/
+COMMIT
+/
+DROP TABLE BROK;
+CREATE TABLE BROK AS SELECT TYP_CD, SUM(TP_VAT)TOTAL FROM BROKEN
+GROUP BY TYP_CD
+ORDER BY TYP_CD;
+
+SET LINESIZE 70
+SET PAGESIZE 1000
+COL TP_VAT FORMAT 9,99,99,999.99
+COLUMN PCT FORMAT 999.99
+
+TTITLE CENTER 'DEPOT: '&&LOC_CD'.' SKIP 1 -
+CENTER 'BROKEN AND DAMAGE MEDICINE' SKIP 1 CENTER ''PERIOD: ''&&DATE1''-TO-''&&DATE2'' -
+ SKIP 2
+
+
+COMPUTE SUM OF TP_VAT ON DIV_CD
+COMPUTE SUM OF TP_VAT PCT ON REPORT
+BREAK ON REPORT ON DIV_CD
+
+SPOOL ON
+
+SELECT DISTINCT A.DIV_CD, A.CAT_CD||A.PRD_CD CODE, INITCAP(SUBSTR(RPAD(B.PROD_NM,'25'),1,25)) PROD_NM, A.RCV_Q, A.TP_VAT, SUM((A.TP_VAT/C.TOTAL)*100) PCT
+FROM BROKEN A, SCENT.INV_PROD B, BROK C
+WHERE A.TYP_CD=B.TYP_CD 
+AND A.CAT_CD=B.CAT_CD 
+AND A.PRD_CD=B.PRD_CD 
+AND A.TYP_CD=C.TYP_CD 
+AND B.TYP_CD=C.TYP_CD 
+AND B.TYP_CD='09' 
+GROUP BY A.DIV_CD,A.CAT_CD||A.PRD_CD,PROD_NM,A.RCV_Q,A.TP_VAT
+ORDER BY A.DIV_CD,PCT,A.CAT_CD||A.PRD_CD,PROD_NM,A.RCV_Q
+/
+
+SPOOL OFF
+
+ED ON.LST
+
+DROP TABLE BROKEN
+/
+
+
+=============================================================================================================
+
+
+                              DEPOT: 11.                              
+                      BROKEN AND DAMAGE MEDICINE                      
+                       PERIOD:01jan25-TO-30jun25                      
+                                                                      
+D CODE   PROD_NM                        RCV_Q          TP_VAT     PCT 
+- ------ ------------------------- ---------- --------------- ------- 
+1 061005 Histalex 100ml                     1           19.23     .20 
+  061008 Neotrax 30ml                       1           21.12     .22 
+  061022 V-Plex Syrup 100ml                 1           31.37     .33 
+  031044 Famodin Pfs 60ml                   1           44.00     .47 
+  061002 Dirozyl 60ml                       2           61.62     .65 
+  261003 Hepatolin 200ml                    1           64.66     .68 
+  261021 Amlacid 200ml                      1           68.97     .73 
+  031011 A-Flox 100ml                       1           70.40     .74 
+  261033 Amlacid 450ml                      1          129.31    1.37 
+  061092 Defrol Os 50ml                     1          132.00    1.40 
+  051041 Tpc 3ml                            1          132.90    1.41 
+  041018 Fluticon Nasal Spray               2          441.38    4.67 
+  081327 Azin 500 (12 Pcs)                  1          580.80    6.14 
+  051046 Fulspec 1g Iv                      1        1,161.68   12.29 
+*                                             ---------------         
+s                                                    2,959.44         
+2 054018 Asta-Vet 100ml                     2          211.86    2.24 
+  054007 Vita-Ade 100ml                     1          353.08    3.73 
+  064017 Hepatovet 1litre                   2          440.00    4.65 
+  064062 Zis Vet Syrup 5 Liter              1          900.00    9.52 
+  064093 Atical Vet Liquid 5l               2        4,590.00   48.55 
+*                                             ---------------         
+s                                                    6,494.94         
+                                              --------------- ------- 
+s                                                    9,454.38  100.00 
+
+19 rows selected.
+

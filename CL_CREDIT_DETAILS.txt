@@ -1,0 +1,79 @@
+set ver off
+SET PAGESIZE 1500
+SET LINESIZE 110
+DROP TABLE TMP_CL_INFO;
+
+CREATE TABLE TMP_CL_INFO AS SELECT * FROM SCENT.CL_INFO WHERE STATUS IS NULL AND SC_CD='&&SC' AND DIV_CD IN('1');
+
+UPDATE TMP_CL_INFO SET DIV_CD='1';
+COMMIT;
+
+
+DROP TABLE M11;
+
+CREATE TABLE M11 AS SELECT A.BS_CD,B.DIV_CD FL_MVH,C.RM_ID,C.FM_ID,B.SC_CD||B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID CL_ID,
+SUBSTR(RPAD(B.CL_NM,'30','....'),1,30)CL_NM,SUBSTR(RPAD(B.CL_ADDR,'30','....'),1,30)CL_ADDR,B.OUT_DAY,B.CREDIT_LIMIT
+FROM SCENT.EMP_AREA A,TMP_CL_INFO B,SCENT.FP_MGR C
+WHERE A.DIST_CD=B.DIST_CD AND A.THA_CD=B.THA_CD AND A.UN_CD=B.UN_CD AND A.FP_ID=C.FP_ID 
+AND A.PERFORM='A' AND B.STATUS IS NULL AND B.DIV_CD IN('1') AND B.STATUS IS NULL 
+AND A.SC_CD=C.SC_CD
+AND C.SC_CD='&&SC'
+AND B.CREDIT_LIMIT>='1'
+GROUP BY A.BS_CD,B.DIV_CD,C.RM_ID,C.FM_ID,B.OUT_DAY,B.CREDIT_LIMIT,B.CL_NM,B.CL_ADDR,B.SC_CD||B.DIST_CD||B.THA_CD||B.UN_CD||B.CL_ID;
+
+
+SPOOL ON
+
+SET PAGESIZE 3000
+SET LINESIZE 180
+
+COMPUTE COUNT OF CL_ID ON report
+COMPUTE COUNT OF CL_ID ON FM_ID
+COMPUTE COUNT OF CL_ID ON RM_ID
+COMPUTE COUNT OF CL_ID ON FPBS_CD_N 
+
+COMPUTE SUM OF CREDIT_LIMIT ON report
+COMPUTE SUM OF CREDIT_LIMIT ON FM_ID
+COMPUTE SUM OF CREDIT_LIMIT ON RM_ID
+COMPUTE SUM OF CREDIT_LIMIT ON FPBS_CD_N 
+
+
+BREAK ON report on RM_ID ON FM_ID ON FPBS_CD_N SKIP-1
+
+TTITLE CENTER 'FP BASE WISE CREDIT CLIENT LIST' SKIP2
+
+
+SELECT A.RM_ID,A.FM_ID,SUBSTR(RPAD(B.FPBS_CD_N,'30','.....'),1,15)FPBS_CD_N,SUBSTR(RPAD(B.FPBS_NM_N,'30','..'),1,30)FP_BASE_N,
+A.CL_ID,A.CL_NM,A.CL_ADDR,A.CREDIT_LIMIT,A.OUT_DAY
+FROM M11 A,SCENT.FP_BASE B
+WHERE A.BS_cD=B.FPBS_CD AND A.RM_ID IN('20044','20045') 
+GROUP BY A.RM_ID,A.FM_ID,B.FPBS_CD_N,B.FPBS_NM_N,A.CL_ID,A.CL_NM,A.CL_ADDR,A.CREDIT_LIMIT,A.OUT_DAY
+ORDER BY A.RM_ID,A.FM_ID,B.FPBS_CD_N,A.CL_ID,A.CREDIT_LIMIT
+/
+SPOOL OFF
+ED ON.LST;
+
+
+
+==============================================================================
+
+
+                                                                           FP BASE WISE CREDIT CLIENT LIST                                                                          
+                                                                                                                                                                                    
+RM_ID FM_ID FPBS_CD_N       FP_BASE_N                      CL_ID        CL_NM                          CL_ADDR                        CREDIT_LIMIT    OUT_DAY                       
+----- ----- --------------- ------------------------------ ------------ ------------------------------ ------------------------------ ------------ ----------                       
+            ***************                                ------------                                                               ------------                                  
+            count                                                     0                                                                                                             
+            sum                                                                                                                                                                     
+      *****                                                ------------                                                               ------------                                  
+      count                                                           0                                                                                                             
+      sum                                                                                                                                                                           
+*****                                                      ------------                                                               ------------                                  
+count                                                                 0                                                                                                             
+sum                                                                                                                                                                                 
+                                                           ------------                                                               ------------                                  
+count                                                                 0                                                                                                             
+sum                                                                                                                                                                                 
+
+no rows selected
+

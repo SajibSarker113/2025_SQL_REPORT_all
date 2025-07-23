@@ -1,0 +1,437 @@
+
+SET VER OFF
+
+SET LINES 190
+SET PAGES 15000
+COLUMN T_SALES FORMAT 9,99,999.99
+BREAK ON CL_ID SKIP 1
+COMPUTE SUM OF T_SALES ON CL_ID
+
+
+
+
+SPOOL ON
+
+SELECT A.SC_CD, A.FP_ID, A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID AS CL_ID, INITCAP(SUBSTR(C.CL_NM,1,18)) CL_NM, A.BILL_NO, A.DELI_DT, A.SALE_NET, A.SALE_CD, D.CAT_CD||D.PRD_CD P_CODE,
+INITCAP(SUBSTR(E.PROD_NM,1,20)) PROD_NM, F.DIS_PCT, D.FLAT_RT BILL_RT, F.FLAT_RT APPV_RT, D.FLAT_RT- F.FLAT_RT DIFF, (D.FLAT_RT- F.FLAT_RT)*D.PRO_QTY MY_BE_LOSS, D.PRO_QTY, D.SALE_GR, D.SALE_NET AS T_SALES
+	FROM SCENT.BILL_MAS A,SCENT.FP_MGR B,SCENT.CL_INFO C, SCENT.BILL_DET D, SCENT.INV_PROD E, SCENT.FLAT_RATE_INS F
+	WHERE A.SC_CD='&&SC_CD'AND
+	A.DIST_CD||A.THA_CD||A.UN_CD||A.CL_ID = F.DIST_CD||F.THA_CD||F.UN_CD||F.CL_ID AND
+	A.DELI_DT BETWEEN '&DATE1' AND '&DATE2' AND
+	A.BILL_NO = D.BILL_NO AND
+	A.SC_CD=B.SC_CD AND
+	A.SC_CD=C.SC_CD AND
+	A.SC_CD=D.SC_CD AND
+	A.SC_CD=F.SC_CD AND
+	A.FP_ID=B.FP_ID AND
+	A.DIST_CD=C.DIST_CD AND
+	A.THA_CD=C.THA_CD AND
+	A.UN_CD=C.UN_CD AND
+	A.CL_ID=C.CL_ID AND 
+	---A.SALE_CD IN('IC','IM','IN') AND
+	A.FL_MVH='1' AND
+	D.TYP_CD=E.TYP_CD AND 
+	D.CAT_CD=E.CAT_CD AND
+	D.PRD_CD=E.PRD_CD AND
+	D.TYP_CD=F.TYP_CD AND 
+	D.CAT_CD=F.CAT_CD AND
+	D.PRD_CD=F.PRD_CD AND
+	F.DIS_PCT > '&PCT'
+	ORDER BY C.CL_NM, CL_ID, A.BILL_NO, P_CODE
+/
+
+
+
+SPOOL OFF
+
+ED ON.LST
+
+
+========================================
+
+Enter value for sc_cd: 31
+Enter value for date1: 01JAN25
+Enter value for date2: 31JAN25
+Enter value for pct: 5
+
+SC FP_ID CL_ID      CL_NM              BILL_NO DELI_DT     SALE_NET SA P_CODE PROD_NM                 DIS_PCT    BILL_RT    APPV_RT       DIFF MY_BE_LOSS    PRO_QTY    SALE_GR      T_SALES  
+-- ----- ---------- ------------------ ------- --------- ---------- -- ------ -------------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ------------  
+31 22338 4205022138 A K S Pharmacy     1237856 01-JAN-25   39045.35 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          1      617.4       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          500.00  
+                                                                                                                                                                                              
+31 21115 4202917001 A To Z Hospital Nr 1238483 04-JAN-25   34508.45 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 21115            A To Z Hospital Nr 1238483 04-JAN-25   34508.45 IC 051037 Tracid                       10     157.01     157.01          0          0         20     3432.6     3,140.20  
+31 21115            A To Z Hospital Nr 1238483 04-JAN-25   34508.45 IC 051043 Winop 30mg                   21         40         40          0          0         50     2436.5     2,000.00  
+31 21115            A To Z Hospital Nr 1238483 04-JAN-25   34508.45 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+31 21115            A To Z Hospital Nr 1242006 18-JAN-25    19372.2 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        200      33544    18,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       34,640.20  
+                                                                                                                                                                                              
+31 27567 4101028127 Al Razi General Ho 1237704 01-JAN-25   66584.66 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        200      33544    18,000.00  
+31 27567            Al Razi General Ho 1237704 01-JAN-25   66584.66 IC 051043 Winop 30mg                   21         40         40          0          0         10      487.3       400.00  
+31 27567            Al Razi General Ho 1237704 01-JAN-25   66584.66 IC 051050 Winop 60                     48         50         50          0          0         30     2525.4     1,500.00  
+31 27567            Al Razi General Ho 1237704 01-JAN-25   66584.66 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       22,400.00  
+                                                                                                                                                                                              
+31 28028 4204020029 Al Sabid Medical S 1244554 30-JAN-25   36532.62 WM 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          1      617.4       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          500.00  
+                                                                                                                                                                                              
+31 28308 4107122001 Al-Arafat Pharmacy 1238052 02-JAN-25   16488.89 IC 051043 Winop 30mg                   21         40         40          0          0          6     292.38       240.00  
+31 28308            Al-Arafat Pharmacy 1238052 02-JAN-25   16488.89 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         10      794.5       500.00  
+31 28308            Al-Arafat Pharmacy 1238052 02-JAN-25   16488.89 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          6     475.26       300.00  
+31 28308            Al-Arafat Pharmacy 1239174 06-JAN-25   12932.65 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          3     237.63       150.00  
+31 28308            Al-Arafat Pharmacy 1239459 07-JAN-25    6680.58 IC 051043 Winop 30mg                   21         40         40          0          0          5     243.65       200.00  
+31 28308            Al-Arafat Pharmacy 1239961 09-JAN-25     957.74 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0          5     397.25       250.00  
+31 28308            Al-Arafat Pharmacy 1240178 11-JAN-25   18835.67 IC 051043 Winop 30mg                   21         40         40          0          0          3     146.19       120.00  
+31 28308            Al-Arafat Pharmacy 1240178 11-JAN-25   18835.67 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          2     158.42       100.00  
+31 28308            Al-Arafat Pharmacy 1240741 13-JAN-25    6678.94 IC 051043 Winop 30mg                   21         40         40          0          0          6     292.38       240.00  
+31 28308            Al-Arafat Pharmacy 1240741 13-JAN-25    6678.94 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          3     237.63       150.00  
+31 28308            Al-Arafat Pharmacy 1241021 14-JAN-25    18097.2 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          3     237.63       150.00  
+31 28308            Al-Arafat Pharmacy 1241813 18-JAN-25   27123.83 IC 051043 Winop 30mg                   21         40         40          0          0          5     243.65       200.00  
+31 28308            Al-Arafat Pharmacy 1241813 18-JAN-25   27123.83 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          3     237.63       150.00  
+31 28308            Al-Arafat Pharmacy 1242357 20-JAN-25   14495.39 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          4     316.84       200.00  
+31 28308            Al-Arafat Pharmacy 1243295 25-JAN-25   39369.68 IC 051028 Trizon Iv 2gm                38        180        180          0          0          6    1588.86     1,080.00  
+31 28308            Al-Arafat Pharmacy 1243295 25-JAN-25   39369.68 IC 051043 Winop 30mg                   21         40         40          0          0          6     292.38       240.00  
+31 28308            Al-Arafat Pharmacy 1243930 28-JAN-25    7011.65 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          4     316.84       200.00  
+31 28308            Al-Arafat Pharmacy 1244101 29-JAN-25   18112.12 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0          4     316.84       200.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        4,670.00  
+                                                                                                                                                                                              
+31 27911 4102005088 Baroicha General H 1239115 05-JAN-25   18926.33 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,800.00  
+                                                                                                                                                                                              
+31 21324 4107117001 Central Hospital N 1237471 01-JAN-25   50011.78 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         10     1677.2       900.00  
+31 21324            Central Hospital N 1237471 01-JAN-25   50011.78 IC 051046 Fulspec 1g Iv                44     723.41     723.41          0          0          3    3485.04     2,170.23  
+31 21324            Central Hospital N 1237471 01-JAN-25   50011.78 IC 051056 Periset 4ml                   6     125.68     125.68          0          0          5     662.25       628.40  
+31 21324            Central Hospital N 1237471 01-JAN-25   50011.78 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0         30     2376.3     1,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        5,198.63  
+                                                                                                                                                                                              
+31 50190 4107047004 Dental Collage And 1238355 03-JAN-25   34453.69 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0         10     1056.1       966.10  
+31 26168            Dental Collage And 1239954 09-JAN-25       2500 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+31 26168            Dental Collage And 1242101 19-JAN-25       3982 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0          5     528.05       483.05  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        3,949.15  
+                                                                                                                                                                                              
+31 21324 4107044007 Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041007 Eyemox                       10     128.82     128.82          0          0         40     5632.4     5,152.80  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041021 Alercon Ds 5ml               10     128.82     128.82          0          0         20     2816.2     2,576.40  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041023 Opcol 10ml Eye Drops         10     144.92     144.92          0          0         20     3168.2     2,898.40  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041024 Lotemycin 5ml                10     161.03     161.03          0          0         20     3520.4     3,220.60  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041026 Eyedew 10ml                  10     152.97     152.97          0          0         20     3344.2     3,059.40  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041032 Eyemox-D Eye Drops 5         10     161.03     161.03          0          0         30     5280.6     4,830.90  
+31 21324            Dhaka Prog. Lion E 1242361 20-JAN-25   46263.61 IC 041039 Eyefil Eye Drops 10m         10     221.41     221.41          0          0         20     4840.4     4,428.20  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       26,166.70  
+                                                                                                                                                                                              
+31 50191 4107044006 Dhaka Prog. Lions  1238093 02-JAN-25   35647.08 IC 011056 Nutrum Eye                   10      241.8      241.8          0          0         10       2643     2,418.00  
+31 50191            Dhaka Prog. Lions  1238093 02-JAN-25   35647.08 IC 041007 Eyemox                       10     128.82     128.82          0          0         30     4224.3     3,864.60  
+31 50191            Dhaka Prog. Lions  1238093 02-JAN-25   35647.08 IC 041021 Alercon Ds 5ml               10     128.82     128.82          0          0         50     7040.5     6,441.00  
+31 50191            Dhaka Prog. Lions  1238093 02-JAN-25   35647.08 IC 041024 Lotemycin 5ml                10     161.03     161.03          0          0         20     3520.4     3,220.60  
+31 21324            Dhaka Prog. Lions  1242754 22-JAN-25     603.85 IC 041024 Lotemycin 5ml                10     161.03     161.03          0          0          1     176.02       161.03  
+31 21324            Dhaka Prog. Lions  1242754 22-JAN-25     603.85 IC 041039 Eyefil Eye Drops 10m         10     221.41     221.41          0          0          2     484.04       442.82  
+31 21324            Dhaka Prog. Lions  1243051 23-JAN-25      39208 IC 041007 Eyemox                       10     128.82     128.82          0          0         40     5632.4     5,152.80  
+31 21324            Dhaka Prog. Lions  1243051 23-JAN-25      39208 IC 041021 Alercon Ds 5ml               10     128.82     128.82          0          0         20     2816.2     2,576.40  
+31 21324            Dhaka Prog. Lions  1243051 23-JAN-25      39208 IC 041023 Opcol 10ml Eye Drops         10     144.92     144.92          0          0         20     3168.2     2,898.40  
+31 21324            Dhaka Prog. Lions  1243051 23-JAN-25      39208 IC 041024 Lotemycin 5ml                10     161.03     161.03          0          0         20     3520.4     3,220.60  
+31 21324            Dhaka Prog. Lions  1243051 23-JAN-25      39208 IC 041032 Eyemox-D Eye Drops 5         10     161.03     161.03          0          0         20     3520.4     3,220.60  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       33,616.85  
+                                                                                                                                                                                              
+31 21324 4107044005 Dhaka Prog. Lions  1239956 09-JAN-25     2941.5 IC 041024 Lotemycin 5ml                10     161.03     161.03          0          0         10     1760.2     1,610.30  
+31 21324            Dhaka Prog. Lions  1243298 25-JAN-25   19523.02 IC 011056 Nutrum Eye                   10      241.8      241.8          0          0          6     1585.8     1,450.80  
+31 21324            Dhaka Prog. Lions  1243298 25-JAN-25   19523.02 IC 041007 Eyemox                       10     128.82     128.82          0          0         10     1408.1     1,288.20  
+31 21324            Dhaka Prog. Lions  1243298 25-JAN-25   19523.02 IC 041021 Alercon Ds 5ml               10     128.82     128.82          0          0         20     2816.2     2,576.40  
+31 21324            Dhaka Prog. Lions  1243298 25-JAN-25   19523.02 IC 041032 Eyemox-D Eye Drops 5         10     161.03     161.03          0          0         10     1760.2     1,610.30  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        8,536.00  
+                                                                                                                                                                                              
+31 22241 4107126001 Diabetic Hospital  1237477 01-JAN-25   63158.88 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+31 22241            Diabetic Hospital  1237477 01-JAN-25   63158.88 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+31 22241            Diabetic Hospital  1244344 30-JAN-25   68128.49 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        4,600.00  
+                                                                                                                                                                                              
+31 26286 4204091024 Dkmc Medicine Corn 1240148 09-JAN-25   14825.69 IC 171015 Cipro-A 100ml                10     118.31     118.31          0          0         20     2586.4     2,366.20  
+31 26286            Dkmc Medicine Corn 1240944 13-JAN-25   18106.76 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          2     1234.8     1,000.00  
+31 26286            Dkmc Medicine Corn 1240944 13-JAN-25   18106.76 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        200      15890    10,000.00  
+31 26286            Dkmc Medicine Corn 1243178 23-JAN-25   11977.48 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0          2     211.22       193.22  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       13,559.42  
+                                                                                                                                                                                              
+31 22862 4107078027 Efa Clinic Nrs 94  1237985 02-JAN-25   49500.87 IC 051013 A-Flox 500mg                 10     221.39     221.39          0          0          5       1210     1,106.95  
+31 22862            Efa Clinic Nrs 94  1237985 02-JAN-25   49500.87 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        3,606.95  
+                                                                                                                                                                                              
+31 27911 4105001063 Green Hill Pharma( 1242326 19-JAN-25   16829.22 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0          2     211.22       193.22  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          193.22  
+                                                                                                                                                                                              
+31 27911 4102005095 Green Life Hospita 1238371 03-JAN-25   23324.18 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+31 27911            Green Life Hospita 1238371 03-JAN-25   23324.18 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+31 27911            Green Life Hospita 1238371 03-JAN-25   23324.18 IC 171015 Cipro-A 100ml                10     118.31     118.31          0          0         10     1293.2     1,183.10  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        3,983.10  
+                                                                                                                                                                                              
+31 22971 4101112039 Hazi Azgor Ali Hos 1239201 06-JAN-25   11208.88 WM 051013 A-Flox 500mg                 10        242     221.39      20.61      206.1         10       2420     2,420.00  
+31 22971            Hazi Azgor Ali Hos 1239201 06-JAN-25   11208.88 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+31 22971            Hazi Azgor Ali Hos 1239201 06-JAN-25   11208.88 WM 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         10      794.5       500.00  
+31 22971            Hazi Azgor Ali Hos 1242985 22-JAN-25    3623.22 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        6,520.00  
+                                                                                                                                                                                              
+31 22982 4107909001 Hazrat Shahjalal R 1238481 04-JAN-25   39572.39 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 22982            Hazrat Shahjalal R 1238481 04-JAN-25   39572.39 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        9,500.00  
+                                                                                                                                                                                              
+31 27450 4204012087 Healthcare Diag. C 1242440 20-JAN-25    3050.95 WM 051043 Winop 30mg                   21         40         40          0          0         20      974.6       800.00  
+31 27450            Healthcare Diag. C 1243853 27-JAN-25    1254.32 WO 051038 Tinium                       10     151.43     140.93       10.5       10.5          1     154.05       151.43  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          951.43  
+                                                                                                                                                                                              
+31 22338 4205022112 Insaf Hospital Nrs 1237858 01-JAN-25   72675.92 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          1      617.4       500.00  
+31 22338            Insaf Hospital Nrs 1237858 01-JAN-25   72675.92 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 22338            Insaf Hospital Nrs 1244247 29-JAN-25   44944.25 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        200      33544    18,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       23,000.00  
+                                                                                                                                                                                              
+31 50190 4107159003 Islamia Pvt Hospit 1238322 02-JAN-25   27615.78 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 50190            Islamia Pvt Hospit 1238322 02-JAN-25   27615.78 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        9,500.00  
+                                                                                                                                                                                              
+31 21115 4202005006 Jonosheba Hospital 1242007 18-JAN-25   18864.98 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 21115            Jonosheba Hospital 1242007 18-JAN-25   18864.98 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       11,500.00  
+                                                                                                                                                                                              
+31 26168 4107102002 Khandakar Medicine 1237998 02-JAN-25   96425.48 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          5       3087     2,500.00  
+31 26168            Khandakar Medicine 1237998 02-JAN-25   96425.48 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 26168            Khandakar Medicine 1237998 02-JAN-25   96425.48 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+31 26168            Khandakar Medicine 1244625 31-JAN-25   54565.33 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       21,500.00  
+                                                                                                                                                                                              
+31 21324 4107007066 Khondaker General  1238810 05-JAN-25   48286.45 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        350      58702    31,500.00  
+31 21324            Khondaker General  1238810 05-JAN-25   48286.45 IC 051037 Tracid                       10     157.01     157.01          0          0         30     5148.9     4,710.30  
+31 21324            Khondaker General  1238810 05-JAN-25   48286.45 IC 051046 Fulspec 1g Iv                44     723.41     723.41          0          0          2    2323.36     1,446.82  
+31 21324            Khondaker General  1238810 05-JAN-25   48286.45 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        120       9534     6,000.00  
+31 21324            Khondaker General  1238810 05-JAN-25   48286.45 IC 171026 Zolidon 600 Iv Infus         10        358        358          0          0          1     391.62       358.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       44,015.12  
+                                                                                                                                                                                              
+31 21324 4107007069 Life Care Hospital 1240157 11-JAN-25   41361.85 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        400      67088    36,000.00  
+31 21324            Life Care Hospital 1240157 11-JAN-25   41361.85 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       38,500.00  
+                                                                                                                                                                                              
+31 08412 4103013021 Life Care Pvt Hosp 1237281 01-JAN-25       9000 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 08412            Life Care Pvt Hosp 1244062 28-JAN-25       9000 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       18,000.00  
+                                                                                                                                                                                              
+31 22594 4202945007 Maa-O-Shishu Hospi 1242616 21-JAN-25    5283.87 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          2     1234.8     1,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,000.00  
+                                                                                                                                                                                              
+31 05M32 4101024058 Madhobdi City ( Pv 1240950 13-JAN-25       5871 IC 051043 Winop 30mg                   21         40         40          0          0         50     2436.5     2,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        2,000.00  
+                                                                                                                                                                                              
+31 05R27 4107001054 Marie Stopes       1243749 27-JAN-25     3443.7 IM 081042 V-Plex Plus                   6       50.1       50.1          0          0         20       1056     1,002.00  
+31 05R27            Marie Stopes       1243749 27-JAN-25     3443.7 IM 081406 Coralex Dx Tablet            10      362.4      362.4          0          0          2      844.8       724.80  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,726.80  
+                                                                                                                                                                                              
+31 27450 4204082014 Medi Life Hospital 1238130 02-JAN-25   23149.96 WM 171026 Zolidon 600 Iv Infus         10     381.61        358      23.61      47.22          2     783.24       763.22  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          763.22  
+                                                                                                                                                                                              
+31 22787 4204034002 Memory Pharmacy Nr 1238280 02-JAN-25    6382.94 IC 051036 Trizidim 1gm                 10     174.26     174.26          0          0          6    1142.94     1,045.56  
+31 22787            Memory Pharmacy Nr 1238280 02-JAN-25    6382.94 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         10      794.5       500.00  
+31 22787            Memory Pharmacy Nr 1238280 02-JAN-25    6382.94 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0         10      792.1       500.00  
+31 22787            Memory Pharmacy Nr 1241668 16-JAN-25   12406.93 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       11,045.56  
+                                                                                                                                                                                              
+31 08400 4402006034 Modelphar (Hamdard 1240685 12-JAN-25   14033.94 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+31 08400            Modelphar (Hamdard 1240685 12-JAN-25   14033.94 IC 051043 Winop 30mg                   21         40         40          0          0         15     730.95       600.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        2,400.00  
+                                                                                                                                                                                              
+31 08412 4103013019 Monohardi Central  1237336 01-JAN-25   52222.67 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         10     1677.2       900.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          900.00  
+                                                                                                                                                                                              
+31 22444 4103054002 Monohardi Diabetic 1238808 04-JAN-25    6168.04 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+31 22444            Monohardi Diabetic 1238808 04-JAN-25    6168.04 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         10      794.5       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        2,300.00  
+                                                                                                                                                                                              
+31 27567 4101028113 Mother Care Genera 1237705 01-JAN-25   46779.67 IC 051013 A-Flox 500mg                 10     229.63     221.39       8.24       82.4         10       2420     2,296.30  
+31 27567            Mother Care Genera 1237705 01-JAN-25   46779.67 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         60    10063.2     5,400.00  
+31 27567            Mother Care Genera 1237705 01-JAN-25   46779.67 IC 051037 Tracid                       10     157.01     157.01          0          0         10     1716.3     1,570.10  
+31 27567            Mother Care Genera 1237705 01-JAN-25   46779.67 IC 051046 Fulspec 1g Iv                44     723.41     723.41          0          0         10    11616.8     7,234.10  
+31 27567            Mother Care Genera 1237705 01-JAN-25   46779.67 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       21,500.50  
+                                                                                                                                                                                              
+31 26168 4107048004 Mukti General (Pvt 1241398 15-JAN-25   10710.05 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 26168            Mukti General (Pvt 1241398 15-JAN-25   10710.05 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+31 26168            Mukti General (Pvt 1243992 28-JAN-25       2700 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         30     5031.6     2,700.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        9,700.00  
+                                                                                                                                                                                              
+31 26168 4107015024 Narsingdi Adhunik  1242356 20-JAN-25       9000 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 26168            Narsingdi Adhunik  1243923 28-JAN-25   40558.81 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        300      50316    27,000.00  
+31 26168            Narsingdi Adhunik  1243923 28-JAN-25   40558.81 IC 051043 Winop 30mg                   21         40         40          0          0         10      487.3       400.00  
+31 26168            Narsingdi Adhunik  1243923 28-JAN-25   40558.81 IC 051056 Periset 4ml                   6     125.68     125.68          0          0         10     1324.5     1,256.80  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       37,656.80  
+                                                                                                                                                                                              
+31 26168 4107159009 Narsingdi City Hos 1243562 26-JAN-25   68832.01 IC 051013 A-Flox 500mg                 10     221.39     221.39          0          0          2        484       442.78  
+31 26168            Narsingdi City Hos 1243562 26-JAN-25   68832.01 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0          5     528.05       483.05  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          925.83  
+                                                                                                                                                                                              
+31 26168 4107015028 Narsingdi Ibna Sin 1244092 29-JAN-25   25162.57 IC 051037 Tracid                       10     157.01     157.01          0          0          5     858.15       785.05  
+31 26168            Narsingdi Ibna Sin 1244092 29-JAN-25   25162.57 IC 051056 Periset 4ml                   6     125.68     125.68          0          0          5     662.25       628.40  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,413.45  
+                                                                                                                                                                                              
+31 22982 4107054001 National Gen. Shis 1238839 05-JAN-25   73678.81 IC 051016 Trizon-Iv 500mg              30         85         85          0          0         10     1147.5       850.00  
+31 22982            National Gen. Shis 1238839 05-JAN-25   73678.81 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 22982            National Gen. Shis 1238839 05-JAN-25   73678.81 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+31 22982            National Gen. Shis 1238839 05-JAN-25   73678.81 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         10      794.5       500.00  
+31 22982            National Gen. Shis 1238839 05-JAN-25   73678.81 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0         10      792.1       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       12,650.00  
+                                                                                                                                                                                              
+31 22982 4107054008 National Health Ca 1237639 01-JAN-25   15333.82 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 22982            National Health Ca 1237639 01-JAN-25   15333.82 WM 051080 Maxima 40 Iv Inj. Ly         44         50         50          0          0         20       1589     1,000.00  
+31 22982            National Health Ca 1243032 23-JAN-25    6454.18 WM 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+31 22982            National Health Ca 1244583 31-JAN-25   65036.35 WM 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+31 22982            National Health Ca 1244583 31-JAN-25   65036.35 WM 051046 Fulspec 1g Iv                44     723.41     723.41          0          0         10    11616.8     7,234.10  
+31 22982            National Health Ca 1244583 31-JAN-25   65036.35 WM 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       27,734.10  
+                                                                                                                                                                                              
+31 22241 4107004066 New Sufia Pvt.Hosp 1238106 02-JAN-25   17172.82 IC 051037 Tracid                       10     157.01     157.01          0          0          3     514.89       471.03  
+31 22241            New Sufia Pvt.Hosp 1239530 07-JAN-25    1557.45 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,471.03  
+                                                                                                                                                                                              
+31 22862 4107082001 Niramoy Hospital N 1241893 18-JAN-25    8290.83 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,800.00  
+                                                                                                                                                                                              
+31 28308 4107060001 Nur Jahan Clinic N 1241078 14-JAN-25  108055.49 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0         10     1056.1       966.10  
+31 28308            Nur Jahan Clinic N 1241078 14-JAN-25  108055.49 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         20       1589     1,000.00  
+31 28308            Nur Jahan Clinic N 1241078 14-JAN-25  108055.49 IC 051069 Ppi 40 Iv Inj.(Lyoph         43         50         50          0          0         10      792.1       500.00  
+31 28308            Nur Jahan Clinic N 1243563 26-JAN-25       9000 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       11,466.10  
+                                                                                                                                                                                              
+31 26168 4107036001 Prime General Hosp 1239175 06-JAN-25   22731.83 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+31 26168            Prime General Hosp 1239175 06-JAN-25   22731.83 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+31 26168            Prime General Hosp 1241590 16-JAN-25   14972.94 IC 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        6,100.00  
+                                                                                                                                                                                              
+31 22971 4101051001 Prime General Hosp 1240946 13-JAN-25    2829.02 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         20     3354.4     1,800.00  
+31 22971            Prime General Hosp 1242028 18-JAN-25    8425.32 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         10     1677.2       900.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        2,700.00  
+                                                                                                                                                                                              
+31 26168 4107156016 Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051013 A-Flox 500mg                 10        242     221.39      20.61      618.3         30       7260     7,260.00  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         30     5031.6     2,700.00  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051043 Winop 30mg                   21         40         40          0          0          5     243.65       200.00  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051050 Winop 60                     48         50         50          0          0         10      841.8       500.00  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051056 Periset 4ml                   6     129.07     125.68       3.39       67.8         20       2649     2,581.40  
+31 26168            Renesa Troma Cente 1238324 02-JAN-25   20388.02 WM 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         30     2383.5     1,500.00  
+31 26168            Renesa Troma Cente 1239963 09-JAN-25     8652.5 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         70    11740.4     6,300.00  
+31 26168            Renesa Troma Cente 1239963 09-JAN-25     8652.5 WM 051043 Winop 30mg                   21         40         40          0          0         30     1461.9     1,200.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       24,041.40  
+                                                                                                                                                                                              
+31 05R27 4107054009 Royel Specialised  1241597 16-JAN-25   25261.31 WM 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          1      617.4       500.00  
+31 05R27            Royel Specialised  1241597 16-JAN-25   25261.31 WM 051017 Trizon-Iv 1g                 54         90         90          0          0         50       8386     4,500.00  
+31 05R27            Royel Specialised  1241597 16-JAN-25   25261.31 WM 051028 Trizon Iv 2gm                38        180        180          0          0         10     2648.1     1,800.00  
+31 05R27            Royel Specialised  1241597 16-JAN-25   25261.31 WM 051043 Winop 30mg                   21         40         40          0          0         10      487.3       400.00  
+31 05R27            Royel Specialised  1241597 16-JAN-25   25261.31 WM 051066 Defrol 200000 Iu/Ml          10     102.91      96.61        6.3        6.3          1     105.61       102.91  
+31 05R27            Royel Specialised  1241597 16-JAN-25   25261.31 WM 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         50     3972.5     2,500.00  
+31 05R27            Royel Specialised  1242559 21-JAN-25   15938.25 WM 051046 Fulspec 1g Iv                44     723.41     723.41          0          0         20    23233.6    14,468.20  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       24,271.11  
+                                                                                                                                                                                              
+31 21575 4204063055 Rupgonj Popular Ho 1240936 13-JAN-25   59319.62 IC 051028 Trizon Iv 2gm                38        180        180          0          0         80    21184.8    14,400.00  
+31 21575            Rupgonj Popular Ho 1240936 13-JAN-25   59319.62 IC 051047 Fulspec 500mg Iv             36      440.5      440.5          0          0         30    19009.2    13,215.00  
+31 21575            Rupgonj Popular Ho 1240936 13-JAN-25   59319.62 IC 051061 Fulspec 250mg Iv             29     264.02     264.02          0          0         20     7040.4     5,280.40  
+31 21575            Rupgonj Popular Ho 1240936 13-JAN-25   59319.62 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+31 21575            Rupgonj Popular Ho 1243893 27-JAN-25   16557.52 IC 051061 Fulspec 250mg Iv             29     264.02     264.02          0          0         20     7040.4     5,280.40  
+31 21575            Rupgonj Popular Ho 1243893 27-JAN-25   16557.52 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         60       4767     3,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       46,175.80  
+                                                                                                                                                                                              
+31 27911 4105016023 Sahin Genarel Hosp 1237873 01-JAN-25   40709.45 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         10     1677.2       900.00  
+31 27911            Sahin Genarel Hosp 1237873 01-JAN-25   40709.45 IC 051066 Defrol 200000 Iu/Ml          10      96.61      96.61          0          0          3     316.83       289.83  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        1,189.83  
+                                                                                                                                                                                              
+31 27567 4101028105 Satota Pharmacy Nr 1240443 12-JAN-25       5400 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         60    10063.2     5,400.00  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          5       3087     2,500.00  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051013 A-Flox 500mg                 10     221.39     221.39          0          0          6       1452     1,328.34  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        200      33544    18,000.00  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051037 Tracid                       10     157.01     157.01          0          0          6    1029.78       942.06  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051043 Winop 30mg                   21         40         40          0          0         30     1461.9     1,200.00  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051050 Winop 60                     48         50         50          0          0         50       4209     2,500.00  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051056 Periset 4ml                   6     125.68     125.68          0          0          5     662.25       628.40  
+31 27567            Satota Pharmacy Nr 1243927 28-JAN-25   46192.95 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0         30     2383.5     1,500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       33,998.80  
+                                                                                                                                                                                              
+31 20497 4106064001 Seba Diagonistic C 1238233 02-JAN-25   30028.19 IC 051019 Trizon-Im 500mg              30         85         85          0          0         20       2295     1,700.00  
+31 20497            Seba Diagonistic C 1238233 02-JAN-25   30028.19 IC 051050 Winop 60                     48         50         50          0          0         10      841.8       500.00  
+31 20497            Seba Diagonistic C 1240116 09-JAN-25    3092.06 IC 051028 Trizon Iv 2gm                38        180        180          0          0          7    1853.67     1,260.00  
+31 20497            Seba Diagonistic C 1244531 30-JAN-25   28852.31 IC 051050 Winop 60                     48         50         50          0          0         10      841.8       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        3,960.00  
+                                                                                                                                                                                              
+31 05M32 4101951003 Shastho Seba Hospi 1239924 08-JAN-25    24314.5 IC 051043 Winop 30mg                   21         40         40          0          0         20      974.6       800.00  
+31 05M32            Shastho Seba Hospi 1239924 08-JAN-25    24314.5 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        400      31780    20,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       20,800.00  
+                                                                                                                                                                                              
+31 21541 4106028023 Shibpur Diabetic & 1240028 09-JAN-25   44013.04 IC 051017 Trizon-Iv 1g                 54         90         90          0          0         30     5031.6     2,700.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        2,700.00  
+                                                                                                                                                                                              
+31 02Z16 4101037015 Surjer Hashi Clini 1238685 04-JAN-25       7444 IM 051017 Trizon-Iv 1g                 54         90         90          0          0         60    10063.2     5,400.00  
+31 02Z16            Surjer Hashi Clini 1238685 04-JAN-25       7444 IM 081100 Tenil 3mg                    10        725      724.5         .5         .5          1        792       725.00  
+31 02Z16            Surjer Hashi Clini 1238685 04-JAN-25       7444 IM 141004 A-Fenac 50mg                 10      120.8     120.76        .04         .2          5        660       604.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        6,729.00  
+                                                                                                                                                                                              
+31 22444 4103054001 Taj(Pvt.) Hospital 1241211 14-JAN-25   10449.37 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        100      16772     9,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                        9,000.00  
+                                                                                                                                                                                              
+31 05R27 4107182001 United General Hos 1239176 06-JAN-25   26193.47 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          2     1234.8     1,000.00  
+31 05R27            United General Hos 1239176 06-JAN-25   26193.47 IC 051017 Trizon-Iv 1g                 54         90         90          0          0        150      25158    13,500.00  
+31 05R27            United General Hos 1239176 06-JAN-25   26193.47 IC 051068 Maxima 40 Iv (Lyophi         44         50         50          0          0        100       7945     5,000.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                       19,500.00  
+                                                                                                                                                                                              
+31 28028 4204205001 Us Bangla Pharmacy 1243898 27-JAN-25   51511.16 IC 011065 Ppi 20mg (140 Pcs)           22        500        500          0          0          1      617.4       500.00  
+         **********                                                                                                                                                             ------------  
+         sum                                                                                                                                                                          500.00  
+                                                                                                                                                                                              
+
+202 rows selected.
+

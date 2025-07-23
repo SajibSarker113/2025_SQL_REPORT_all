@@ -1,0 +1,681 @@
+DROP TABLE SS;
+
+CREATE TABLE SS AS
+SELECT DISTINCT A.FP_ID, A.CL_ID, SUBSTR(INITCAP(C.CL_NM),1,20)CL_NM, A.FL_MVH, A.SALE_CD, A.BILL_NO, A.DELI_DT, NVL(SUM(A.SALE_NET),0)BILL_AMNT, (SELECT NVL(SUM(AMNT),0)
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='R')RTN, (NVL(SUM(A.SALE_NET),0))-(SELECT (NVL(SUM(AMNT),0))
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='R')NET_SALE, TO_DATE(B.OUT_DT)COLLEC_DATE, (SELECT SUM(AMNT)
+FROM SCENT.OUT_DET D WHERE SC_CD='&&SC_CD' AND D.BILL_NO=A.BILL_NO AND MOA='C' AND D.OUT_DT BETWEEN '&&DATE1' AND '&&DATE2')COLLEC_AMNT, TO_DATE(B.OUT_DT)-TO_DATE(A.DELI_DT)DAYS
+FROM SCENT.BILL_MAS A,
+     SCENT.OUT_DET B,
+     SCENT.CL_INFO C
+WHERE A.SC_CD='&&SC_CD'
+  AND A.SC_CD=B.SC_CD
+  AND A.SC_CD=C.SC_CD
+  AND B.OUT_DT BETWEEN '&&DATE1' AND '&&DATE2'
+  AND A.BILL_NO=B.BILL_NO
+  AND A.DIST_CD=C.DIST_CD
+  AND A.THA_CD=C.THA_CD
+  AND A.UN_CD=C.UN_CD
+  AND A.CL_ID=C.CL_ID
+  AND SEQ=(SELECT MAX(SEQ) FROM SCENT.OUT_DET WHERE A.SC_CD=SC_CD AND A.BILL_NO=BILL_NO AND SC_CD='&&SC_CD') 
+GROUP BY A.FP_ID, A.CL_ID,A.FL_MVH, A.SALE_CD, A.BILL_NO, A.DELI_DT, C.CL_NM, B.OUT_DT
+HAVING (B.OUT_DT-A.DELI_DT)>'31'
+ORDER BY A.FP_ID
+/
+
+SET LINES 137
+SET PAGES 4000
+COL COLLEC_AMNT FORMAT 999,99,99,999.99
+
+COMPUTE SUM OF BILL_AMNT RTN NET_SALE COLLEC_AMNT ON REPORT
+COMPUTE COUNT OF BILL_NO ON REPORT
+BREAK ON REPORT ON REPORT SKIP-1
+
+TTITLE CENTER 'Depot: '&&SC_CD' ' SKIP 1 -
+CENTER 'Delay Collection' SKIP 1 CENTER ''Period :  ''&&DATE1'' -to- ''&&DATE2'' -
+RIGHT 'More than Days' SKIP 2
+
+
+SPOOL ON
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('WM','WO','RC') AND FL_MVH='1'
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+ORDER BY DAYS, FP_ID
+/
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('IM','IC','IN','IP') AND FL_MVH='1' AND DAYS>45 
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+ORDER BY DAYS, FP_ID
+/
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('WM','WO','RC') AND FL_MVH='2'
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+ORDER BY DAYS, FP_ID
+/
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('IM','IC','IN','IP') AND FL_MVH='2' AND DAYS>45 
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+ORDER BY DAYS, FP_ID
+/
+
+SELECT FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, ROUND(SUM(COLLEC_AMNT*100/BILL_AMNT))PER, DAYS
+FROM SS 
+WHERE SALE_CD IN ('RS') AND FL_MVH='2' AND DAYS>31 
+GROUP BY FP_ID, CL_ID, CL_NM, FL_MVH, SALE_CD, BILL_NO, DELI_DT, BILL_AMNT, RTN, NET_SALE, COLLEC_DATE, COLLEC_AMNT, DAYS
+ORDER BY DAYS, FP_ID
+/
+
+
+SPOOL OFF
+
+ED ON.LST
+
+DROP TABLE SS
+/
+
+
+
+==========================================================
+
+
+                                                                Depot: 11                                                                
+                                                             Delay Collection                                                            
+                                                        Period:01jan25-to-31jan25                                          More than Days
+                                                                                                                                         
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT    BILL_AMNT        RTN   NET_SALE COLLEC_DA       COLLEC_AMNT        PER       DAYS 
+----- --- -------------------- - -- ------- --------- ---------- ---------- ---------- --------- ----------------- ---------- ---------- 
+02455 002 Dihan Medical Hall   1 WM 1519328 30-DEC-24   14495.78          0   14495.78 31-JAN-25         14,495.78        100         32 
+02455 001 Dr. Abdul Alim       1 WM 1518737 28-DEC-24    7500.97          0    7500.97 29-JAN-25          7,500.30        100         32 
+02455 001 Dr. Abdul Latif      1 WM 1518736 28-DEC-24   32761.43          0   32761.43 29-JAN-25         32,761.43        100         32 
+02EC8 013 Choddogram Pharmay   1 WM 1519377 30-DEC-24   62470.76          0   62470.76 31-JAN-25         62,470.76        100         32 
+02FT8 076 Reshma Pharmacy      1 WM 1519360 30-DEC-24   22023.89          0   22023.89 31-JAN-25         22,023.89        100         32 
+02MK2 032 Bhai Bhai Pharmacy   1 WM 1518154 25-DEC-24   70338.73          0   70338.73 26-JAN-25         70,338.73        100         32 
+02MK2 017 Sebika Medical Hall  1 WM 1519107 29-DEC-24   13791.57          0   13791.57 30-JAN-25         13,791.57        100         32 
+02MT7 001 Nazma Drug House     1 WM 1518842 28-DEC-24   46738.75          0   46738.75 29-JAN-25         46,738.75        100         32 
+02Q72 048 Sonaly Pharmacy      1 WM 1519515 30-DEC-24   34900.42          0   34900.42 31-JAN-25         34,900.42        100         32 
+02YS8 088 Anowar Pharmacy      1 WM 1518566 26-DEC-24   10627.84          0   10627.84 27-JAN-25         10,627.84        100         32 
+02YS8 001 Dr. Faruk Khondokar  1 WM 1519399 30-DEC-24   11564.98          0   11564.98 31-JAN-25         11,564.98        100         32 
+02YS8 019 Dr.Abdul Hannan      1 WM 1519493 30-DEC-24   12018.73          0   12018.73 31-JAN-25         12,018.73        100         32 
+05137 015 Mollah Pharmacy      1 WM 1511199 01-DEC-24   86748.57          0   86748.57 02-JAN-25         56,748.57         65         32 
+05137 010 Mukta Medical Hall   1 WM 1518378 26-DEC-24  243689.88          0  243689.88 27-JAN-25       2,43,689.88        100         32 
+05418 010 Parents Pharmacy     1 WM 1519171 29-DEC-24    11424.2          0    11424.2 30-JAN-25         11,424.20        100         32 
+05S49 029 Master Medical Hall  1 WM 1519525 30-DEC-24   48752.52          0   48752.52 31-JAN-25         48,752.52        100         32 
+05X32 022 Alif Drug Center     1 WM 1511075 30-NOV-24    53546.4          0    53546.4 01-JAN-25            771.33          1         32 
+05X32 055 Fatema Medical Hall  1 WM 1519239 29-DEC-24   28146.59          0   28146.59 30-JAN-25         28,146.59        100         32 
+05X32 009 Ip Pharmacy          1 WM 1519238 29-DEC-24    25788.1          0    25788.1 30-JAN-25         25,788.10        100         32 
+05X32 077 Maa M. Hall          1 WM 1519536 30-DEC-24   64768.56          0   64768.56 31-JAN-25         64,768.56        100         32 
+05X38 005 Garib-E-Newaz Medica 1 WM 1519537 30-DEC-24    29761.1          0    29761.1 31-JAN-25         29,761.10        100         32 
+05X38 025 Karnafuli Aushadhalo 1 WM 1518533 26-DEC-24   41573.97          0   41573.97 27-JAN-25         41,573.97        100         32 
+05X38 055 Khadeza M/H          1 WM 1519436 30-DEC-24   67405.36          0   67405.36 31-JAN-25         67,405.36        100         32 
+05X38 037 New Khan Med Hall    1 WM 1518531 26-DEC-24   13528.91     3542.5    9986.41 27-JAN-25          9,986.41         74         32 
+05X38 039 Taslim Medical Hall  1 WM 1519254 29-DEC-24   20357.57          0   20357.57 30-JAN-25         20,357.57        100         32 
+06928 059 Abdur Rouf Master Me 1 WM 1518238 25-DEC-24   23619.12          0   23619.12 26-JAN-25         23,619.12        100         32 
+06928 012 Al Amin Medical Hall 1 WM 1518172 25-DEC-24    6053.66          0    6053.66 26-JAN-25          6,053.66        100         32 
+06928 006 Bismillah M Hall     1 WM 1519137 29-DEC-24    8622.47          0    8622.47 30-JAN-25          8,622.47        100         32 
+06928 015 Dr. Hanif            1 WM 1519136 29-DEC-24   37526.54          0   37526.54 30-JAN-25         37,526.54        100         32 
+06928 028 Dr. Motiur           1 WM 1518170 25-DEC-24   12283.51     1179.2   11104.31 26-JAN-25         11,104.31         90         32 
+06928 009 Janani  Pharmacy     1 WM 1519135 29-DEC-24    19777.1          0    19777.1 30-JAN-25         19,777.10        100         32 
+06928 007 Jay Daymaye Pharmacy 1 WM 1518175 25-DEC-24   26470.24          0   26470.24 26-JAN-25         26,470.24        100         32 
+06928 025 Maa Mdeical Hall     1 WM 1519234 29-DEC-24    41326.9          0    41326.9 30-JAN-25         41,326.90        100         32 
+06928 002 Maa Medical Hall     1 WM 1519127 29-DEC-24     5435.7          0     5435.7 30-JAN-25          5,435.70        100         32 
+06928 008 Mayar Doya Pharmacy  1 WM 1519130 29-DEC-24   14229.84          0   14229.84 30-JAN-25         14,229.84        100         32 
+06928 026 Partha  Dip Medical  1 WM 1518176 25-DEC-24   45891.59          0   45891.59 26-JAN-25         45,891.59        100         32 
+06928 018 Razia Pharmacy       1 WM 1519128 29-DEC-24   29619.38          0   29619.38 30-JAN-25         29,619.38        100         32 
+06928 009 Shanti Medical Hall  1 WM 1519131 29-DEC-24    9770.17          0    9770.17 30-JAN-25          9,770.17        100         32 
+06928 053 Shojib Saimon Medica 1 WM 1519050 29-DEC-24   35150.11          0   35150.11 30-JAN-25         35,150.11        100         32 
+06928 010 Sonia Pharmacy       1 WM 1519129 29-DEC-24   40326.05          0   40326.05 30-JAN-25         40,326.05        100         32 
+06928 026 Taleb Pharmacy       1 WM 1518177 25-DEC-24   17956.27          0   17956.27 26-JAN-25         17,956.27        100         32 
+20123 001 Al. Amin Medical Hal 1 WM 1518689 28-DEC-24   15438.51          0   15438.51 29-JAN-25         15,438.51        100         32 
+20123 007 Day Night Pharmacy   1 WM 1519481 30-DEC-24   72407.65          0   72407.65 31-JAN-25         72,407.65        100         32 
+20123 007 Hazi Medical Hall    1 WM 1519484 30-DEC-24  113177.99          0  113177.99 31-JAN-25       1,13,177.99        100         32 
+20123 056 Medicine Point       1 WM 1519386 30-DEC-24   11867.96          0   11867.96 31-JAN-25         11,867.96        100         32 
+20123 002 Rayed Medical Hall   1 WM 1518691 28-DEC-24   13828.52          0   13828.52 29-JAN-25         13,828.52        100         32 
+20123 013 S. R  Noor Pharmacy  1 WM 1518665 28-DEC-24   18231.47          0   18231.47 29-JAN-25         18,231.47        100         32 
+20123 020 Sheba Medical Hall   1 WM 1519451 30-DEC-24    4184.22          0    4184.22 31-JAN-25          4,184.22        100         32 
+20123 005 Suma Medical Hall    1 WM 1519452 30-DEC-24   14071.04          0   14071.04 31-JAN-25         14,071.04        100         32 
+20468 077 Aysha Medical Hall   1 WM 1519089 29-DEC-24  104196.64          0  104196.64 30-JAN-25       1,04,196.64        100         32 
+20468 010 Nazma Medical Hall   1 WM 1519288 29-DEC-24   42676.28          0   42676.28 30-JAN-25         42,676.28        100         32 
+20508 044 Nava Medical Hall    1 WM 1519548 30-DEC-24   13328.18          0   13328.18 31-JAN-25         13,328.18        100         32 
+20508 018 Taranga Medical Hall 1 WM 1519529 30-DEC-24   23984.23          0   23984.23 31-JAN-25         23,984.23        100         32 
+20542 002 Hamidia Medical Hall 1 WM 1518602 27-DEC-24   162569.8          0   162569.8 28-JAN-25       1,62,569.80        100         32 
+20542 023 New Nurjahan Medical 1 WM 1519004 29-DEC-24   15975.99          0   15975.99 30-JAN-25         15,975.99        100         32 
+20542 005 Sheba Medical Hall   1 WM 1519346 30-DEC-24    6115.19          0    6115.19 31-JAN-25          6,115.19        100         32 
+20611 005 Mollah Pharmacy      1 WM 1519189 29-DEC-24   87845.99          0   87845.99 30-JAN-25         87,845.99        100         32 
+20611 005 Mollah Pharmacy      1 WM 1519286 29-DEC-24   39841.03          0   39841.03 30-JAN-25         39,841.03        100         32 
+20611 007 Sarker Rayhan Pharma 1 WM 1519519 30-DEC-24   30630.77          0   30630.77 31-JAN-25         30,630.77        100         32 
+20793 023 Jubayer Medical Hall 1 WM 1510916 30-NOV-24   12841.06          0   12841.06 01-JAN-25         12,841.06        100         32 
+20793 010 Jubyida Medical Hall 1 WM 1519546 30-DEC-24   10532.24          0   10532.24 31-JAN-25         10,532.24        100         32 
+20793 001 Maa Medical Hall     1 WM 1510915 30-NOV-24     7932.1          0     7932.1 01-JAN-25          7,932.10        100         32 
+20793 079 Noman Medical Hall   1 WM 1519545 30-DEC-24   20468.46          0   20468.46 31-JAN-25         20,468.46        100         32 
+20793 021 Srikrisna Pharmacy   1 WM 1519428 30-DEC-24   33861.42          0   33861.42 31-JAN-25         33,861.42        100         32 
+21258 010 Hazi Madical Hall    1 WM 1519453 30-DEC-24   19612.33          0   19612.33 31-JAN-25         19,612.33        100         32 
+21258 073 Oyshi Madecal Hall   1 WM 1518693 28-DEC-24   48370.74          0   48370.74 29-JAN-25         48,370.74        100         32 
+21467 002 Sheba Pharmacy       1 WM 1518516 26-DEC-24   23239.99          0   23239.99 27-JAN-25         23,239.99        100         32 
+21467 002 Sikder Medical Hall  1 WM 1518494 26-DEC-24   31883.15          0   31883.15 27-JAN-25         31,883.15        100         32 
+21646 007 Golden Pharmacy      1 WM 1518504 26-DEC-24   22457.54          0   22457.54 27-JAN-25         22,457.54        100         32 
+21646 002 Shamir Pharmacy      1 WM 1519497 30-DEC-24  138945.48          0  138945.48 31-JAN-25       1,38,945.48        100         32 
+21678 099 Abdullah Pharmacy    1 WM 1519327 30-DEC-24   32114.56          0   32114.56 31-JAN-25         32,114.56        100         32 
+21678 111 Jihan Medical Hall   1 WM 1519326 30-DEC-24     8247.3          0     8247.3 31-JAN-25          8,247.30        100         32 
+21678 001 Seba Madical Hall    1 WM 1518734 28-DEC-24   25360.92          0   25360.92 29-JAN-25         25,360.92        100         32 
+21738 014 Mollah Pharmacy.     1 WM 1519030 29-DEC-24   48707.36          0   48707.36 30-JAN-25         48,707.36        100         32 
+21906 046 Azad Medical Hall    1 WM 1513038 05-DEC-24   21283.66          0   21283.66 06-JAN-25         21,283.66        100         32 
+21906 068 Dayamoy Pharmacy     1 WM 1511070 30-NOV-24   53472.06          0   53472.06 01-JAN-25         53,472.06        100         32 
+21906 021 Palli Medical Hall ( 1 WM 1519528 30-DEC-24    9998.01          0    9998.01 31-JAN-25          9,998.01        100         32 
+22027 034 Hira Medical Hall    1 WM 1519353 30-DEC-24  106603.41          0  106603.41 31-JAN-25       1,06,603.41        100         32 
+22027 099 Polash Pharmacy      1 WM 1519354 30-DEC-24   61935.16          0   61935.16 31-JAN-25         61,935.16        100         32 
+22083 055 Al Shifa Pharmacy    1 WM 1519180 29-DEC-24   16599.27          0   16599.27 30-JAN-25         16,599.27        100         32 
+22083 022 Dr Anil Pharmacy     1 WM 1519019 29-DEC-24   26132.81     724.14   25408.67 30-JAN-25         25,408.67         97         32 
+22083 013 Fahim Medical Hall   1 WM 1519124 29-DEC-24   39385.22          0   39385.22 30-JAN-25         39,385.22        100         32 
+22083 063 Joti Medical Hall    1 WM 1519121 29-DEC-24    26882.2          0    26882.2 30-JAN-25         26,882.20        100         32 
+22083 017 Lota Pharmacy        1 WM 1519020 29-DEC-24   10632.22          0   10632.22 30-JAN-25         10,632.22        100         32 
+22083 029 Maa Telecom          1 WM 1519122 29-DEC-24   16015.73    2315.28   13700.45 30-JAN-25         13,700.45         86         32 
+22083 095 Puspo Medical Hall   1 WM 1518165 25-DEC-24    4836.15          0    4836.15 26-JAN-25          4,836.15        100         32 
+22083 084 Robiullah Medical Ha 1 WM 1519120 29-DEC-24   10207.11          0   10207.11 30-JAN-25         10,207.11        100         32 
+22083 003 Supriya Medical Hall 1 WM 1518282 25-DEC-24   38271.98          0   38271.98 26-JAN-25         38,271.98        100         32 
+22116 158 Anonna Medical Hall  1 WM 1511120 30-NOV-24   53458.75          0   53458.75 01-JAN-25         53,458.75        100         32 
+22116 015 Mafsura Pharmacy     1 WM 1519081 29-DEC-24   12477.04          0   12477.04 30-JAN-25         12,477.04        100         32 
+22116 014 Shaha Pharmacy       1 WM 1511325 01-DEC-24   55832.13    1886.75   53945.38 02-JAN-25         13,986.74         25         32 
+22516 003 Dr. Siddikur Rahaman 1 WM 1518671 28-DEC-24   14099.97          0   14099.97 29-JAN-25         14,099.97        100         32 
+22572 009 Bashani M. Hall      1 WM 1518611 27-DEC-24    20298.9          0    20298.9 28-JAN-25         18,298.90         90         32 
+22572 061 Lokman Medicine Hous 1 WM 1518763 28-DEC-24   24717.87          0   24717.87 29-JAN-25         24,717.87        100         32 
+22702 011 Hossain Pharmacy     1 WM 1519339 30-DEC-24   97463.58          0   97463.58 31-JAN-25         97,463.58        100         32 
+22702 003 Modern Medical Hall  1 WM 1511157 30-NOV-24   97746.71          0   97746.71 01-JAN-25         18,214.00         19         32 
+26384 009 Q P S Pharmacy       1 WM 1519374 30-DEC-24       9500          0       9500 31-JAN-25          9,500.00        100         32 
+26615 009 Anik Madical Hall    1 WM 1519230 29-DEC-24   33414.84          0   33414.84 30-JAN-25         33,414.84        100         32 
+26615 004 Arati Medical Hall   1 WM 1519475 30-DEC-24   138970.2          0   138970.2 31-JAN-25       1,38,970.20        100         32 
+26648 027 Hossain Medical Hall 1 WM 1519097 29-DEC-24    7213.44          0    7213.44 30-JAN-25          7,213.44        100         32 
+26687 045 Islamia Pharmacy     1 WM 1510907 30-NOV-24   12497.58          0   12497.58 01-JAN-25              7.00          0         32 
+26687 011 Jyoti Medico         1 WM 1510964 30-NOV-24   12769.27          0   12769.27 01-JAN-25              9.00          0         32 
+26687 076 Sumi Pharmacy        1 WM 1510931 30-NOV-24   11827.24          0   11827.24 01-JAN-25              7.00          0         32 
+26688 067 Hygienic Pharma      1 WM 1519568 30-DEC-24   23093.65          0   23093.65 31-JAN-25         23,093.65        100         32 
+26688 010 Niha Medical Hall    1 WM 1519191 29-DEC-24   19542.15          0   19542.15 30-JAN-25         19,542.15        100         32 
+26688 068 Ruposi Bangla Medica 1 WM 1519567 30-DEC-24   25416.18          0   25416.18 31-JAN-25         25,416.18        100         32 
+26879 133 Bismillah Medical Ha 1 WM 1519060 29-DEC-24   26850.03          0   26850.03 30-JAN-25         26,850.03        100         32 
+26879 024 Janasheba Pharmacy   1 WM 1518271 25-DEC-24   19176.99     698.16   18478.83 26-JAN-25         18,478.83         96         32 
+26879 138 Master Medical Hall  1 WM 1518183 25-DEC-24   40864.82          0   40864.82 26-JAN-25         40,864.82        100         32 
+26879 064 Prionti Medical Hall 1 WM 1518182 25-DEC-24   59477.15          0   59477.15 26-JAN-25         59,477.15        100         32 
+26879 124 S.R Pharmacy         1 WM 1518187 25-DEC-24   27999.69          0   27999.69 26-JAN-25         27,999.69        100         32 
+26879 047 Sarif Drug House     1 WM 1518185 25-DEC-24   56674.85          0   56674.85 26-JAN-25         56,674.85        100         32 
+26879 166 Sotota Pharmacy      1 WM 1518186 25-DEC-24   48836.36          0   48836.36 26-JAN-25         48,836.36        100         32 
+27517 003 Lamia Pharmacy       1 WM 1518264 25-DEC-24   30936.67          0   30936.67 26-JAN-25         30,936.67        100         32 
+27585 054 Dr Delowar Hossain   1 WM 1519085 29-DEC-24   13054.78          0   13054.78 30-JAN-25         13,054.78        100         32 
+27585 001 Shapla Hospital & Di 1 WM 1511110 30-NOV-24    44781.1          0    44781.1 01-JAN-25         26,780.20         60         32 
+28578 004 Tahmina Pharmacy     1 WM 1519446 30-DEC-24    4722.66          0    4722.66 31-JAN-25          4,722.66        100         32 
+02MK2 013 Matri Medical Hall   1 WM 1519105 29-DEC-24   12587.67    1621.08   10966.59 31-JAN-25         10,966.59         87         33 
+02MK2 046 R C Ray Medical Hall 1 WM 1519106 29-DEC-24   21097.51          0   21097.51 31-JAN-25         21,097.51        100         33 
+02MT7 013 Liton Pharmacy       1 WM 1518843 28-DEC-24   57211.65          0   57211.65 30-JAN-25         57,211.65        100         33 
+02MT7 015 Santa Medical Hall   1 WM 1518847 28-DEC-24   24667.61          0   24667.61 30-JAN-25         24,667.61        100         33 
+02Q68 009 Dr. Anowar Hossiain  1 WM 1518362 26-DEC-24   26466.37          0   26466.37 28-JAN-25         26,466.37        100         33 
+02Q68 018 Taruque Medical Hall 1 WM 1518363 26-DEC-24   16385.68          0   16385.68 28-JAN-25         16,385.68        100         33 
+02YS8 016 Maa.M.Hall           1 WM 1518695 28-DEC-24   14494.89          0   14494.89 30-JAN-25         14,494.89        100         33 
+05137 014 Bondashahi Drug Hous 1 WM 1518609 27-DEC-24  151058.83   13043.02  138015.81 29-JAN-25       1,38,015.81         91         33 
+05418 121 Abdullla Pharmacy    1 WM 1518685 28-DEC-24  127439.35          0  127439.35 30-JAN-25       1,27,439.35        100         33 
+05418 053 Bismillah Pharmacy   1 WM 1518659 27-DEC-24    49654.6          0    49654.6 29-JAN-25         49,654.60        100         33 
+05418 022 Dr Shoel Pharmacy    1 WM 1519212 29-DEC-24   40296.89          0   40296.89 31-JAN-25         40,296.89        100         33 
+05418 004 Riday Pharmacy       1 WM 1518629 27-DEC-24   15536.13          0   15536.13 29-JAN-25         15,536.13        100         33 
+05S49 002 Gawsia Medical Hall  1 WM 1514178 09-DEC-24    3396.32          0    3396.32 11-JAN-25          3,396.32        100         33 
+05S49 025 Mukti Medical Hall   1 WM 1518882 28-DEC-24   66725.24          0   66725.24 30-JAN-25         66,725.24        100         33 
+05X32 027 Razia Pharmacy       1 WM 1519240 29-DEC-24   48292.84          0   48292.84 31-JAN-25         48,292.84        100         33 
+05X38 027 Mojumder Pharmacy    1 WM 1519256 29-DEC-24   18566.55          0   18566.55 31-JAN-25         18,566.55        100         33 
+05X38 016 New Cheap Medical Ha 1 WM 1518552 26-DEC-24   12562.68    9115.51    3447.17 28-JAN-25          3,447.17         27         33 
+06834 026 Molla Hospital       1 WM 1518910 28-DEC-24   24451.21          0   24451.21 30-JAN-25         24,451.21        100         33 
+20468 003 Hasan Medical Hall   1 WM 1519270 29-DEC-24   21221.67          0   21221.67 31-JAN-25         21,221.67        100         33 
+20468 013 Ma Baba Medical Hall 1 WM 1518638 27-DEC-24   31032.77          0   31032.77 29-JAN-25         31,032.77        100         33 
+20468 007 Mia Pharmacy         1 WM 1518654 27-DEC-24   11412.33          0   11412.33 29-JAN-25         11,412.33        100         33 
+20468 087 New Medical Hall     1 WM 1518655 27-DEC-24   14836.09          0   14836.09 29-JAN-25         14,836.09        100         33 
+20542 020 Bakul Medical Hall   1 WM 1519003 29-DEC-24      38131        686      37445 31-JAN-25         37,445.00         98         33 
+21258 131 Al Amin Medicine Cor 1 WM 1518696 28-DEC-24   67610.05          0   67610.05 30-JAN-25         67,610.05        100         33 
+21646 119 Sumaya Medical Hall  1 WM 1519151 29-DEC-24   27194.21          0   27194.21 31-JAN-25         27,194.21        100         33 
+21906 005 Al-Amin Pharmacy     1 WM 1511837 02-DEC-24   47287.91          0   47287.91 04-JAN-25         47,287.91        100         33 
+21906 115 Joypur Medical Corne 1 WM 1518871 28-DEC-24      40228          0      40228 30-JAN-25         40,228.00        100         33 
+22083 080 Ashek Nur Medical Ha 1 WM 1519275 29-DEC-24   13579.31          0   13579.31 31-JAN-25         13,579.31        100         33 
+22083 019 Khaza Pharmacy       1 WM 1519276 29-DEC-24    9761.71          0    9761.71 31-JAN-25          9,761.71        100         33 
+22083 103 Master Pharmacy      1 WM 1519117 29-DEC-24    23872.6          0    23872.6 31-JAN-25         23,872.60        100         33 
+22512 006 Bishash Phermacy     1 WM 1518772 28-DEC-24    3592.02          0    3592.02 30-JAN-25          3,592.02        100         33 
+22702 016 Nurjahan Medical Hal 1 WM 1518624 27-DEC-24  105394.41          0  105394.41 29-JAN-25       1,05,394.41        100         33 
+22970 001 Matry Medical Hall   1 WM 1512191 03-DEC-24   33099.36          0   33099.36 05-JAN-25         12,420.14         38         33 
+22970 035 Samiya Medical Hall  1 WM 1518901 28-DEC-24    5825.45          0    5825.45 30-JAN-25          5,825.45        100         33 
+26615 027 Dr Bissojeet Barua   1 WM 1519228 29-DEC-24   64064.68          0   64064.68 31-JAN-25         64,064.68        100         33 
+26648 010 Suman Medical Hall   1 WM 1519008 29-DEC-24    8098.52          0    8098.52 31-JAN-25          8,098.52        100         33 
+26687 018 Janosheba Pharmacy   1 WM 1518889 28-DEC-24    7089.57          0    7089.57 30-JAN-25          7,089.57        100         33 
+26687 015 Jibon Deep Pharmacy  1 WM 1518887 28-DEC-24    58710.6          0    58710.6 30-JAN-25         58,710.60        100         33 
+26687 001 Ma Moni Pharmacy     1 WM 1511899 02-DEC-24   15804.81          0   15804.81 04-JAN-25          2,493.77         16         33 
+26687 038 Mission Pharmacy     1 WM 1518888 28-DEC-24    11628.4          0    11628.4 30-JAN-25         11,628.40        100         33 
+26687 036 Shohan Pharmacy      1 WM 1518930 28-DEC-24   21410.64          0   21410.64 30-JAN-25         21,410.64        100         33 
+26688 113 Hazi Madical Hall    1 WM 1519287 29-DEC-24   19458.57          0   19458.57 31-JAN-25         19,458.57        100         33 
+26688 073 Kjhandoker Medicall  1 WM 1518299 25-DEC-24   10911.01          0   10911.01 27-JAN-25         10,911.01        100         33 
+26879 120 Cure Corner  2       1 WM 1519067 29-DEC-24    5358.33          0    5358.33 31-JAN-25          5,358.33        100         33 
+26879 068 Janasheba Pharmacy   1 WM 1519065 29-DEC-24   31673.06          0   31673.06 31-JAN-25         31,673.06        100         33 
+27517 011 Dean Pharmacy        1 WM 1519166 29-DEC-24   12477.25          0   12477.25 31-JAN-25         12,477.25        100         33 
+27517 002 Mim Pharmacy         1 WM 1519163 29-DEC-24    5634.96          0    5634.96 31-JAN-25          5,634.96        100         33 
+28578 055 Jonaprio Pharmacy    1 WM 1511064 30-NOV-24   19721.23          0   19721.23 02-JAN-25         19,721.23        100         33 
+28578 065 Vai Vai Pharmacy     1 WM 1511067 30-NOV-24   23551.79          0   23551.79 02-JAN-25         14,585.82         62         33 
+02FT8 043 3m Brothers Pharmacy 1 WM 1517973 25-DEC-24   54134.18    1749.32   52384.86 28-JAN-25         52,384.86         97         34 
+02FT8 073 R.K Pharmacy         1 WM 1518592 27-DEC-24  308618.48          0  308618.48 30-JAN-25       3,08,618.48        100         34 
+02MT7 004 Janany Medicla Hall  1 WM 1518805 28-DEC-24   35013.22          0   35013.22 31-JAN-25         35,013.22        100         34 
+05207 080 Sarker Medical Hall  1 WM 1518933 28-DEC-24   67829.16          0   67829.16 31-JAN-25         67,829.16        100         34 
+05X32 145 Habib Medical Hall   1 WM 1518526 26-DEC-24   19483.24          0   19483.24 29-JAN-25         19,483.24        100         34 
+05X38 028 Khan Medical Hall    1 WM 1518532 26-DEC-24   43203.09          0   43203.09 29-JAN-25         43,203.09        100         34 
+06834 176 Molla Pharmacy       1 WM 1518915 28-DEC-24   38358.83          0   38358.83 31-JAN-25         38,358.83        100         34 
+20123 001 Delta Medical Hall   1 WM 1518690 28-DEC-24   29760.71          0   29760.71 31-JAN-25         29,760.71        100         34 
+20123 001 Shake Medical Hall   1 WM 1514115 09-DEC-24    17029.5          0    17029.5 12-JAN-25         11,914.50         70         34 
+20542 025 Anirban Owsadaloy    1 WM 1518756 28-DEC-24   32660.43          0   32660.43 31-JAN-25         32,660.43        100         34 
+21646 003 Maa Moni Medical Hal 1 WM 1510557 28-NOV-24   21195.92          0   21195.92 01-JAN-25             50.00          0         34 
+21646 002 Seba Pharmacy        1 WM 1510553 28-NOV-24   54570.07          0   54570.07 01-JAN-25            100.00          0         34 
+21678 143 Emergency Medicine P 1 WM 1518732 28-DEC-24   22815.81          0   22815.81 31-JAN-25         22,815.81        100         34 
+22083 085 Suvo Medical Hall    1 WM 1518235 25-DEC-24   10419.19          0   10419.19 28-JAN-25         10,419.19        100         34 
+22512 033 Samia Pharmacy       1 WM 1518852 28-DEC-24   46520.15          0   46520.15 31-JAN-25         46,520.15        100         34 
+22512 005 Talukder Pharmacy    1 WM 1518773 28-DEC-24    3891.48          0    3891.48 31-JAN-25          3,891.48        100         34 
+22970 003 Sajib Medical Hall   1 WM 1518904 28-DEC-24   10424.47          0   10424.47 31-JAN-25         10,424.47        100         34 
+26687 130 Bayozit Pharmacy     1 WM 1518890 28-DEC-24   41461.24          0   41461.24 31-JAN-25         41,461.24        100         34 
+26688 088 Sarker Medical Hall  1 WM 1518660 27-DEC-24   85557.19          0   85557.19 30-JAN-25         85,557.19        100         34 
+27517 063 Dr. Abdur Rahim      1 WM 1515734 15-DEC-24    11233.5          0    11233.5 18-JAN-25          7,233.50         64         34 
+27517 009 Seba Pharmacy        1 WM 1518227 25-DEC-24   11913.27          0   11913.27 28-JAN-25         11,913.27        100         34 
+27585 056 Hazafa Pharmacy      1 WM 1510601 28-NOV-24   12152.02          0   12152.02 01-JAN-25          3,152.02         26         34 
+28578 028 Bangladesh Medical H 1 WM 1511738 02-DEC-24   14439.45          0   14439.45 05-JAN-25         14,439.45        100         34 
+28578 056 Ma Babar Dowa Medica 1 WM 1518892 28-DEC-24   34353.16          0   34353.16 31-JAN-25         34,353.16        100         34 
+02MK2 009 Patwary Pharmacy     1 WM 1518155 25-DEC-24   24657.63          0   24657.63 29-JAN-25         24,657.63        100         35 
+05137 009 Dr. Abu Medical Hall 1 WM 1518379 26-DEC-24    3318.83          0    3318.83 30-JAN-25          3,318.83        100         35 
+05137 001 Faiza Medical Hall   1 WM 1518376 26-DEC-24    7058.27          0    7058.27 30-JAN-25          7,058.27        100         35 
+05137 029 Moiniya Medical Hall 1 WM 1518382 26-DEC-24     7539.8          0     7539.8 30-JAN-25          7,539.80        100         35 
+05418 029 Rokeya Medicall Hall 1 WM 1518630 27-DEC-24    26883.3          0    26883.3 31-JAN-25         26,883.30        100         35 
+05S49 015 Alip Pharmacy        1 WM 1511843 02-DEC-24   45399.03          0   45399.03 06-JAN-25         45,399.03        100         35 
+05X32 065 Mohsin Medical Hall  1 WM 1518525 26-DEC-24  165640.02          0  165640.02 30-JAN-25       1,65,640.02        100         35 
+05X38 023 Bismillah Medical Ha 1 WM 1512021 02-DEC-24   57394.01    7392.56   50001.45 06-JAN-25         40,391.45         70         35 
+05X38 034 Master Pharmacy      1 WM 1518534 26-DEC-24   69434.38          0   69434.38 30-JAN-25         69,434.38        100         35 
+05X38 052 Nurjahan Medical Hal 1 WM 1518568 26-DEC-24   19228.78          0   19228.78 30-JAN-25         19,228.78        100         35 
+05X38 110 Shefa Medical Hall   1 WM 1518535 26-DEC-24   63245.27          0   63245.27 30-JAN-25         63,245.27        100         35 
+06928 036 Junayed Medicine Cor 1 WM 1518168 25-DEC-24    3987.41          0    3987.41 29-JAN-25          3,987.41        100         35 
+06928 037 Mayer Dowa Pharmacy  1 WM 1518171 25-DEC-24    7002.71          0    7002.71 29-JAN-25          7,002.71        100         35 
+20123 009 Maa Pharmacy         1 WM 1511770 02-DEC-24    11115.9          0    11115.9 06-JAN-25         11,115.90        100         35 
+20123 026 Square Medical Hall  1 WM 1511905 02-DEC-24   30645.66          0   30645.66 06-JAN-25          8,145.06         27         35 
+20468 026 Bismillah Pharmacy   1 WM 1518658 27-DEC-24   41281.45          0   41281.45 31-JAN-25         41,281.45        100         35 
+21258 027 Ibne Sina Medical Ha 1 WM 1518291 25-DEC-24  122220.82       4500  117720.82 29-JAN-25       1,17,720.82         96         35 
+21646 047 Aras Sauda Medical H 1 WM 1518283 25-DEC-24   41622.88          0   41622.88 29-JAN-25         41,622.88        100         35 
+21646 020 M.M. Drug House.     1 WM 1510298 27-NOV-24   50671.95          0   50671.95 01-JAN-25            100.00          0         35 
+22027 085 Anwora Medical Hall  1 WM 1518603 27-DEC-24   34567.18          0   34567.18 31-JAN-25         34,567.18        100         35 
+22027 006 Roy Medical Hall     1 WM 1511195 01-DEC-24   17530.79          0   17530.79 05-JAN-25         17,530.79        100         35 
+22083 021 Dr Basir Uddin       1 WM 1518016 25-DEC-24    8744.81          0    8744.81 29-JAN-25          8,744.81        100         35 
+22415 005 Seba Ghor            1 WM 1512919 05-DEC-24    6546.25          0    6546.25 09-JAN-25          6,416.25         98         35 
+22970 013 Acharjyee  Pharmacy( 1 WM 1513275 07-DEC-24    5435.81          0    5435.81 11-JAN-25          5,434.41        100         35 
+22970 002 Jannat Medical Hall  1 WM 1518627 27-DEC-24    29126.7          0    29126.7 31-JAN-25         29,126.70        100         35 
+22970 003 Mala Pharmacy        1 WM 1512372 03-DEC-24   18588.37          0   18588.37 07-JAN-25          6,588.37         35         35 
+26688 046 Popular Medical      1 WM 1518293 25-DEC-24  107218.66          0  107218.66 29-JAN-25       1,07,218.66        100         35 
+02455 042 Shamim Medical Hall  1 WM 1511206 01-DEC-24   31505.45          0   31505.45 06-JAN-25         31,505.45        100         36 
+02MT7 002 Hazi Pharmacy        1 WM 1518075 25-DEC-24   43101.44          0   43101.44 30-JAN-25         43,101.44        100         36 
+02MT7 015 New Pharmacy         1 WM 1518076 25-DEC-24   72344.24          0   72344.24 30-JAN-25         72,344.24        100         36 
+05X32 059 Sihab Medical Hall   1 WM 1518298 25-DEC-24   27520.48          0   27520.48 30-JAN-25         27,520.48        100         36 
+05X38 001 Noor Pharmacy        1 WM 1518530 26-DEC-24   15465.13          0   15465.13 31-JAN-25         15,465.13        100         36 
+06928 031 Ma Babar Doya Med Ha 1 WM 1518169 25-DEC-24   10724.28          0   10724.28 30-JAN-25         10,724.28        100         36 
+20542 001 Anik Medical Hall    1 WM 1518373 26-DEC-24   21566.45          0   21566.45 31-JAN-25         21,566.45        100         36 
+21467 081 Darbar Sharif Medica 1 WM 1518544 26-DEC-24    8285.72          0    8285.72 31-JAN-25          8,285.72        100         36 
+22083 002 Mita Medical Hall    1 WM 1518015 25-DEC-24    4157.12          0    4157.12 30-JAN-25          4,157.12        100         36 
+22083 083 Ms. Kazol & Sons     1 WM 1518018 25-DEC-24    5541.63          0    5541.63 30-JAN-25          5,541.63        100         36 
+22512 027 Al Modina Pharmacy   1 WM 1518055 25-DEC-24   18848.26          0   18848.26 30-JAN-25         18,848.26        100         36 
+22648 023 Sonali Medical Hall  1 WM 1512186 03-DEC-24    4179.98          0    4179.98 08-JAN-25          2,553.58         61         36 
+27517 023 Hazi Pharmacy        1 WM 1511337 01-DEC-24   134429.6          0   134429.6 06-JAN-25         48,382.45         36         36 
+02MT7 002 Abu Hanif Pharmacy   1 WM 1518090 25-DEC-24    12441.9          0    12441.9 31-JAN-25         12,441.90        100         37 
+05418 110 Bandhu Pharmacy      1 WM 1518277 25-DEC-24  123671.12          0  123671.12 31-JAN-25       1,23,671.12        100         37 
+20123 023 Noyon Clinic         1 WM 1518056 25-DEC-24   22711.66          0   22711.66 31-JAN-25         22,711.66        100         37 
+20508 003 Aziz Clinic          1 WM 1518274 25-DEC-24   31887.22          0   31887.22 31-JAN-25         31,887.22        100         37 
+20542 002 Suman Medical Hall   1 WM 1517952 25-DEC-24   11516.14        309   11207.14 31-JAN-25         11,207.14         97         37 
+21906 049 Juma Pharmacy        1 WM 1510625 28-NOV-24      38903          0      38903 04-JAN-25         34,264.00         88         37 
+22083 023 Ferdos Medical Hall  1 WM 1518014 25-DEC-24      10462          0      10462 31-JAN-25         10,462.00        100         37 
+26688 016 Belal Medical Hall   1 WM 1518294 25-DEC-24  107135.35       2060  105075.35 31-JAN-25       1,05,075.35         98         37 
+26879 002 Dr. Makhan Lal Dash  1 WM 1518072 25-DEC-24   12661.41          0   12661.41 31-JAN-25         12,661.41        100         37 
+28578 056 Haque Pharmacy       1 WM 1510989 30-NOV-24   43123.33          0   43123.33 06-JAN-25         43,123.33        100         37 
+28578 020 Sheuli  Pharmacy     1 WM 1513079 05-DEC-24   21291.91          0   21291.91 11-JAN-25         21,291.91        100         37 
+08006 009 Majumdar Pharmacy    1 WM 1515071 12-DEC-24    7193.24          0    7193.24 19-JAN-25          7,193.24        100         38 
+21906 109 Mizan Pharmacy ( Z ) 1 WM 1511838 02-DEC-24   22720.09          0   22720.09 09-JAN-25         22,720.09        100         38 
+22970 024 Zehad Medical Hall   1 WM 1510969 30-NOV-24   38658.24          0   38658.24 07-JAN-25         18,000.00         47         38 
+02YS8 001 Jannat Pharmacy      1 WM 1510535 28-NOV-24    9958.76          0    9958.76 06-JAN-25          9,958.76        100         39 
+05137 002 Monika Pharmacy      1 WM 1512169 03-DEC-24    4326.61          0    4326.61 12-JAN-25          4,326.61        100         40 
+22415 001 Central Medical Stor 1 WM 1516844 19-DEC-24    7549.92          0    7549.92 28-JAN-25          7,549.92        100         40 
+27585 029 Maa Medical Hall     1 WM 1512679 04-DEC-24   16572.96          0   16572.96 13-JAN-25         16,572.96        100         40 
+02YS8 028 Maria Thasin Medical 1 WM 1511959 02-DEC-24   17480.24    3191.05   14289.19 12-JAN-25         14,289.19         82         41 
+05S49 002 Gawsia Medical Hall  1 WM 1512755 04-DEC-24   25493.21          0   25493.21 14-JAN-25         25,493.21        100         41 
+20123 014 Doctor Chamber       1 WM 1512719 04-DEC-24    5992.68          0    5992.68 14-JAN-25          5,992.68        100         41 
+20508 010 Alif Medical Hall    1 WM 1511756 02-DEC-24    8557.14          0    8557.14 12-JAN-25          8,557.14        100         41 
+05S49 011 Bhuiyan Medical Hall 1 WM 1513145 05-DEC-24   20135.04          0   20135.04 16-JAN-25         19,942.32         99         42 
+27517 008 Munny Medical Hall   1 WM 1510220 27-NOV-24    22883.9          0    22883.9 08-JAN-25          7,260.66         32         42 
+27585 010 Joy Drug & Ist Aid C 1 WM 1511328 01-DEC-24    5846.37          0    5846.37 12-JAN-25          5,846.37        100         42 
+20123 001 Dr. Narayan Chandra  1 WM 1510821 29-NOV-24    7460.27          0    7460.27 12-JAN-25          7,460.27        100         44 
+27585 053 Puja Pharmacy        1 WM 1511009 30-NOV-24   14608.28          0   14608.28 14-JAN-25          7,212.39         49         45 
+05S49 077 Al Amin Pharmacy     1 WM 1513085 05-DEC-24   23359.99          0   23359.99 20-JAN-25         23,359.99        100         46 
+27517 073 Jannat Pharmacy      1 WM 1510185 27-NOV-24   12045.14          0   12045.14 12-JAN-25          3,471.87         29         46 
+20123 020 Rashel Medical Hall  1 WM 1509679 25-NOV-24    7548.41          0    7548.41 12-JAN-25          7,548.41        100         48 
+27585 028 Sefa Medical Hall    1 WM 1509797 25-NOV-24   12978.79          0   12978.79 12-JAN-25         12,978.79        100         48 
+20123 004 Suman Medical Hall   1 WM 1510834 30-NOV-24   16023.65          0   16023.65 19-JAN-25         16,023.65        100         50 
+26648 023 Arugga Nikatan       1 WM 1512507 04-DEC-24   16601.12          0   16601.12 31-JAN-25         16,601.12        100         58 
+05137 005 Haque M Hall         1 WM 1504740 08-NOV-24    3639.98          0    3639.98 19-JAN-25          3,639.98        100         72 
+05S49 071 Sarker Pharmacy      1 WM 1155372 10-OCT-21   64211.54          0   64211.54 22-JAN-25          1,000.00          2       1200 
+                                    -------           ---------- ---------- ----------           -----------------                       
+count                                   265                                                                                              
+sum                                                   9028729.08   54013.57 8974715.51                82,75,907.81                       
+
+265 rows selected.
+
+
+                                                                Depot: 11                                                                
+                                                             Delay Collection                                                            
+                                                        Period:01jan25-to-31jan25                                          More than Days
+                                                                                                                                         
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT    BILL_AMNT        RTN   NET_SALE COLLEC_DA       COLLEC_AMNT        PER       DAYS 
+----- --- -------------------- - -- ------- --------- ---------- ---------- ---------- --------- ----------------- ---------- ---------- 
+02VL8 030 Comfort Hospital     1 IC 1512472 04-DEC-24   11214.45          0   11214.45 19-JAN-25          3,444.45         31         46 
+20844 001 Moderrn  Hospital    1 IC 1515334 14-DEC-24   19681.15          0   19681.15 29-JAN-25         19,681.15        100         46 
+21497 011 B J A K S(Outdoor Ph 1 IM 1514391 10-DEC-24    57472.1          0    57472.1 25-JAN-25         57,472.10        100         46 
+21646 001 Mahbubur Rahman Memo 1 IC 1508350 20-NOV-24   77735.38          0   77735.38 05-JAN-25         77,735.38        100         46 
+21646 001 Mahbubur Rahman Memo 1 IC 1512639 04-DEC-24  123308.05          0  123308.05 19-JAN-25       1,23,308.05        100         46 
+22572 001 Pearless Hospital Ph 1 IC 1513377 07-DEC-24    9890.35          0    9890.35 22-JAN-25          9,890.35        100         46 
+22702 001 Maynamoti Cant. Gen. 1 IC 1508943 23-NOV-24   41169.41          0   41169.41 08-JAN-25         41,169.34        100         46 
+22702 001 Maynamoti Cant. Gen. 1 IC 1514357 10-DEC-24      12863          0      12863 25-JAN-25         12,863.00        100         46 
+22702 001 Maynamoti Cant. Gen. 1 IC 1515650 15-DEC-24   27621.88          0   27621.88 30-JAN-25         27,621.88        100         46 
+26384 001 Moon  Hospital       1 IC 1512881 05-DEC-24    7057.64          0    7057.64 20-JAN-25          7,057.64        100         46 
+08006 001 Midland Hospital     1 IC 1510662 29-NOV-24       3150          0       3150 15-JAN-25          3,150.00        100         47 
+20508 012 Adhunik Hospital     1 IC 1512800 04-DEC-24    12764.6          0    12764.6 20-JAN-25         12,764.60        100         47 
+22027 031 Mcgh Pharmacy(Clinic 1 IC 1507280 17-NOV-24   15659.28          0   15659.28 03-JAN-25         15,659.28        100         47 
+26384 001 Moon  Hospital       1 IC 1512421 04-DEC-24    2000.92          0    2000.92 20-JAN-25          2,000.92        100         47 
+02FT8 046 Taslima Met. And Fer 1 IC 1515387 14-DEC-24   13731.35          0   13731.35 31-JAN-25         13,731.35        100         48 
+05137 001 Pearless Hospital Ph 1 IC 1515373 14-DEC-24   16007.26          0   16007.26 31-JAN-25         16,007.26        100         48 
+08006 001 Midland Hospital     1 IC 1506738 14-NOV-24      10350          0      10350 01-JAN-25         10,350.00        100         48 
+26384 001 Moon  Hospital       1 IC 1511647 02-DEC-24   30803.34          0   30803.34 20-JAN-25         30,803.34        100         49 
+20844 001 Moderrn  Hospital    1 IC 1514321 10-DEC-24   29442.36          0   29442.36 29-JAN-25         29,442.36        100         50 
+26384 001 Moon  Hospital       1 IC 1511140 01-DEC-24    8518.68          0    8518.68 20-JAN-25          8,518.68        100         50 
+02VL8 038 Square Hospital      1 IC 1512239 03-DEC-24       2000          0       2000 23-JAN-25          2,000.00        100         51 
+20508 016 Burichong Medical Ce 1 IC 1514984 11-DEC-24   22477.45          0   22477.45 31-JAN-25         22,477.45        100         51 
+21720 005 Cumilla Alif Diag &  1 IC 1514609 11-DEC-24       3600          0       3600 31-JAN-25          3,600.00        100         51 
+02Q68 047 Ibn Sina Diag & Cons 1 IC 1512467 04-DEC-24   20014.76          0   20014.76 25-JAN-25         20,014.76        100         52 
+21015 009 Dhaka Ahsania Missio 1 IM 1514461 10-DEC-24      60243          0      60243 31-JAN-25          2,617.19          4         52 
+02FT8 049 Royal Hospital       1 IC 1504853 09-NOV-24     2555.5          0     2555.5 01-JAN-25          2,553.25        100         53 
+20123 029 Liza Clinic          1 IC 1510836 30-NOV-24   15727.68          0   15727.68 22-JAN-25         15,727.68        100         53 
+22572 001 Pearless Hospital Ph 1 IC 1508219 20-NOV-24    7554.94          0    7554.94 12-JAN-25          2,554.94         34         53 
+20508 016 Burichong Medical Ce 1 IC 1509848 26-NOV-24    14405.5          0    14405.5 19-JAN-25         14,405.08        100         54 
+02FT8 002 Appolo Hospital      1 IC 1506686 14-NOV-24    5607.26          0    5607.26 08-JAN-25          1,599.77         29         55 
+22572 001 Pearless Hospital Ph 1 IC 1507620 18-NOV-24   11812.26          0   11812.26 12-JAN-25          2,812.26         24         55 
+20844 001 Moderrn  Hospital    1 IC 1512427 04-DEC-24   10124.26          0   10124.26 29-JAN-25         10,124.26        100         56 
+20844 001 Moderrn  Hospital    1 IC 1511574 02-DEC-24   31388.01          0   31388.01 29-JAN-25         31,388.01        100         58 
+02FT8 046 Taslima Met. And Fer 1 IC 1508581 21-NOV-24   22181.08          0   22181.08 19-JAN-25         22,181.08        100         59 
+05137 017 Cumilla Titas Pharma 1 IC 1505147 10-NOV-24    9104.38          0    9104.38 08-JAN-25          9,104.38        100         59 
+02FT8 049 Royal Hospital       1 IC 1511141 01-DEC-24   35770.15          0   35770.15 31-JAN-25         35,770.15        100         61 
+26384 001 Mim Pharmacy         1 IC 1510445 28-NOV-24  100563.58          0  100563.58 30-JAN-25       1,00,563.58        100         63 
+26688 065 Central Hospital     1 IC 1510339 27-NOV-24   50755.67          0   50755.67 29-JAN-25         50,755.67        100         63 
+20844 001 Moderrn  Hospital    1 IC 1505248 10-NOV-24    16102.2          0    16102.2 13-JAN-25         16,102.20        100         64 
+02Q68 008 Dr Ahsanullah Romi   1 IC 1500942 28-OCT-24      32500          0      32500 06-JAN-25         12,000.00         37         70 
+20844 001 Moderrn  Hospital    1 IC 1502931 03-NOV-24   29736.11          0   29736.11 13-JAN-25         29,736.11        100         71 
+02Q68 008 Dr Ahsanullah Romi   1 IC 1507614 18-NOV-24      26000          0      26000 31-JAN-25         26,000.00        100         74 
+05137 003 Cumilla Evergreen Ho 1 IC 1392047 18-OCT-23   19598.88          0   19598.88 12-JAN-25         19,598.88        100        452 
+05137 003 Cumilla Evergreen Ho 1 IC 1390598 13-OCT-23    8059.94          0    8059.94 12-JAN-25          8,059.94        100        457 
+                                    -------           ---------- ---------- ----------           -----------------                       
+count                                    44                                                                                              
+sum                                                   1088323.81          0 1088323.81                 9,84,417.77                       
+
+44 rows selected.
+
+
+                                                                Depot: 11                                                                
+                                                             Delay Collection                                                            
+                                                        Period:01jan25-to-31jan25                                          More than Days
+                                                                                                                                         
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT    BILL_AMNT        RTN   NET_SALE COLLEC_DA       COLLEC_AMNT        PER       DAYS 
+----- --- -------------------- - -- ------- --------- ---------- ---------- ---------- --------- ----------------- ---------- ---------- 
+22153 006 Bismillah Pharmacy   2 WM 1511361 01-DEC-24   14333.75          0   14333.75 02-JAN-25         14,333.75        100         32 
+22153 057 Dewan Medical Hall   2 WM 1511508 01-DEC-24    6958.55          0    6958.55 02-JAN-25          6,958.55        100         32 
+22606 001 M.S. Bismillah  Poul 2 WM 1513068 05-DEC-24    31296.1          0    31296.1 06-JAN-25         31,296.10        100         32 
+21487 034 Dr Rafiqul Islam     2 WM 1515987 16-DEC-24     6873.5          0     6873.5 18-JAN-25          6,873.50        100         33 
+28157 094 Madina Poultry       2 WM 1510988 30-NOV-24    36340.2          0    36340.2 02-JAN-25          4,470.80         12         33 
+02HQ3 020 Dr. Akter Hossain    2 WM 1514675 11-DEC-24   39405.56          0   39405.56 14-JAN-25         39,405.56        100         34 
+28157 094 Madina Poultry       2 WM 1510814 29-NOV-24  278419.94          0  278419.94 02-JAN-25          6,000.00          2         34 
+22606 001 M/S. M. Rahman Poult 2 WM 1511819 02-DEC-24    25284.5          0    25284.5 06-JAN-25         21,284.50         84         35 
+28065 034 Bismillaha Pharmacy  2 WM 1513073 05-DEC-24   80118.49          0   80118.49 09-JAN-25         66,094.18         82         35 
+28157 108 Mukta Pharmacy       2 WM 1512344 03-DEC-24      30870          0      30870 07-JAN-25         11,870.00         38         35 
+21487 001 Abidpur Medical Hall 2 WM 1512483 04-DEC-24   13470.63          0   13470.63 09-JAN-25         13,457.96        100         36 
+21487 132  Bhuiyan Birds Cente 2 WM 1516189 16-DEC-24       5184          0       5184 22-JAN-25          5,184.00        100         37 
+22153 032 M S Sattar Enterpris 2 WM 1511505 01-DEC-24   46851.44          0   46851.44 08-JAN-25         21,851.44         47         38 
+27631 042 Dr Md Samsul Islam   2 WM 1515852 15-DEC-24      42388          0      42388 22-JAN-25         42,388.00        100         38 
+28157 003 Fahad Medical Hall   2 WM 1510963 30-NOV-24      10670          0      10670 07-JAN-25          9,570.00         90         38 
+21538 046 Adarsho Veterinary P 2 WM 1516493 18-DEC-24    9647.17          0    9647.17 26-JAN-25          2,647.17         27         39 
+21487 002 Krise Gour           2 WM 1511927 02-DEC-24     4316.5          0     4316.5 12-JAN-25          4,316.50        100         41 
+27631 057 Patwary Pharmacy     2 WM 1512650 04-DEC-24    3372.05          0    3372.05 14-JAN-25          3,372.05        100         41 
+21487 118 Mitro Enterprise     2 WM 1515314 14-DEC-24    25727.2          0    25727.2 25-JAN-25         25,727.20        100         42 
+22153 016 Maa Medical Hall     2 WM 1509381 24-NOV-24    4700.24          0    4700.24 05-JAN-25          4,700.24        100         42 
+21487 002 Krise Gour           2 WM 1514152 09-DEC-24       2134          0       2134 21-JAN-25          2,134.00        100         43 
+21487 144 Iqubal Traders       2 WM 1514029 09-DEC-24     8911.3          0     8911.3 26-JAN-25          8,911.30        100         48 
+22606 045 Dr.Sahidul  Islam    2 WM 1507644 18-NOV-24   15470.17          0   15470.17 05-JAN-25          4,970.17         32         48 
+21487 005 Vtn Pharmacy         2 WM 1515028 12-DEC-24    9500.87          0    9500.87 31-JAN-25          9,500.87        100         50 
+21487 121 Maa Baba Pharmacy    2 WM 1511684 02-DEC-24     4630.6          0     4630.6 22-JAN-25          4,630.60        100         51 
+22606 001 Three  Star  Poultry 2 WM 1506677 14-NOV-24    3062.53          0    3062.53 09-JAN-25          3,062.53        100         56 
+27631 042 Dr Md Samsul Islam   2 WM 1510233 27-NOV-24    86483.6          0    86483.6 22-JAN-25         86,483.60        100         56 
+27631 042 Dr Md Samsul Islam   2 WM 1507504 17-NOV-24   83678.52          0   83678.52 15-JAN-25         83,678.52        100         59 
+27631 042 Dr Md Samsul Islam   2 WM 1511492 01-DEC-24   95233.25          0   95233.25 29-JAN-25         94,233.25         99         59 
+27631 045 Alhamdulillah Veteri 2 WM 1505294 10-NOV-24   27284.08          0   27284.08 09-JAN-25          9,159.00         34         60 
+22606 069 Borak Veterinary Pha 2 WM 1507174 16-NOV-24    3188.08          0    3188.08 19-JAN-25          3,188.08        100         64 
+22153 008 Maysha Poultry Feed  2 WM 1497768 16-OCT-24    12509.4          0    12509.4 05-JAN-25         12,509.40        100         81 
+22153 167 Bismillah Treaders   2 WM 1504375 06-NOV-24   27023.17          0   27023.17 31-JAN-25         27,023.17        100         86 
+22153 040 Bhuyan Enterprise    2 WM 1497774 16-OCT-24      12804          0      12804 31-JAN-25         12,804.00        100        107 
+28157 117 Mehedi Medicine Corn 2 WM 1493901 03-OCT-24  200677.41          0  200677.41 28-JAN-25       2,00,677.41        100        117 
+22153 054 Bismillah Pharmacy   2 WM 1488560 15-SEP-24   38038.42          0   38038.42 12-JAN-25         23,038.42         61        119 
+22606 015 Yeakub Enterprises   2 WM 1487942 12-SEP-24      24638          0      24638 20-JAN-25         14,810.00         60        130 
+                                    -------           ---------- ---------- ----------           -----------------                       
+count                                    37                                                                                              
+sum                                                   1371495.22          0 1371495.22                 9,42,615.82                       
+
+37 rows selected.
+
+
+                                                                Depot: 11                                                                
+                                                             Delay Collection                                                            
+                                                        Period:01jan25-to-31jan25                                          More than Days
+                                                                                                                                         
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT    BILL_AMNT        RTN   NET_SALE COLLEC_DA       COLLEC_AMNT        PER       DAYS 
+----- --- -------------------- - -- ------- --------- ---------- ---------- ---------- --------- ----------------- ---------- ---------- 
+                                    -------           ---------- ---------- ----------           -----------------                       
+count                                     0                                                                                              
+sum                                                                                                                                      
+
+no rows selected
+
+
+                                                                Depot: 11                                                                
+                                                             Delay Collection                                                            
+                                                        Period:01jan25-to-31jan25                                          More than Days
+                                                                                                                                         
+FP_ID CL_ CL_NM                F SA BILL_NO DELI_DT    BILL_AMNT        RTN   NET_SALE COLLEC_DA       COLLEC_AMNT        PER       DAYS 
+----- --- -------------------- - -- ------- --------- ---------- ---------- ---------- --------- ----------------- ---------- ---------- 
+02EB1 001 K R Varaitis&Medicen 2 RS 1512879 05-DEC-24     8671.6          0     8671.6 06-JAN-25          6,045.03         70         32 
+02EB1 112 Mamun Medical And Ve 2 RS 1511160 01-DEC-24   42815.38          0   42815.38 02-JAN-25         15,000.20         35         32 
+02EB1 013 Sazzat Medical Hall  2 RS 1519572 30-DEC-24   100639.6          0   100639.6 31-JAN-25       1,00,639.60        100         32 
+02HQ3 031 Hashem Medical Hall  2 RS 1516548 18-DEC-24    42126.2          0    42126.2 19-JAN-25         42,126.20        100         32 
+21538 132 Hasan Poultry        2 RS 1518161 25-DEC-24   16532.25          0   16532.25 26-JAN-25         16,532.25        100         32 
+21538 071 Master Pharmacy      2 RS 1518160 25-DEC-24     8033.2          0     8033.2 26-JAN-25          8,033.20        100         32 
+21538 081 Ms Abul Uhaia Poultr 2 RS 1512655 04-DEC-24    23184.9          0    23184.9 05-JAN-25         23,184.90        100         32 
+21672 148 Vai Vai Agro         2 RS 1512253 03-DEC-24       8250          0       8250 04-JAN-25          8,250.00        100         32 
+27811 002 Bismillah Trader`S   2 RS 1512156 03-DEC-24    20542.9          0    20542.9 04-JAN-25         20,542.90        100         32 
+27811 005 Sarker Phermecy      2 RS 1512158 03-DEC-24       3438          0       3438 04-JAN-25          3,438.00        100         32 
+02EB1 049 Afia Poultry Complex 2 RS 1512391 04-DEC-24   23872.48          0   23872.48 06-JAN-25         23,872.48        100         33 
+02EB1 138 Al Modina Pharmacy(V 2 RS 1518336 26-DEC-24       3660          0       3660 28-JAN-25          3,660.00        100         33 
+21487 118 Mitro Enterprise     2 RS 1516595 18-DEC-24    52803.6          0    52803.6 20-JAN-25         52,803.60        100         33 
+02EB1 094 Bayshakhi Pharmacy   2 RS 1518758 28-DEC-24   17686.94          0   17686.94 31-JAN-25         17,686.94        100         34 
+27811 021 Naveed Medeco        2 RS 1511809 02-DEC-24    3556.52          0    3556.52 05-JAN-25          3,556.52        100         34 
+02EB1 057 Islam Medical Hall   2 RS 1516429 18-DEC-24    5359.18          0    5359.18 22-JAN-25          3,359.18         63         35 
+02EB1 100 Matree Kollyan Medic 2 RS 1512461 04-DEC-24      10810          0      10810 08-JAN-25          6,400.00         59         35 
+02EB1 052 Pally Medical Hall   2 RS 1512160 03-DEC-24     5229.7          0     5229.7 07-JAN-25          4,582.06         88         35 
+02EB1 002 Popy Medical Hall    2 RS 1512892 05-DEC-24     5435.6          0     5435.6 09-JAN-25          5,435.60        100         35 
+02EB1 080 Sad Medical Asor     2 RS 1512460 04-DEC-24    18818.5          0    18818.5 08-JAN-25          8,818.50         47         35 
+02N55 120 Bhai Bhai Veterinary 2 RS 1512653 04-DEC-24    23114.3          0    23114.3 08-JAN-25         23,114.30        100         35 
+21538 060 Dr. Ripon Ghosh      2 RS 1518021 25-DEC-24    11063.2          0    11063.2 29-JAN-25         11,063.20        100         35 
+21538 018 Janani Medical Hall  2 RS 1516492 18-DEC-24     3517.8          0     3517.8 22-JAN-25          3,517.80        100         35 
+21538 060 Jibon Pharmacy       2 RS 1511240 01-DEC-24    16511.4          0    16511.4 05-JAN-25         14,555.87         88         35 
+27631 001 Alam Pharmacy        2 RS 1511343 01-DEC-24    7906.97          0    7906.97 05-JAN-25          7,906.97        100         35 
+27631 114 Bhai Bhai  Veterinar 2 RS 1514761 11-DEC-24    14492.4          0    14492.4 15-JAN-25          7,000.00         48         35 
+27631 026 Dr.Baten Pharmacy    2 RS 1514760 11-DEC-24       3369          0       3369 15-JAN-25          3,369.00        100         35 
+27631 079 Rahena Vtn           2 RS 1511233 01-DEC-24    14285.3          0    14285.3 05-JAN-25          6,000.30         42         35 
+28065 034 Bismillaha Pharmacy  2 RS 1513074 05-DEC-24      29432          0      29432 09-JAN-25         29,432.00        100         35 
+28548 067 Shahansha Veterinary 2 RS 1512797 04-DEC-24      11706          0      11706 08-JAN-25         11,706.00        100         35 
+21538 120 Nihad Poultry        2 RS 1514843 11-DEC-24    28816.8          0    28816.8 16-JAN-25         28,816.80        100         36 
+02HQ3 021 Maa Vetrinary Medica 2 RS 1513805 08-DEC-24    14139.8          0    14139.8 14-JAN-25         11,139.80         79         37 
+21672 068 Islamia Veterinary   2 RS 1512236 03-DEC-24    6659.82          0    6659.82 09-JAN-25          6,659.82        100         37 
+22153 013 Tania Medical Hall   2 RS 1511506 01-DEC-24    8952.85          0    8952.85 07-JAN-25          8,952.85        100         37 
+27631 079 Rahena Vtn           2 RS 1518038 25-DEC-24      15021          0      15021 31-JAN-25         15,021.00        100         37 
+21538 067 Arif Medical Hall    2 RS 1514841 11-DEC-24       2962          0       2962 18-JAN-25          2,962.00        100         38 
+21672 018 Dr Akter Hamid       2 RS 1513453 07-DEC-24     5291.7          0     5291.7 14-JAN-25          1,291.09         24         38 
+27811 071 B.Paul Pharmacy      2 RS 1512876 05-DEC-24       8000          0       8000 12-JAN-25          6,000.00         75         38 
+02N55 049 Dr Shafique Mia      2 RS 1516589 18-DEC-24     9176.6          0     9176.6 27-JAN-25          9,176.60        100         40 
+02N55 050 Rafique Medicine Con 2 RS 1511814 02-DEC-24     3066.4          0     3066.4 11-JAN-25          3,066.40        100         40 
+21487 017 Khadiza Poultry  Far 2 RS 1512603 04-DEC-24    52803.6          0    52803.6 14-JAN-25         52,803.60        100         41 
+22606 084 Zamider Pharmacy     2 RS 1509697 25-NOV-24   16132.63          0   16132.63 05-JAN-25          8,132.63         50         41 
+28065 077 Bismillah Medical    2 RS 1514144 09-DEC-24       4125          0       4125 19-JAN-25          4,125.00        100         41 
+02EB1 087 Akbar Ali Poshu Chik 2 RS 1511164 01-DEC-24    7297.08          0    7297.08 12-JAN-25          4,297.08         59         42 
+21672 025 Amena Medical Hall   2 RS 1512245 03-DEC-24    2921.42          0    2921.42 14-JAN-25          2,921.42        100         42 
+22153 023 Bismillah Medical Ha 2 RS 1511552 01-DEC-24     9241.6          0     9241.6 12-JAN-25          9,241.60        100         42 
+22606 039 Matry Medical Hall   2 RS 1513447 07-DEC-24    11855.7          0    11855.7 18-JAN-25         11,855.70        100         42 
+28548 003 Star Poultry &Dairy  2 RS 1510519 28-NOV-24  105001.93          0  105001.93 09-JAN-25       1,05,001.93        100         42 
+02N55 010 Ayesa Medical Hall   2 RS 1511925 02-DEC-24   18905.15          0   18905.15 14-JAN-25         18,905.15        100         43 
+22606 010 Dr.Mosaraf           2 RS 1516868 19-DEC-24   13676.76          0   13676.76 31-JAN-25         12,176.76         89         43 
+22606 027 Maa Veterinary House 2 RS 1516869 19-DEC-24   27061.67          0   27061.67 31-JAN-25         27,061.67        100         43 
+02EB1 057 Gazi Poultry &Feed   2 RS 1507966 19-NOV-24   28328.78          0   28328.78 02-JAN-25         10,307.18         36         44 
+02N55 015 B.Para   Poultry     2 RS 1516112 16-DEC-24    13200.9          0    13200.9 29-JAN-25         13,200.90        100         44 
+22606 001 M/S. M. Rahman Poult 2 RS 1511696 02-DEC-24   146210.1      15705   130505.1 15-JAN-25       1,06,404.13         73         44 
+21487 140 Hossan Enterprise    2 RS 1516114 16-DEC-24    86803.6          0    86803.6 30-JAN-25         86,803.60        100         45 
+27811 015 Dr.Ayet Ali          2 RS 1515921 16-DEC-24     4576.2          0     4576.2 30-JAN-25          4,576.20        100         45 
+28548 005 Rafique Enterprise   2 RS 1511929 02-DEC-24      11000          0      11000 16-JAN-25         11,000.00        100         45 
+02HQ3 030 Homna Poultry        2 RS 1515797 15-DEC-24  229428.04     4929.4  224498.64 30-JAN-25       2,24,498.64         98         46 
+27811 036 Rasel Poultry & Medi 2 RS 1512875 05-DEC-24     6096.5          0     6096.5 20-JAN-25          6,096.50        100         46 
+21538 105 Nimra Traders        2 RS 1510698 29-NOV-24   12270.24          0   12270.24 15-JAN-25         12,270.24        100         47 
+21487 030 New Fatema Medical H 2 RS 1512061 02-DEC-24    30190.6          0    30190.6 19-JAN-25         25,037.75         83         48 
+22606 025 Adib Poultry         2 RS 1508812 21-NOV-24     2717.4          0     2717.4 08-JAN-25            717.40         26         48 
+27811 039 Sumaya Medical Hall  2 RS 1512098 03-DEC-24       7256          0       7256 20-JAN-25          7,256.00        100         48 
+21487 032 Farista Enterprise   2 RS 1511818 02-DEC-24    17075.6          0    17075.6 20-JAN-25         17,075.60        100         49 
+21538 073 J.C Poultry          2 RS 1511241 01-DEC-24     6820.5          0     6820.5 19-JAN-25          6,820.50        100         49 
+21672 124 Adarsho Medical Hous 2 RS 1512246 03-DEC-24      45845          0      45845 21-JAN-25         45,845.00        100         49 
+22606 021 Lokman Treaders      2 RS 1515129 12-DEC-24   17140.49          0   17140.49 30-JAN-25         15,141.19         88         49 
+28548 059 Sawdagor Poultry & M 2 RS 1513134 05-DEC-24    63555.7          0    63555.7 23-JAN-25         63,555.70        100         49 
+21487 085 Bhuiyan Pharmacy     2 RS 1515030 12-DEC-24      15250          0      15250 31-JAN-25         15,250.00        100         50 
+21487 059 Nazir Enterprise     2 RS 1514234 09-DEC-24      24000          0      24000 30-JAN-25         24,000.00        100         52 
+21487 150 Sadek Medical Hall   2 RS 1505789 11-NOV-24    26401.8          0    26401.8 02-JAN-25         26,401.80        100         52 
+22606 036 Medicine Supply Agen 2 RS 1507173 16-NOV-24     9528.8          0     9528.8 07-JAN-25          2,003.00         21         52 
+27631 022 Matin Enterprise     2 RS 1513938 08-DEC-24   81861.46          0   81861.46 29-JAN-25         81,861.46        100         52 
+02EB1 133 Md Ullah Poultry Fee 2 RS 1507215 17-NOV-24   74414.34          0   74414.34 09-JAN-25         34,414.00         46         53 
+02HQ3 014 Dr. Basher           2 RS 1512486 04-DEC-24      13446          0      13446 26-JAN-25         13,446.00        100         53 
+02HQ3 017 Dr. Romiz Uddin      2 RS 1512487 04-DEC-24    71295.1          0    71295.1 26-JAN-25         49,995.10         70         53 
+02HQ3 068 Nazma Medical Hall   2 RS 1512606 04-DEC-24    27112.2          0    27112.2 26-JAN-25         27,112.20        100         53 
+21538 120 Nihad Poultry        2 RS 1506533 13-NOV-24    22321.2          0    22321.2 05-JAN-25         12,321.20         55         53 
+27631 031 Lucky Medical Hall   2 RS 1512224 03-DEC-24    24178.8          0    24178.8 25-JAN-25         20,178.80         83         53 
+28065 028 Shorif Dairy         2 RS 1511700 02-DEC-24     3994.8          0     3994.8 25-JAN-25          3,994.80        100         54 
+02EB1 094 Bayshakhi Pharmacy   2 RS 1512161 03-DEC-24   92304.53          0   92304.53 27-JAN-25         84,787.31         92         55 
+21538 122 Jahid Enterprise     2 RS 1509447 24-NOV-24    8570.16          0    8570.16 18-JAN-25          8,570.16        100         55 
+22606 069 Bhuiyan Veterinary M 2 RS 1513450 07-DEC-24       7961          0       7961 31-JAN-25          7,961.00        100         55 
+02HQ3 065 Madhbar Pharmacy     2 RS 1506783 14-NOV-24   41432.14          0   41432.14 09-JAN-25         41,432.14        100         56 
+22606 086 Bismillah Pharmacy   2 RS 1510452 28-NOV-24      35192       6428      28764 23-JAN-25         15,000.00         43         56 
+28548 009 Faysal Poultry Agro  2 RS 1505797 11-NOV-24      11150          0      11150 06-JAN-25          3,687.70         33         56 
+21487 022 Dr Jahangir          2 RS 1509614 25-NOV-24   30413.74          0   30413.74 21-JAN-25         26,413.00         87         57 
+22606 044 Munshi Vet.Medical H 2 RS 1513069 05-DEC-24    7665.74          0    7665.74 31-JAN-25          3,584.54         47         57 
+21538 074 Dr. Anowar           2 RS 1512604 04-DEC-24   14333.02          0   14333.02 31-JAN-25         14,333.02        100         58 
+02HQ3 101 Bismilah Vet Pharmac 2 RS 1511706 02-DEC-24  140207.04          0  140207.04 30-JAN-25       1,40,207.04        100         59 
+22606 045 Pirkasim Pur Veterin 2 RS 1506752 14-NOV-24    7802.04          0    7802.04 12-JAN-25          7,802.04        100         59 
+22606 071 Tasfia Veterinary    2 RS 1510501 28-NOV-24   49865.47          0   49865.47 27-JAN-25         49,865.47        100         60 
+27631 077 Maa Enterprize       2 RS 1505206 10-NOV-24     2112.2          0     2112.2 09-JAN-25          2,112.20        100         60 
+28548 059 Sawdagor Poultry & M 2 RS 1506538 13-NOV-24   82569.78          0   82569.78 12-JAN-25         82,569.78        100         60 
+28548 059 Sawdagor Poultry & M 2 RS 1506565 13-NOV-24    13200.9          0    13200.9 12-JAN-25         13,200.90        100         60 
+21538 004 Sumon Dairy Farm     2 RS 1502087 31-OCT-24   14856.55          0   14856.55 01-JAN-25          9,356.55         63         62 
+22606 034 Mahi Vet Pharmacy    2 RS 1503425 04-NOV-24      23814          0      23814 05-JAN-25          3,200.24         13         62 
+27631 080 Ajoy Veterinary      2 RS 1506543 13-NOV-24     4856.6          0     4856.6 14-JAN-25          4,856.60        100         62 
+27811 044 Mah Moni Medical Hal 2 RS 1509204 24-NOV-24    9496.05          0    9496.05 25-JAN-25          6,496.05         68         62 
+27811 060 Samanta Medical Hall 2 RS 1510866 30-NOV-24    12144.4          0    12144.4 31-JAN-25         10,144.40         84         62 
+21538 142 Grambangla Pharmacy  2 RS 1502946 03-NOV-24      27950          0      27950 05-JAN-25          8,000.00         29         63 
+27811 016 Billu Medicin House  2 RS 1509255 24-NOV-24   51823.74          0   51823.74 26-JAN-25         51,823.74        100         63 
+27811 068 Vai Vai Poultry&Fish 2 RS 1510649 29-NOV-24      59844          0      59844 31-JAN-25         59,844.00        100         63 
+28065 011 Munsi Enterprise     2 RS 1501793 30-OCT-24      21000          0      21000 01-JAN-25          6,225.86         30         63 
+28548 001 M/S. Al- Imran Poult 2 RS 1503666 04-NOV-24      66278          0      66278 06-JAN-25         66,278.00        100         63 
+21672 006 Razzak Traders       2 RS 1509093 23-NOV-24   105590.4          0   105590.4 26-JAN-25       1,05,590.40        100         64 
+27811 111 Bhuiyan Poultry And  2 RS 1502234 01-NOV-24     4488.3          0     4488.3 04-JAN-25          4,488.30        100         64 
+21538 078 Dr. Saha Alam        2 RS 1505297 10-NOV-24   35874.43          0   35874.43 14-JAN-25         35,874.43        100         65 
+02HQ3 111 Dr. Idris Miah       2 RS 1503150 03-NOV-24    24197.8          0    24197.8 08-JAN-25         24,197.80        100         66 
+21538 070 Ayesha Siddika Poult 2 RS 1505351 10-NOV-24      23913          0      23913 15-JAN-25         10,113.46         42         66 
+02EB1 024 Hossain Enterprise   2 RS 1504060 06-NOV-24      28108          0      28108 12-JAN-25          4,000.00         14         67 
+21487 149 New World Enterprise 2 RS 1501785 30-OCT-24    52803.6          0    52803.6 05-JAN-25         52,803.60        100         67 
+28548 139 Mohsin Medical Hall  2 RS 1508856 21-NOV-24  103699.31          0  103699.31 27-JAN-25       1,03,699.31        100         67 
+02N55 026 Dr Mizan             2 RS 1508237 20-NOV-24     2992.2          0     2992.2 29-JAN-25          2,992.20        100         70 
+21538 042 Prani Shastho Sheba  2 RS 1501852 30-OCT-24      13086          0      13086 09-JAN-25         13,086.00        100         71 
+27811 040 Dr. Abdul Wahab      2 RS 1508158 20-NOV-24    3363.44          0    3363.44 30-JAN-25          3,363.44        100         71 
+21538 122 Jahid Enterprise     2 RS 1504169 06-NOV-24     6876.2          0     6876.2 18-JAN-25          6,876.20        100         73 
+22606 046 Abdul Kadir Vet Hall 2 RS 1507639 18-NOV-24   21087.76          0   21087.76 30-JAN-25         21,087.76        100         73 
+02HQ3 072 Roy Medecal Hall     2 RS 1507287 17-NOV-24     4121.2          0     4121.2 30-JAN-25          4,121.20        100         74 
+21538 159 Mayer Doya Pharmacy  2 RS 1500917 27-OCT-24       3668          0       3668 09-JAN-25          3,668.00        100         74 
+27631 053 Aa Fisheries         2 RS 1504233 06-NOV-24      24600          0      24600 19-JAN-25         24,600.00        100         74 
+22606 001 Three  Star  Poultry 2 RS 1501122 28-OCT-24       2635          0       2635 12-JAN-25          2,230.38         85         76 
+02N55 060 M/S Shuvo Traders    2 RS 1506373 13-NOV-24      39536          0      39536 29-JAN-25         39,536.00        100         77 
+22606 045 Dr.Sahidul  Islam    2 RS 1500136 24-OCT-24      16130          0      16130 09-JAN-25         16,130.00        100         77 
+02N55 007 Dr. Wahid Medical Ha 2 RS 1501583 30-OCT-24    6409.15          0    6409.15 16-JAN-25          6,409.15        100         78 
+27811 071 Rayja Medecal Hall   2 RS 1502520 02-NOV-24    3646.72          0    3646.72 19-JAN-25          3,646.72        100         78 
+02N55 044 Masum Med.Hall       2 RS 1501048 28-OCT-24       6100          0       6100 16-JAN-25          6,100.00        100         80 
+27631 049 Dr. Rased            2 RS 1500886 27-OCT-24     4972.1          0     4972.1 15-JAN-25          4,972.10        100         80 
+02N55 063 Dr. Noman Mia        2 RS 1505598 11-NOV-24     6434.8          0     6434.8 31-JAN-25          6,434.80        100         81 
+21487 005 Ms. Neel Enterprise  2 RS 1504704 07-NOV-24   59206.05          0   59206.05 28-JAN-25         59,206.05        100         82 
+02N55 020 Mayer Doa Poultry Co 2 RS 1497052 14-OCT-24    6365.97          0    6365.97 05-JAN-25          6,365.97        100         83 
+22606 070 Shaheb Baria Project 2 RS 1505002 09-NOV-24      20655          0      20655 31-JAN-25         17,710.06         86         83 
+02N55 002 Dr. Mohiuddin        2 RS 1501584 30-OCT-24    23907.6          0    23907.6 22-JAN-25         20,000.00         84         84 
+21487 056 Afrin Dairy & Medici 2 RS 1504230 06-NOV-24   35086.64          0   35086.64 29-JAN-25         35,086.64        100         84 
+22606 001 M/S. Khan Poultry    2 RS 1497059 14-OCT-24    12518.8          0    12518.8 06-JAN-25         10,018.80         80         84 
+02EB1 060 Bazid Veterinary Med 2 RS 1503793 05-NOV-24     7191.6          0     7191.6 29-JAN-25          7,191.60        100         85 
+02N55 046 Dr Badeul Alam       2 RS 1502508 02-NOV-24     4673.7          0     4673.7 26-JAN-25          4,673.70        100         85 
+21487 035 Dr Asraf             2 RS 1498341 19-OCT-24      37500          0      37500 12-JAN-25         37,500.00        100         85 
+22606 140 Sarker Poultry       2 RS 1504558 07-NOV-24    47841.9          0    47841.9 31-JAN-25         29,096.37         61         85 
+27631 038 Baser Medical Hall   2 RS 1500668 27-OCT-24     3316.8          0     3316.8 20-JAN-25          1,652.48         50         85 
+02N55 019 Molla Enterprise     2 RS 1499728 23-OCT-24    9721.42          0    9721.42 19-JAN-25          9,721.42        100         88 
+22606 067 Dr Shabuj            2 RS 1502618 02-NOV-24      33040          0      33040 29-JAN-25         18,905.98         57         88 
+02HQ3 084 Adiyan Veterinary    2 RS 1500888 27-OCT-24    56990.5          0    56990.5 26-JAN-25         32,601.87         57         91 
+21538 106 Azad Medical Hall    2 RS 1495808 09-OCT-24    10288.6          0    10288.6 08-JAN-25          6,288.60         61         91 
+28548 129 Kashfi Medical Hall  2 RS 1495351 07-OCT-24    11011.2          0    11011.2 06-JAN-25          4,509.49         41         91 
+28548 004 Sihab Medical Hall   2 RS 1501120 28-OCT-24   25970.04          0   25970.04 27-JAN-25         25,970.04        100         91 
+02N55 058 Dr. Mehedi Hasan     2 RS 1499305 21-OCT-24    14301.4          0    14301.4 22-JAN-25         14,301.40        100         93 
+21538 081 Jasim Pharmacy       2 RS 1496871 13-OCT-24   21254.55          0   21254.55 15-JAN-25         17,254.55         81         94 
+21672 056 Mojumder Pharmacy    2 RS 1494461 05-OCT-24       3650          0       3650 08-JAN-25          2,494.83         68         95 
+02N55 057 Dr. Jasimuddin       2 RS 1497310 14-OCT-24    26661.4          0    26661.4 21-JAN-25         26,661.40        100         99 
+27811 015 Ekosh  Poultry       2 RS 1494746 06-OCT-24     2640.2          0     2640.2 14-JAN-25            640.20         24        100 
+22606 020 Gramin Drug House    2 RS 1498179 17-OCT-24     5426.2          0     5426.2 26-JAN-25          5,426.20        100        101 
+22153 043 Dr. Noor Mohammad    2 RS 1498933 20-OCT-24       6529          0       6529 30-JAN-25          6,529.00        100        102 
+27631 100 Anisha Vet.Pharmacy  2 RS 1495740 09-OCT-24   61725.35          0   61725.35 19-JAN-25         34,000.00         55        102 
+02N55 151 Dr Herun Mia         2 RS 1497773 16-OCT-24    38920.6          0    38920.6 28-JAN-25         38,291.65         98        104 
+21538 062 Maa Medical Hall     2 RS 1492387 29-SEP-24    9181.16          0    9181.16 11-JAN-25          2,331.16         25        104 
+27811 012 Bilal Medicine Corne 2 RS 1497113 14-OCT-24   57438.42          0   57438.42 27-JAN-25         46,578.53         81        105 
+21672 024 Jaman Medical Hall   2 RS 1495547 08-OCT-24   10999.48          0   10999.48 22-JAN-25          6,999.48         64        106 
+22606 041 Maa Medical  Hall    2 RS 1490879 23-SEP-24   23447.04          0   23447.04 09-JAN-25         23,447.04        100        108 
+02N55 062 Dr. Duno Mia         2 RS 1493669 02-OCT-24      23770          0      23770 19-JAN-25         23,770.00        100        109 
+02N55 052 Sarker Tradras       2 RS 1496265 12-OCT-24    52803.6          0    52803.6 29-JAN-25         52,803.60        100        109 
+28065 032 Karim Medical Hall   2 RS 1491672 26-SEP-24    57441.2          0    57441.2 16-JAN-25         36,416.58         63        112 
+28157 016 Sharmin  M/H         2 RS 1490142 21-SEP-24    10940.8          0    10940.8 11-JAN-25          6,940.80         63        112 
+22153 016 Dr. Salam            2 RS 1495818 09-OCT-24      33213          0      33213 31-JAN-25         33,213.00        100        114 
+02N55 029 Dr Swapon Bhiyan     2 RS 1495228 07-OCT-24      29800          0      29800 30-JAN-25         29,800.00        100        115 
+28548 010 Mahedi Pharmacy      2 RS 1490861 23-SEP-24   46527.74    13464.9   33062.84 23-JAN-25         25,972.84         56        122 
+28065 059 Dr Sumon             2 RS 1485728 05-SEP-24   17883.46          0   17883.46 06-JAN-25          9,888.55         55        123 
+21538 072 Roza Pharmacy        2 RS 1491433 25-SEP-24    18632.1          0    18632.1 30-JAN-25          7,796.62         42        127 
+22606 010 Mahi Medical Hall    2 RS 1490143 21-SEP-24    15866.1          0    15866.1 31-JAN-25          3,866.10         24        132 
+21538 124 Tohid Medical Hall   2 RS 1483107 28-AUG-24    45211.7          0    45211.7 12-JAN-25         15,621.10         35        137 
+21672 218 Dr Motaleb Mia       2 RS 1487170 10-SEP-24   15766.98          0   15766.98 30-JAN-25         15,766.98        100        142 
+21487 009 Member Pharmacy      2 RS 1481004 19-AUG-24    9512.05          0    9512.05 12-JAN-25          9,512.05        100        146 
+28065 052 Gild Bird Poultry    2 RS 1481810 22-AUG-24   160609.3          0   160609.3 27-JAN-25         81,066.55         50        158 
+22153 009 Tisha Medical Hall   2 RS 1475219 30-JUL-24   84773.84          0   84773.84 12-JAN-25         63,317.44         75        166 
+27811 033 Salma Poultry & Feed 2 RS 1475277 30-JUL-24      12250          0      12250 14-JAN-25         12,250.00        100        168 
+02EB1 145 Army Veterenary Phar 2 RS 1476972 05-AUG-24       6555          0       6555 22-JAN-25          2,555.00         39        170 
+22153 032 Tariq Animal Health  2 RS 1475259 30-JUL-24  121974.62   10063.35  111911.27 31-JAN-25       1,00,000.00         82        185 
+21487 042 Kaji Medical Hall    2 RS 1467300 03-JUL-24   41804.21          0   41804.21 22-JAN-25         26,774.21         64        203 
+21538 031 Bhai Bhai Pharmacy   2 RS 1462517 12-JUN-24    13925.9          0    13925.9 05-JAN-25          7,910.40         57        207 
+27631 065 Abu Sani Enterpirse  2 RS 1462764 13-JUN-24      81600          0      81600 31-JAN-25         21,914.00         27        232 
+22606 020 Sarkar Medical Hall  2 RS 1450452 04-MAY-24   13419.55          0   13419.55 31-JAN-25         13,219.55         99        272 
+28065 001 Azad Medical Store   2 RS 1436099 14-MAR-24   19035.49          0   19035.49 16-JAN-25          6,551.02         34        308 
+28157 063 Vai Vai Traders      2 RS 1420744 27-JAN-24      25500          0      25500 19-JAN-25         10,546.15         41        358 
+                                    -------           ---------- ---------- ----------           -----------------                       
+count                                   183                                                                                              
+sum                                                   5077748.35   50590.65  5027157.7                42,11,526.43                       
+
+183 rows selected.
+

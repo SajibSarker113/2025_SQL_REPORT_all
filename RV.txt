@@ -1,0 +1,95 @@
+
+SET LINES 96
+SET PAGES 2000
+SET NUMFORMAT 9999999999.99
+
+
+
+COMPUTE COUNT OF B_NO ON PRD_CD  
+
+BREAK ON REPORT ON PRD_CD  
+
+SPOOL ON
+
+SELECT DISTINCT A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, SUM(RV_QTY) RV_QTY, A.ISS_FROM 
+---SUM(T_VAT*RV_QTY) T_VAL
+FROM INV.FG_RV1 A, INV.FG_RV2 B,SCENT.INV_PROD C
+WHERE A.RV_DT>='&RV_DATE_FROM'
+AND A.LOC_CD='&SC_CD'
+AND A.LOC_CD=B.LOC_CD
+AND A.DIV_CD='&DIV'
+AND A.RV_NO=B.RV_NO
+AND C.CAT_CD=B.CAT_CD
+AND C.PRD_CD=B.PRD_CD
+AND B.TYP_CD=C.TYP_CD
+AND B.TYP_CD='09'
+---AND A.ISS_FROM IS NOT NULL
+AND B.CAT_CD||B.PRD_CD IN('&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD')
+GROUP BY A.DIV_CD, C.CAT_CD, C.PRD_CD, C.PROD_NM, A.RV_NO, B.B_NO, A.RV_DT, RV_QTY, A.ISS_FROM
+ORDER BY C.CAT_CD, C.PRD_CD, B.B_NO, A.RV_DT, A.DIV_CD
+/
+
+SPOOL OFF
+ED ON.LST
+
+
+==============================================
+
+
+Enter value for rv_date_from: 01JUN25
+old   4: WHERE A.RV_DT>='&RV_DATE_FROM'
+new   4: WHERE A.RV_DT>='01JUN25'
+Enter value for sc_cd: 11
+old   5: AND A.LOC_CD='&SC_CD'
+new   5: AND A.LOC_CD='11'
+Enter value for div: 1
+old   7: AND A.DIV_CD='&DIV'
+new   7: AND A.DIV_CD='1'
+Enter value for prod: 081163
+Enter value for prod: 051065
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+Enter value for prod: 
+old  14: AND B.CAT_CD||B.PRD_CD IN('&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD','&PROD')
+new  14: AND B.CAT_CD||B.PRD_CD IN('081163','051065','','','','','','','','','','','','')
+
+D CA PRD_ PROD_NM                                  RV_NO   B_NO       RV_DT             RV_QTY  
+- -- ---- ---------------------------------------- ------- ---------- --------- --------------  
+IS                                                                                              
+--                                                                                              
+1 05 1065 HEMOJET 500 INJECTION                    0055029 L0652001   06-JUL-25           1.00  
+                                                                                                
+                                                                                                
+1 05      HEMOJET 500 INJECTION                    0054862 V0651005   15-JUN-25           1.00  
+                                                                                                
+                                                                                                
+1 05      HEMOJET 500 INJECTION                    0054862 V0651018   15-JUN-25           1.00  
+                                                                                                
+                                                                                                
+1 05      HEMOJET 500 INJECTION                    0054862 V0651020   15-JUN-25           1.00  
+                                                                                                
+                                                                                                
+1 05      HEMOJET 500 INJECTION                    0054862 V0651025   15-JUN-25           1.00  
+                                                                                                
+                                                                                                
+1 05      HEMOJET 500 INJECTION                    0054862 V0652002   15-JUN-25           2.00  
+                                                                                                
+                                                                                                
+     ****                                                  ----------                           
+                                                                                                
+                                                                                                
+     coun                                                           6                           
+                                                                                                
+                                                                                                
+
+6 rows selected.
+

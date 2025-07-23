@@ -1,0 +1,62 @@
+
+
+SET LINE 45
+SET PAGES 20000
+COLUMN SALE_NET FORMAT 99,99,999.99
+
+
+
+TTITLE center 'Depot:'&&SC_CD', Replace bill Month wise' SKIP2
+
+
+
+SPOOL ON
+
+SELECT SC_CD, 
+    TO_CHAR(DELI_DT, 'YYYY-MM') AS MONTH_YEAR, SALE_CD,
+    --FL_MVH, 
+    SUM(SALE_NET) AS SALE_NET
+FROM 
+    scent.bill_replace1
+WHERE 
+    DELI_DT BETWEEN '&DATE1' AND '&DATE2'
+    AND SC_CD = '&&SC_CD'
+    AND SALE_CD = 'RS'  
+GROUP BY 
+    SC_CD,
+    TO_CHAR(DELI_DT, 'YYYY-MM'), SALE_CD
+    --FL_MVH 
+ORDER BY 
+    MONTH_YEAR;
+
+
+ 
+SPOOL OFF
+
+ED ON.LST
+
+
+
+========================================
+
+
+Enter value for date1: 01JAN25
+Enter value for date2: 30JUN25
+old   8:     DELI_DT BETWEEN '&DATE1' AND '&DATE2'
+new   8:     DELI_DT BETWEEN '01JAN25' AND '30JUN25'
+old   9:     AND SC_CD = '&&SC_CD'
+new   9:     AND SC_CD = '11'
+
+      Depot:11, Replace bill Month wise      
+                                             
+SC MONTH_Y SA      SALE_NET                  
+-- ------- -- -------------                  
+11 2025-01 RS  12,74,757.16                  
+11 2025-02 RS   6,82,294.73                  
+11 2025-03 RS   8,59,862.24                  
+11 2025-04 RS   3,72,526.99                  
+11 2025-05 RS  11,15,196.78                  
+11 2025-06 RS   3,48,015.74                  
+
+6 rows selected.
+
